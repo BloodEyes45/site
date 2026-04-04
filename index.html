@@ -1,107 +1,143 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LoL Win/Lose Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloodEyes1</title>
+    <meta name="description" content="BloodEyes1 Premium Bio Link ve Sosyal Mecralar">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="profil.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@200;400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="dashboard-header">
-    <h1>LoL Win/Lose Dashboard</h1>
-    <div class="dashboard-panels">
-      <div class="panel" id="panel-total">
-        <div class="panel-label">Toplam Maç</div>
-        <div class="panel-value" id="total-matches">0</div>
-      </div>
-      <div class="panel" id="panel-win">
-        <div class="panel-label">Win</div>
-        <div class="panel-value" id="total-wins">0</div>
-      </div>
-      <div class="panel" id="panel-lose">
-        <div class="panel-label">Lose</div>
-        <div class="panel-value" id="total-loses">0</div>
-      </div>
-      <div class="panel" id="panel-winrate">
-        <div class="panel-label">Winrate</div>
-        <div class="panel-value" id="winrate">0%</div>
-        <div class="progress-bar-bg"><div class="progress-bar-fill" id="winrate-bar"></div></div>
-      </div>
-    </div>
-    <div class="dashboard-panels streak-panels-row">
-      <div class="panel streak-panel" id="panel-current-win-streak">
-        <div class="panel-label">Şu Anki Win Streak</div>
-        <div class="panel-value" id="current-win-streak">0</div>
-      </div>
-      <div class="panel streak-panel" id="panel-current-lose-streak">
-        <div class="panel-label">Şu Anki Lose Streak</div>
-        <div class="panel-value" id="current-lose-streak">0</div>
-      </div>
-      <div class="panel streak-panel" id="panel-best-win-streak">
-        <div class="panel-label">En Uzun Win Streak</div>
-        <div class="panel-value" id="best-win-streak">0</div>
-      </div>
-      <div class="panel streak-panel" id="panel-best-lose-streak">
-        <div class="panel-label">En Uzun Lose Streak</div>
-        <div class="panel-value" id="best-lose-streak">0</div>
-      </div>
-    </div>
-  </div>
-  <div class="dashboard-main">
-    <div class="dashboard-actions">
-      <button id="add-match-btn">+ Maç Ekle</button>
-    </div>
-    <div class="table-container">
-      <table id="matches-table">
-        <thead>
-          <tr>
-            <th>Semih</th>
-            <th>Kağan</th>
-            <th>Sonuç</th>
-            <th>Not</th>
-            <th>Sil</th>
-          </tr>
-        </thead>
-        <tbody id="matches-tbody">
-          <!-- Maçlar buraya gelecek -->
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div id="confetti-container"></div>
 
-  <!-- Maç Ekle Modal -->
-  <div id="add-match-modal" class="modal-bg" style="display:none;">
-    <div class="modal">
-      <h2>Yeni Maç Ekle</h2>
-      <form id="add-match-form">
-        <label>Senin karakterin:<br>
-          <input type="text" id="modal-my-champion" required autocomplete="off">
-        </label><br>
-        <label>Kuzenin karakteri:<br>
-          <input type="text" id="modal-cousin-champion" required autocomplete="off">
-        </label><br>
-        <label>Sonuç:<br>
-          <select id="modal-result" required>
-            <option value="win">Win</option>
-            <option value="lose">Lose</option>
-          </select>
-        </label><br>
-        <label>Maç Linki:<br>
-          <input type="url" id="modal-link" required autocomplete="off" placeholder="https://...">
-        </label><br>
-        <div class="modal-actions">
-          <button type="submit" id="modal-add-btn">Ekle</button>
-          <button type="button" id="modal-cancel-btn">İptal</button>
+<body class="loading">
+    <!-- Custom Follower (Aura) -->
+    <div class="cursor-aura"></div>
+
+    <!-- V4 Overlay (Transparent/Blur) -->
+    <div id="overlay" class="overlay">
+        <div class="overlay-content">
+            <h2 class="glitch" data-text="CLICK TO ENTER">CLICK TO ENTER</h2>
+            <div class="enter-btn">BAŞLAT</div>
         </div>
-      </form>
     </div>
-  </div>
 
-  <!-- Firebase App (core) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <!-- Firebase Realtime Database -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="main.js"></script>
+    <!-- Cinematic Scanline Overlay -->
+    <div class="scanlines"></div>
+
+    <!-- Minimal Volume Toggle -->
+    <div class="volume-control" id="volume-control">
+        <i class="fa-solid fa-volume-xmark" id="volume-icon"></i>
+    </div>
+
+    <!-- Copy Notification Toast -->
+    <div id="copy-toast" class="copy-toast">Kopyalandı!</div>
+
+    <!-- Background Video Container -->
+    <div id="video-container">
+        <video id="bg-video" loop playsinline>
+            <source src="arkaplan.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- Snow Particles -->
+    <div id="particles-js"></div>
+
+    <!-- Main Content -->
+    <main class="content" id="main-content">
+        <!-- Decorative Orbit Oval -->
+        <div class="orbit-ring"></div>
+
+        <div class="profile-card" id="profile-card">
+            <div class="shine"></div>
+
+            <!-- Audio Visualizer -->
+            <div class="visualizer-container">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+
+            <!-- Profile Section -->
+            <div class="profile-header">
+                <div class="avatar-container">
+                    <img src="profil.png" alt="Profile" class="avatar" id="avatar">
+                    <div class="status-dot" id="status-dot"></div>
+                </div>
+                <div class="name-container">
+                    <img src="badge.png" class="name-badge badge-left" id="badge-left" alt="Badge">
+                    <h1 class="username neon-pulse" id="typewriter-name" data-text="BloodEyes1" title="Kopyalamak için tıkla"></h1>
+                    <img src="badge.png" class="name-badge badge-right" id="badge-right" alt="Badge">
+                </div>
+                <p class="tagline" id="discord-tag" title="Kopyalamak için tıkla">thelastdance#4444</p>
+            </div>
+
+            <!-- Discord Presence Slot (Static) -->
+            <div class="discord-presence">
+                <div class="presence-icon">
+                    <i class="fa-brands fa-discord"></i>
+                </div>
+                <div class="presence-info">
+                    <span class="presence-activity">Görünmeyeni görmeye çalış.</span>
+                </div>
+            </div>
+
+            <!-- Social Links (Horizontal Layout) -->
+            <div class="social-links">
+                <div class="social-item-wrapper" data-tooltip="Discord Sunucum">
+                    <a href="https://discord.gg/Zj74JY7gVT" target="_blank" class="social-item">
+                        <i class="fa-brands fa-discord"></i>
+                    </a>
+                    <div class="gradient-border"></div>
+                </div>
+                <div class="social-item-wrapper" data-tooltip="Spotify Profilim">
+                    <a href="https://open.spotify.com/user/31dhnu5bx7zulxt4pbaoymmhtmci" target="_blank"
+                        class="social-item">
+                        <i class="fa-brands fa-spotify"></i>
+                    </a>
+                    <div class="gradient-border"></div>
+                </div>
+                <div class="social-item-wrapper" data-tooltip="Bionluk Hesabım">
+                    <a href="https://bionluk.com/semihyprk" target="_blank" class="social-item">
+                        <span class="bi-icon">bi</span>
+                    </a>
+                    <div class="gradient-border"></div>
+                </div>
+            </div>
+
+            <!-- Spotify Marquee (Dynamic) -->
+            <div class="spotify-marquee-container" id="spotify-marquee-container">
+                <div class="marquee-content">
+                    <i class="fa-brands fa-spotify"></i>
+                    <span id="spotify-text">Şu an müzik dinlemiyor...</span>
+                </div>
+            </div>
+
+            <!-- Visit Count -->
+            <div class="stats">
+                <span class="view-count"><i class="fa-solid fa-eye"></i> <span id="count">0</span></span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
 </body>
-</html> 
+
+</html>
