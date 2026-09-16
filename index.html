@@ -202,7 +202,7 @@
             "Perşembe": [], "Cuma": [], "Cumartesi": [], "Pazar": []
         };
 
-        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v7')) || {
+        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v8')) || {
             lessons: defaultLessons,
             habits: [
                 { id: 1, name: "Su İç (2 Litre)", completed: false },
@@ -213,7 +213,7 @@
         };
 
         function saveData() {
-            localStorage.setItem('sema_asistan_db_v7', JSON.stringify(db));
+            localStorage.setItem('sema_asistan_db_v8', JSON.stringify(db));
         }
 
         function toggleTheme() {
@@ -363,9 +363,25 @@
             container.innerHTML = '';
             list.forEach(item => {
                 const abs = item.absence || 0;
-                // 5 devamsızlık sınırı kontrolü (5 ve üzeri tehlike)
-                const isDanger = abs >= 5;
-                const cardBorder = isDanger ? 'border-red-500/50 bg-red-500/5' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800';
+                
+                // Kademeli Renk ve Uyarı Skalası
+                let cardBorder = 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800';
+                let badgeColor = 'text-pink-500';
+                let warningText = '';
+
+                if (abs === 3) {
+                    cardBorder = 'border-amber-500/50 bg-amber-500/5';
+                    badgeColor = 'text-amber-500 font-bold';
+                    warningText = '<span class="text-[9px] text-amber-500 font-bold ml-1">(Dikkat: 3!) ⚠️</span>';
+                } else if (abs === 4) {
+                    cardBorder = 'border-orange-500/50 bg-orange-500/5';
+                    badgeColor = 'text-orange-500 font-bold';
+                    warningText = '<span class="text-[9px] text-orange-500 font-bold ml-1">(Son Sınır: 4!) 🚨</span>';
+                } else if (abs >= 5) {
+                    cardBorder = 'border-red-500/50 bg-red-500/5';
+                    badgeColor = 'text-red-500 font-bold';
+                    warningText = '<span class="text-[9px] text-red-500 font-bold ml-1">(Sınır Aşıldı!) ❌</span>';
+                }
 
                 container.innerHTML += `
                     <div class="${cardBorder} border rounded-2xl p-3.5 shadow-sm space-y-2 transition-colors">
@@ -381,8 +397,8 @@
                         </div>
                         <div class="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-slate-800 text-[11px]">
                             <span class="opacity-80">
-                                <i class="fa-solid fa-user-xmark mr-1"></i>Devamsızlık: <strong class="${isDanger ? 'text-red-500 font-bold' : 'text-pink-500'}">${abs} / 5</strong>
-                                ${isDanger ? '<span class="text-[9px] text-red-500 font-bold ml-1">(Sınır Aşıldı!) ⚠️</span>' : ''}
+                                <i class="fa-solid fa-user-xmark mr-1"></i>Devamsızlık: <strong class="${badgeColor}">${abs} / 5</strong>
+                                ${warningText}
                             </span>
                             <div class="flex gap-1">
                                 <button onclick="updateAbsence(${item.id}, -1)" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">-</button>
@@ -448,7 +464,6 @@
             }
             container.innerHTML = '';
             db.todos.forEach(item => {
-                // Öncelik rozeti rengi
                 let badgeColor = 'bg-blue-500/10 text-blue-500 border-blue-500/20';
                 if (item.priority === 'Sınav') badgeColor = 'bg-red-500/10 text-red-500 border-red-500/20';
                 else if (item.priority === 'Ödev') badgeColor = 'bg-purple-500/10 text-purple-500 border-purple-500/20';
