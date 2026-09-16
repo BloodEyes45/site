@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SemaAsistan</title>
     
-    <!-- Gönderdiğin İkonun Doğrudan Linki -->
+    <!-- Sevimli Kalp İkonu -->
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/128/6723/6723246.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,16 +21,16 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 dark:bg-slate-950 dark:text-slate-100 bg-slate-50 text-slate-900 min-h-screen pb-28 transition-colors duration-300">
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-28 transition-colors duration-300">
 
     <!-- Üst Başlık -->
-    <header class="bg-slate-900/80 dark:bg-slate-900/80 bg-white/80 backdrop-blur-md border-b border-slate-800/80 dark:border-slate-800 border-slate-200 sticky top-0 z-40 px-4 py-3">
+    <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 px-4 py-3">
         <div class="max-w-md mx-auto flex justify-between items-center">
             <h1 class="text-base font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent flex items-center gap-2">
                 <i class="fa-solid fa-heart text-pink-500"></i>SemaAsistan
             </h1>
             <div class="flex items-center gap-2">
-                <button onclick="toggleTheme()" class="w-8 h-8 rounded-xl bg-slate-800/50 dark:bg-slate-800 bg-slate-200 border border-slate-700/50 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 transition">
+                <button onclick="toggleTheme()" class="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 transition">
                     <i id="themeIcon" class="fa-solid fa-sun text-xs"></i>
                 </button>
             </div>
@@ -58,7 +58,7 @@
             </div>
 
             <!-- Canlı Ders Sayaç Kartı -->
-            <div id="countdownCard" class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-4 shadow-sm text-center">
+            <div id="countdownCard" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm text-center">
                 <h4 class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Ders Durumu</h4>
                 <div id="countdownText" class="text-sm font-bold text-pink-500">Hesaplanıyor...</div>
             </div>
@@ -103,7 +103,7 @@
             <div id="notesList" class="space-y-3"></div>
         </section>
 
-        <!-- 5. ÖDEVLER SEKMESİ -->
+        <!-- 5. ÖDEVLER VE SINAVLAR SEKMESİ -->
         <section id="tab-todos" class="space-y-4 hidden">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold">Ödevler & Sınavlar</h2>
@@ -116,20 +116,20 @@
 
         <!-- 6. ORTALAMA HESAPLAMA SEKMESİ -->
         <section id="tab-calc" class="space-y-4 hidden">
-            <div class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-4 shadow-md space-y-3">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-md space-y-3">
                 <h2 class="text-sm font-bold">Akıllı Geçme Notu & AGNO Hesapla</h2>
                 <div>
                     <label class="block text-[10px] font-medium opacity-60 mb-1">VİZE NOTU</label>
-                    <input type="number" id="vizeNot" placeholder="Örn: 70" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2.5 text-xs focus:outline-none focus:border-pink-500">
+                    <input type="number" id="vizeNot" placeholder="Örn: 70" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-pink-500">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-[10px] font-medium opacity-60 mb-1">VİZE ETKİSİ (%)</label>
-                        <input type="number" id="vizeOran" value="40" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2.5 text-xs">
+                        <input type="number" id="vizeOran" value="40" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-xs">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium opacity-60 mb-1">GEÇME NOTU (Ağırlıklı)</label>
-                        <input type="number" id="gecmeNotu" value="50" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2.5 text-xs">
+                        <input type="number" id="gecmeNotu" value="50" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-xs">
                     </div>
                 </div>
                 <button onclick="calculatePassingScore()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-medium py-2.5 rounded-xl text-xs transition shadow-lg shadow-pink-600/30">Finalden Kaç Almalıyım?</button>
@@ -140,7 +140,7 @@
     </main>
 
     <!-- Alt Navigasyon Çubuğu -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/90 dark:bg-slate-900/90 bg-white/90 backdrop-blur-lg border-t border-slate-800 dark:border-slate-800 border-slate-200 py-2 px-1 z-40">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 py-2 px-1 z-40">
         <div class="max-w-md mx-auto flex justify-around">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-pink-500 transition">
                 <i class="fa-solid fa-house text-sm"></i><span class="text-[9px] font-medium">Özet</span>
@@ -165,10 +165,10 @@
 
     <!-- Modal Pencere -->
     <div id="globalModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl text-slate-100">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl text-slate-900 dark:text-slate-100">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="modalTitle" class="text-sm font-bold">Yeni Kayıt</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
             <form id="dynamicForm" onsubmit="handleFormSubmit(event)" class="space-y-3"></form>
         </div>
@@ -202,7 +202,7 @@
             "Perşembe": [], "Cuma": [], "Cumartesi": [], "Pazar": []
         };
 
-        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v6')) || {
+        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v7')) || {
             lessons: defaultLessons,
             habits: [
                 { id: 1, name: "Su İç (2 Litre)", completed: false },
@@ -213,7 +213,7 @@
         };
 
         function saveData() {
-            localStorage.setItem('sema_asistan_db_v6', JSON.stringify(db));
+            localStorage.setItem('sema_asistan_db_v7', JSON.stringify(db));
         }
 
         function toggleTheme() {
@@ -273,14 +273,14 @@
 
             const textEl = document.getElementById('countdownText');
             if (currentLesson) {
-                textEl.innerHTML = `Şu an derste: <strong class="text-white">${currentLesson.name}</strong> (${currentLesson.room || ''})`;
+                textEl.innerHTML = `Şu an derste: <strong class="text-pink-500">${currentLesson.name}</strong> (${currentLesson.room || ''})`;
             } else if (nextLesson) {
                 const [sH, sM] = nextLesson.start.split(':').map(Number);
                 const diff = (sH * 60 + sM) - curMinutes;
                 const saat = Math.floor(diff / 60);
                 const dakika = diff % 60;
                 let zamanStr = saat > 0 ? `${saat} saat ${dakika} dk` : `${dakika} dakika`;
-                textEl.innerHTML = `Sıradaki Ders: <strong class="text-white">${nextLesson.name}</strong> (${zamanStr} kaldı)`;
+                textEl.innerHTML = `Sıradaki Ders: <strong class="text-pink-500">${nextLesson.name}</strong> (${zamanStr} kaldı)`;
             } else {
                 textEl.innerHTML = `Bugün başka ders kalmadı! Dinlenme vakti ✨`;
             }
@@ -322,13 +322,13 @@
             
             let html = '';
             if (todayLessons.length === 0) {
-                html += `<div class="bg-slate-900/50 dark:bg-slate-900/50 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-4 text-center text-xs opacity-60">Bugün planlanmış ders bulunmuyor. Harika gün! 🎉</div>`;
+                html += `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center text-xs opacity-60">Bugün planlanmış ders bulunmuyor. Harika gün! 🎉</div>`;
             } else {
                 todayLessons.forEach(item => {
                     html += `
-                        <div class="bg-slate-900/50 dark:bg-slate-900/50 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
                             <div>
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-400 border border-pink-500/20">${item.start} - ${item.end}</span>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-500 border border-pink-500/20">${item.start} - ${item.end}</span>
                                 <h4 class="text-sm font-bold mt-1">${item.name}</h4>
                             </div>
                             ${item.room ? `<span class="text-[10px] opacity-60"><i class="fa-solid fa-location-dot mr-1"></i>${item.room}</span>` : ''}
@@ -344,7 +344,7 @@
             days.forEach(day => {
                 const isActive = day === selectedDay;
                 container.innerHTML += `
-                    <button onclick="selectDay('${day}')" class="px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/30' : 'bg-slate-900/50 dark:bg-slate-900 bg-white opacity-70 border border-slate-800 dark:border-slate-800 border-slate-200'}">
+                    <button onclick="selectDay('${day}')" class="px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/30' : 'bg-white dark:bg-slate-900 opacity-70 border border-slate-200 dark:border-slate-800'}">
                         ${day}
                     </button>`;
             });
@@ -363,23 +363,30 @@
             container.innerHTML = '';
             list.forEach(item => {
                 const abs = item.absence || 0;
+                // 5 devamsızlık sınırı kontrolü (5 ve üzeri tehlike)
+                const isDanger = abs >= 5;
+                const cardBorder = isDanger ? 'border-red-500/50 bg-red-500/5' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800';
+
                 container.innerHTML += `
-                    <div class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-3.5 shadow-sm space-y-2">
+                    <div class="${cardBorder} border rounded-2xl p-3.5 shadow-sm space-y-2 transition-colors">
                         <div class="flex justify-between items-center">
                             <div>
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-400 border border-pink-500/20">${item.start} - ${item.end}</span>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-500 border border-pink-500/20">${item.start} - ${item.end}</span>
                                 <h3 class="text-sm font-bold mt-1">${item.name}</h3>
                             </div>
                             <div class="flex items-center gap-1">
-                                <button onclick="openModal('lesson', ${item.id})" class="opacity-60 hover:text-pink-400 p-2"><i class="fa-solid fa-pen text-xs"></i></button>
-                                <button onclick="deleteItem('lessons', ${item.id})" class="opacity-50 hover:text-red-400 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                <button onclick="openModal('lesson', ${item.id})" class="opacity-60 hover:text-pink-500 p-2"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteItem('lessons', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
                             </div>
                         </div>
-                        <div class="flex justify-between items-center pt-2 border-t border-slate-800/30 dark:border-slate-800/30 border-slate-100 text-[11px]">
-                            <span class="opacity-60"><i class="fa-solid fa-user-xmark mr-1"></i>Devamsızlık: <strong class="text-pink-400">${abs}</strong></span>
+                        <div class="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-slate-800 text-[11px]">
+                            <span class="opacity-80">
+                                <i class="fa-solid fa-user-xmark mr-1"></i>Devamsızlık: <strong class="${isDanger ? 'text-red-500 font-bold' : 'text-pink-500'}">${abs} / 5</strong>
+                                ${isDanger ? '<span class="text-[9px] text-red-500 font-bold ml-1">(Sınır Aşıldı!) ⚠️</span>' : ''}
+                            </span>
                             <div class="flex gap-1">
-                                <button onclick="updateAbsence(${item.id}, -1)" class="w-6 h-6 rounded-lg bg-slate-800/50 border border-slate-700/50 flex items-center justify-center">-</button>
-                                <button onclick="updateAbsence(${item.id}, 1)" class="w-6 h-6 rounded-lg bg-slate-800/50 border border-slate-700/50 flex items-center justify-center">+</button>
+                                <button onclick="updateAbsence(${item.id}, -1)" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">-</button>
+                                <button onclick="updateAbsence(${item.id}, 1)" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">+</button>
                             </div>
                         </div>
                     </div>`;
@@ -404,12 +411,12 @@
             container.innerHTML = '';
             db.habits.forEach(item => {
                 container.innerHTML += `
-                    <div class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
                         <div class="flex items-center gap-3">
                             <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="toggleHabit(${item.id})" class="w-4 h-4 accent-pink-600 rounded">
                             <span class="text-sm font-bold ${item.completed ? 'line-through opacity-40' : ''}">${item.name}</span>
                         </div>
-                        <button onclick="deleteItem('habits', ${item.id})" class="opacity-50 hover:text-red-400 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                        <button onclick="deleteItem('habits', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
                     </div>`;
             });
         }
@@ -423,10 +430,10 @@
             container.innerHTML = '';
             db.notes.forEach(item => {
                 container.innerHTML += `
-                    <div class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-4 shadow-sm space-y-1">
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-1">
                         <div class="flex justify-between items-start">
                             <h3 class="text-sm font-bold">${item.title}</h3>
-                            <button onclick="deleteItem('notes', ${item.id})" class="opacity-50 hover:text-red-400"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                            <button onclick="deleteItem('notes', ${item.id})" class="opacity-50 hover:text-red-500"><i class="fa-solid fa-trash-can text-xs"></i></button>
                         </div>
                         <p class="text-xs opacity-80 whitespace-pre-line">${item.content}</p>
                     </div>`;
@@ -441,16 +448,24 @@
             }
             container.innerHTML = '';
             db.todos.forEach(item => {
+                // Öncelik rozeti rengi
+                let badgeColor = 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+                if (item.priority === 'Sınav') badgeColor = 'bg-red-500/10 text-red-500 border-red-500/20';
+                else if (item.priority === 'Ödev') badgeColor = 'bg-purple-500/10 text-purple-500 border-purple-500/20';
+
                 container.innerHTML += `
-                    <div class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
                         <div class="flex items-center gap-3">
                             <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="toggleTodo(${item.id})" class="w-4 h-4 accent-pink-600 rounded">
                             <div>
-                                <h3 class="text-sm font-bold ${item.completed ? 'line-through opacity-40' : ''}">${item.title}</h3>
-                                <span class="text-[10px] opacity-65">Tarih: ${item.date || 'Belirtilmedi'}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-md border ${badgeColor}">${item.priority || 'Görev'}</span>
+                                    <h3 class="text-sm font-bold ${item.completed ? 'line-through opacity-40' : ''}">${item.title}</h3>
+                                </div>
+                                <span class="text-[10px] opacity-65">Son Tarih: ${item.date || 'Belirtilmedi'}</span>
                             </div>
                         </div>
-                        <button onclick="deleteItem('todos', ${item.id})" class="opacity-50 hover:text-red-400 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                        <button onclick="deleteItem('todos', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
                     </div>`;
             });
         }
@@ -468,30 +483,31 @@
                 }
                 document.getElementById('modalTitle').innerText = id ? 'Dersi Düzenle' : 'Yeni Ders Ekle';
                 form.innerHTML = `
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">GÜN</label><select id="fDay" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs">${days.map(d=>`<option ${d===selectedDay?'selected':''}>${d}</option>`).join('')}</select></div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERS ADI</label><input type="text" id="fName" value="${lesson ? lesson.name : ''}" required placeholder="Matematik" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">GÜN</label><select id="fDay" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs">${days.map(d=>`<option ${d===selectedDay?'selected':''}>${d}</option>`).join('')}</select></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERS ADI</label><input type="text" id="fName" value="${lesson ? lesson.name : ''}" required placeholder="Matematik" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
                     <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLANGIÇ</label><input type="time" id="fStart" value="${lesson ? lesson.start : ''}" required class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
-                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BİTİŞ</label><input type="time" id="fEnd" value="${lesson ? lesson.end : ''}" required class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLANGIÇ</label><input type="time" id="fStart" value="${lesson ? lesson.start : ''}" required class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
+                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BİTİŞ</label><input type="time" id="fEnd" value="${lesson ? lesson.end : ''}" required class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
                     </div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERSLİK</label><input type="text" id="fRoom" value="${lesson ? (lesson.room || '') : ''}" placeholder="Derslik 7" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERSLİK</label><input type="text" id="fRoom" value="${lesson ? (lesson.room || '') : ''}" placeholder="Derslik 7" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
                     <button type="submit" class="w-full bg-pink-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
             } else if (type === 'habit') {
                 document.getElementById('modalTitle').innerText = 'Yeni Rutin Ekle';
                 form.innerHTML = `
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">RUTİN ADI</label><input type="text" id="hName" required placeholder="Erken Uyu" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">RUTİN ADI</label><input type="text" id="hName" required placeholder="Erken Uyu" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
                     <button type="submit" class="w-full bg-pink-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
             } else if (type === 'note') {
                 document.getElementById('modalTitle').innerText = 'Yeni Not Ekle';
                 form.innerHTML = `
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLIK</label><input type="text" id="nTitle" required placeholder="Başlık" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">İÇERİK</label><textarea id="nContent" rows="3" required placeholder="İçerik..." class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></textarea></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLIK</label><input type="text" id="nTitle" required placeholder="Başlık" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">İÇERİK</label><textarea id="nContent" rows="3" required placeholder="İçerik..." class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></textarea></div>
                     <button type="submit" class="w-full bg-pink-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
             } else if (type === 'todo') {
-                document.getElementById('modalTitle').innerText = 'Görev Ekle';
+                document.getElementById('modalTitle').innerText = 'Görev veya Sınav Ekle';
                 form.innerHTML = `
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">GÖREV ADI</label><input type="text" id="tTitle" required placeholder="Ödev adı" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">SON TARİH</label><input type="date" id="tDate" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">TÜR / ÖNCELİK</label><select id="tPriority" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"><option>Sınav</option><option>Ödev</option><option>Genel Görev</option></select></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLIK</label><input type="text" id="tTitle" required placeholder="Vize Sınavı veya Ödev" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">SON TARİH</label><input type="date" id="tDate" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
                     <button type="submit" class="w-full bg-pink-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
             }
         }
@@ -530,7 +546,7 @@
             } else if (activeModalType === 'note') {
                 db.notes.push({ id: Date.now(), title: document.getElementById('nTitle').value, content: document.getElementById('nContent').value });
             } else if (activeModalType === 'todo') {
-                db.todos.push({ id: Date.now(), title: document.getElementById('tTitle').value, date: document.getElementById('tDate').value, completed: false });
+                db.todos.push({ id: Date.now(), title: document.getElementById('tTitle').value, priority: document.getElementById('tPriority').value, date: document.getElementById('tDate').value, completed: false });
             }
             saveData(); closeModal(); renderCurrentView();
         }
