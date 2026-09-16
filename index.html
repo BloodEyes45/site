@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SemaAsistan</title>
     
-    <!-- SemaAsistan İçin Özel İkon -->
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/4230/4230623.png">
+    <!-- Gönderdiğin İkonun Doğrudan Linki -->
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/128/6723/6723246.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -30,11 +30,8 @@
                 <i class="fa-solid fa-heart text-pink-500"></i>SemaAsistan
             </h1>
             <div class="flex items-center gap-2">
-                <button onclick="toggleTheme()" class="w-8 h-8 rounded-xl bg-slate-800/50 dark:bg-slate-800 border border-slate-700/50 flex items-center justify-center text-slate-300 hover:text-white transition">
+                <button onclick="toggleTheme()" class="w-8 h-8 rounded-xl bg-slate-800/50 dark:bg-slate-800 bg-slate-200 border border-slate-700/50 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 transition">
                     <i id="themeIcon" class="fa-solid fa-sun text-xs"></i>
-                </button>
-                <button onclick="requestNotificationPermission()" class="text-xs bg-pink-600/10 border border-pink-500/20 text-pink-400 px-2.5 py-1.5 rounded-xl flex items-center gap-1 transition hover:bg-pink-600/20">
-                    <i class="fa-solid fa-bell"></i> Bildirim
                 </button>
             </div>
         </div>
@@ -58,6 +55,12 @@
                         <div id="weatherDesc" class="text-[10px] opacity-90">Hava</div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Canlı Ders Sayaç Kartı -->
+            <div id="countdownCard" class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-4 shadow-sm text-center">
+                <h4 class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Ders Durumu</h4>
+                <div id="countdownText" class="text-sm font-bold text-pink-500">Hesaplanıyor...</div>
             </div>
 
             <div class="space-y-3">
@@ -179,9 +182,28 @@
         let selectedDay = days[currentDayIndex];
         let currentTab = 'home';
         let activeModalType = '';
+        let editingLessonId = null;
 
-        let db = JSON.parse(localStorage.getItem('sema_asistan_db')) || {
-            lessons: { "Pazartesi": [], "Salı": [], "Çarşamba": [], "Perşembe": [], "Cuma": [], "Cumartesi": [], "Pazar": [] },
+        const defaultLessons = {
+            "Pazartesi": [
+                { id: 101, name: "Yaşlıda Akut ve Kronik Hastalıklar", start: "09:00", end: "12:30", room: "Derslik 7", absence: 0 },
+                { id: 102, name: "Sağlık Sosyolojisi", start: "13:30", end: "15:10", room: "Derslik 3", absence: 0 }
+            ],
+            "Salı": [
+                { id: 201, name: "Yaşlıda Beslenme", start: "09:00", end: "10:40", room: "Derslik 3", absence: 0 },
+                { id: 202, name: "Fiziksel Rehabilitasyon", start: "10:50", end: "12:30", room: "Derslik 6", absence: 0 },
+                { id: 203, name: "Geriatrik Psikiyatri", start: "13:30", end: "15:10", room: "Derslik 6", absence: 0 },
+                { id: 204, name: "Sağlık İşletmelerinde Yönetim", start: "15:20", end: "17:00", room: "Amfi C", absence: 0 }
+            ],
+            "Çarşamba": [
+                { id: 301, name: "Çevre Koruma", start: "09:00", end: "10:40", room: "Amfi C", absence: 0 },
+                { id: 302, name: "Yaşlıda Akut ve Kronik Hastalıklar", start: "10:50", end: "12:30", room: "Amfi C", absence: 0 }
+            ],
+            "Perşembe": [], "Cuma": [], "Cumartesi": [], "Pazar": []
+        };
+
+        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v6')) || {
+            lessons: defaultLessons,
             habits: [
                 { id: 1, name: "Su İç (2 Litre)", completed: false },
                 { id: 2, name: "Günlük Tekrar Yap", completed: false }
@@ -191,7 +213,7 @@
         };
 
         function saveData() {
-            localStorage.setItem('sema_asistan_db', JSON.stringify(db));
+            localStorage.setItem('sema_asistan_db_v6', JSON.stringify(db));
         }
 
         function toggleTheme() {
@@ -199,8 +221,10 @@
             const icon = document.getElementById('themeIcon');
             if (html.classList.contains('dark')) {
                 html.classList.remove('dark');
+                html.classList.add('light');
                 icon.className = "fa-solid fa-moon text-xs";
             } else {
+                html.classList.remove('light');
                 html.classList.add('dark');
                 icon.className = "fa-solid fa-sun text-xs";
             }
@@ -218,28 +242,61 @@
         }
 
         function renderCurrentView() {
-            if (currentTab === 'home') { renderHome(); fetchWeather(); }
+            if (currentTab === 'home') { renderHome(); fetchWeather(); updateCountdown(); }
             if (currentTab === 'schedule') { renderDays(); renderLessons(); }
             if (currentTab === 'habits') renderHabits();
             if (currentTab === 'notes') renderNotes();
             if (currentTab === 'todos') renderTodos();
         }
 
+        function updateCountdown() {
+            const now = new Date();
+            const todayName = days[currentDayIndex];
+            const todayLessons = db.lessons[todayName] || [];
+            
+            const curMinutes = now.getHours() * 60 + now.getMinutes();
+            let nextLesson = null;
+            let currentLesson = null;
+
+            todayLessons.forEach(l => {
+                const [sH, sM] = l.start.split(':').map(Number);
+                const [eH, eM] = l.end.split(':').map(Number);
+                const sMin = sH * 60 + sM;
+                const eMin = eH * 60 + eM;
+
+                if (curMinutes >= sMin && curMinutes <= eMin) {
+                    currentLesson = l;
+                } else if (sMin > curMinutes && (!nextLesson || sMin < (parseInt(nextLesson.start.split(':')[0])*60 + parseInt(nextLesson.start.split(':')[1])))) {
+                    nextLesson = l;
+                }
+            });
+
+            const textEl = document.getElementById('countdownText');
+            if (currentLesson) {
+                textEl.innerHTML = `Şu an derste: <strong class="text-white">${currentLesson.name}</strong> (${currentLesson.room || ''})`;
+            } else if (nextLesson) {
+                const [sH, sM] = nextLesson.start.split(':').map(Number);
+                const diff = (sH * 60 + sM) - curMinutes;
+                const saat = Math.floor(diff / 60);
+                const dakika = diff % 60;
+                let zamanStr = saat > 0 ? `${saat} saat ${dakika} dk` : `${dakika} dakika`;
+                textEl.innerHTML = `Sıradaki Ders: <strong class="text-white">${nextLesson.name}</strong> (${zamanStr} kaldı)`;
+            } else {
+                textEl.innerHTML = `Bugün başka ders kalmadı! Dinlenme vakti ✨`;
+            }
+        }
+
         async function fetchWeather() {
             try {
-                let lat = 39.1903, lon = 27.6156; // Soma / Manisa koordinatları
+                let lat = 39.1903, lon = 27.6156;
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(pos => {
-                        lat = pos.coords.latitude;
-                        lon = pos.coords.longitude;
-                        getWeatherData(lat, lon);
+                        getWeatherData(pos.coords.latitude, pos.coords.longitude);
                     }, () => getWeatherData(lat, lon));
-                } else {
-                    getWeatherData(lat, lon);
-                }
+                } else { getWeatherData(lat, lon); }
             } catch (e) {
                 document.getElementById('weatherTemp').innerText = "22°C";
-                document.getElementById('weatherDesc').innerText = "Parçalı Bulutlu";
+                document.getElementById('weatherDesc').innerText = "Açık";
             }
         }
 
@@ -247,9 +304,8 @@
             try {
                 const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
                 const data = await res.json();
-                const temp = Math.round(data.current_weather.temperature);
-                document.getElementById('weatherTemp').innerText = `${temp}°C`;
-                document.getElementById('weatherDesc').innerText = "Açık / Güneşli";
+                document.getElementById('weatherTemp').innerText = `${Math.round(data.current_weather.temperature)}°C`;
+                document.getElementById('weatherDesc').innerText = "Güneşli";
             } catch (e) {
                 document.getElementById('weatherTemp').innerText = "20°C";
                 document.getElementById('weatherDesc').innerText = "Normal";
@@ -314,7 +370,10 @@
                                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-400 border border-pink-500/20">${item.start} - ${item.end}</span>
                                 <h3 class="text-sm font-bold mt-1">${item.name}</h3>
                             </div>
-                            <button onclick="deleteItem('lessons', ${item.id})" class="opacity-50 hover:text-red-400 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                            <div class="flex items-center gap-1">
+                                <button onclick="openModal('lesson', ${item.id})" class="opacity-60 hover:text-pink-400 p-2"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteItem('lessons', ${item.id})" class="opacity-50 hover:text-red-400 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                            </div>
                         </div>
                         <div class="flex justify-between items-center pt-2 border-t border-slate-800/30 dark:border-slate-800/30 border-slate-100 text-[11px]">
                             <span class="opacity-60"><i class="fa-solid fa-user-xmark mr-1"></i>Devamsızlık: <strong class="text-pink-400">${abs}</strong></span>
@@ -396,20 +455,26 @@
             });
         }
 
-        function openModal(type) {
+        function openModal(type, id = null) {
             activeModalType = type;
+            editingLessonId = id;
             document.getElementById('globalModal').classList.remove('hidden');
             const form = document.getElementById('dynamicForm');
+            
             if (type === 'lesson') {
-                document.getElementById('modalTitle').innerText = 'Yeni Ders Ekle';
+                let lesson = null;
+                if (id) {
+                    lesson = db.lessons[selectedDay].find(x => x.id === id);
+                }
+                document.getElementById('modalTitle').innerText = id ? 'Dersi Düzenle' : 'Yeni Ders Ekle';
                 form.innerHTML = `
                     <div><label class="block text-[10px] font-medium opacity-60 mb-1">GÜN</label><select id="fDay" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs">${days.map(d=>`<option ${d===selectedDay?'selected':''}>${d}</option>`).join('')}</select></div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERS ADI</label><input type="text" id="fName" required placeholder="Matematik" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERS ADI</label><input type="text" id="fName" value="${lesson ? lesson.name : ''}" required placeholder="Matematik" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
                     <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLANGIÇ</label><input type="time" id="fStart" required class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
-                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BİTİŞ</label><input type="time" id="fEnd" required class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLANGIÇ</label><input type="time" id="fStart" value="${lesson ? lesson.start : ''}" required class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BİTİŞ</label><input type="time" id="fEnd" value="${lesson ? lesson.end : ''}" required class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
                     </div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERSLİK</label><input type="text" id="fRoom" placeholder="Amfi 1" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERSLİK</label><input type="text" id="fRoom" value="${lesson ? (lesson.room || '') : ''}" placeholder="Derslik 7" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
                     <button type="submit" class="w-full bg-pink-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
             } else if (type === 'habit') {
                 document.getElementById('modalTitle').innerText = 'Yeni Rutin Ekle';
@@ -437,7 +502,28 @@
             e.preventDefault();
             if (activeModalType === 'lesson') {
                 const day = document.getElementById('fDay').value;
-                db.lessons[day].push({ id: Date.now(), name: document.getElementById('fName').value, start: document.getElementById('fStart').value, end: document.getElementById('fEnd').value, room: document.getElementById('fRoom').value, absence: 0 });
+                const name = document.getElementById('fName').value;
+                const start = document.getElementById('fStart').value;
+                const end = document.getElementById('fEnd').value;
+                const room = document.getElementById('fRoom').value;
+
+                if (editingLessonId) {
+                    const item = db.lessons[selectedDay].find(x => x.id === editingLessonId);
+                    if (item) {
+                        item.name = name;
+                        item.start = start;
+                        item.end = end;
+                        item.room = room;
+                        if (selectedDay !== day) {
+                            db.lessons[selectedDay] = db.lessons[selectedDay].filter(x => x.id !== editingLessonId);
+                            if (!db.lessons[day]) db.lessons[day] = [];
+                            db.lessons[day].push(item);
+                        }
+                    }
+                } else {
+                    if (!db.lessons[day]) db.lessons[day] = [];
+                    db.lessons[day].push({ id: Date.now(), name, start, end, room, absence: 0 });
+                }
                 selectedDay = day;
             } else if (activeModalType === 'habit') {
                 db.habits.push({ id: Date.now(), name: document.getElementById('hName').value, completed: false });
@@ -481,33 +567,9 @@
             } else if (gerekenFinal > 100) {
                 res.innerHTML = `Maalesef bu vizeyle bu hedefi finalde 100 alarak bile yakalamak zor.`;
             } else {
-                res.innerHTML = `Geçmek için finalden en az: <strong class="text-white text-sm">${gerekenFinal.toFixed(1)}</strong> alman gerekiyor!`;
+                res.innerHTML = `Geçmek için finalden en az: <strong class="text-pink-500 text-sm">${gerekenFinal.toFixed(1)}</strong> alman gerekiyor!`;
             }
         }
-
-        function requestNotificationPermission() {
-            if ("Notification" in window) {
-                Notification.requestPermission().then(p => {
-                    alert(p === "granted" ? "Bildirimler aktif!" : "Bildirim izni verilmedi.");
-                });
-            }
-        }
-
-        setInterval(() => {
-            if (Notification.permission !== "granted") return;
-            const now = new Date();
-            const todayName = days[now.getDay() === 0 ? 6 : now.getDay() - 1];
-            const todayLessons = db.lessons[todayName] || [];
-            const curStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-            
-            todayLessons.forEach(l => {
-                let [h, m] = l.start.split(':').map(Number);
-                m -= 10; if (m < 0) { m += 60; h -= 1; }
-                if (curStr === `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`) {
-                    new Notification("Yaklaşan Ders! 📚", { body: `${l.name} dersine 10 dakika kaldı!` });
-                }
-            });
-        }, 60000);
 
         renderCurrentView();
     </script>
