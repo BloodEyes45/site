@@ -1,143 +1,515 @@
 <!DOCTYPE html>
-<html lang="tr">
-
+<html lang="tr" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BloodEyes1</title>
-    <meta name="description" content="BloodEyes1 Premium Bio Link ve Sosyal Mecralar">
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="profil.png">
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@200;400;700&display=swap"
-        rel="stylesheet">
-
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Süper Öğrenci Asistanı</title>
+    
+    <!-- iPhone Ana Ekran İkonu (Harf yerine şık bir simge görünmesi için) -->
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135755.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
 </head>
+<body class="bg-slate-950 text-slate-100 dark:bg-slate-950 dark:text-slate-100 bg-slate-50 text-slate-900 min-h-screen pb-28 transition-colors duration-300">
 
-<body class="loading">
-    <!-- Custom Follower (Aura) -->
-    <div class="cursor-aura"></div>
-
-    <!-- V4 Overlay (Transparent/Blur) -->
-    <div id="overlay" class="overlay">
-        <div class="overlay-content">
-            <h2 class="glitch" data-text="CLICK TO ENTER">CLICK TO ENTER</h2>
-            <div class="enter-btn">BAŞLAT</div>
-        </div>
-    </div>
-
-    <!-- Cinematic Scanline Overlay -->
-    <div class="scanlines"></div>
-
-    <!-- Minimal Volume Toggle -->
-    <div class="volume-control" id="volume-control">
-        <i class="fa-solid fa-volume-xmark" id="volume-icon"></i>
-    </div>
-
-    <!-- Copy Notification Toast -->
-    <div id="copy-toast" class="copy-toast">Kopyalandı!</div>
-
-    <!-- Background Video Container -->
-    <div id="video-container">
-        <video id="bg-video" loop playsinline>
-            <source src="arkaplan.mp4" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
-    </div>
-
-    <!-- Snow Particles -->
-    <div id="particles-js"></div>
-
-    <!-- Main Content -->
-    <main class="content" id="main-content">
-        <!-- Decorative Orbit Oval -->
-        <div class="orbit-ring"></div>
-
-        <div class="profile-card" id="profile-card">
-            <div class="shine"></div>
-
-            <!-- Audio Visualizer -->
-            <div class="visualizer-container">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-
-            <!-- Profile Section -->
-            <div class="profile-header">
-                <div class="avatar-container">
-                    <img src="profil.png" alt="Profile" class="avatar" id="avatar">
-                    <div class="status-dot" id="status-dot"></div>
-                </div>
-                <div class="name-container">
-                    <img src="badge.png" class="name-badge badge-left" id="badge-left" alt="Badge">
-                    <h1 class="username neon-pulse" id="typewriter-name" data-text="BloodEyes1" title="Kopyalamak için tıkla"></h1>
-                    <img src="badge.png" class="name-badge badge-right" id="badge-right" alt="Badge">
-                </div>
-                <p class="tagline" id="discord-tag" title="Kopyalamak için tıkla">thelastdance#4444</p>
-            </div>
-
-            <!-- Discord Presence Slot (Static) -->
-            <div class="discord-presence">
-                <div class="presence-icon">
-                    <i class="fa-brands fa-discord"></i>
-                </div>
-                <div class="presence-info">
-                    <span class="presence-activity">Görünmeyeni görmeye çalış.</span>
-                </div>
-            </div>
-
-            <!-- Social Links (Horizontal Layout) -->
-            <div class="social-links">
-                <div class="social-item-wrapper" data-tooltip="Discord Sunucum">
-                    <a href="https://discord.gg/Zj74JY7gVT" target="_blank" class="social-item">
-                        <i class="fa-brands fa-discord"></i>
-                    </a>
-                    <div class="gradient-border"></div>
-                </div>
-                <div class="social-item-wrapper" data-tooltip="Spotify Profilim">
-                    <a href="https://open.spotify.com/user/31dhnu5bx7zulxt4pbaoymmhtmci" target="_blank"
-                        class="social-item">
-                        <i class="fa-brands fa-spotify"></i>
-                    </a>
-                    <div class="gradient-border"></div>
-                </div>
-                <div class="social-item-wrapper" data-tooltip="Bionluk Hesabım">
-                    <a href="https://bionluk.com/semihyprk" target="_blank" class="social-item">
-                        <span class="bi-icon">bi</span>
-                    </a>
-                    <div class="gradient-border"></div>
-                </div>
-            </div>
-
-            <!-- Spotify Marquee (Dynamic) -->
-            <div class="spotify-marquee-container" id="spotify-marquee-container">
-                <div class="marquee-content">
-                    <i class="fa-brands fa-spotify"></i>
-                    <span id="spotify-text">Şu an müzik dinlemiyor...</span>
-                </div>
-            </div>
-
-            <!-- Visit Count -->
-            <div class="stats">
-                <span class="view-count"><i class="fa-solid fa-eye"></i> <span id="count">0</span></span>
+    <!-- Üst Başlık -->
+    <header class="bg-slate-900/80 dark:bg-slate-900/80 bg-white/80 backdrop-blur-md border-b border-slate-800/80 dark:border-slate-800 border-slate-200 sticky top-0 z-40 px-4 py-3">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <h1 class="text-base font-bold bg-gradient-to-r from-indigo-500 to-cyan-500 bg-clip-text text-transparent flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-indigo-500"></i>Süper Asistan
+            </h1>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTheme()" class="w-8 h-8 rounded-xl bg-slate-800/50 dark:bg-slate-800 border border-slate-700/50 flex items-center justify-center text-slate-300 hover:text-white transition">
+                    <i id="themeIcon" class="fa-solid fa-moon text-xs"></i>
+                </button>
+                <button onclick="requestNotificationPermission()" class="text-xs bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 px-2.5 py-1.5 rounded-xl flex items-center gap-1 transition hover:bg-indigo-600/20">
+                    <i class="fa-solid fa-bell"></i> Bildirim
+                </button>
             </div>
         </div>
+    </header>
+
+    <!-- İçerik Alanı -->
+    <main class="max-w-md mx-auto px-4 mt-4 space-y-4">
+        
+        <!-- 1. ÖZET / ANA SAYFA SEKMESİ -->
+        <section id="tab-home" class="space-y-4">
+            <div class="grid grid-cols-1 gap-3">
+                <div class="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-5 text-white shadow-xl shadow-indigo-600/20 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold mb-1">Hoş Geldin! 👋</h2>
+                        <p id="welcomeDate" class="text-xs text-indigo-100 opacity-90">Yükleniyor...</p>
+                    </div>
+                    <!-- Hava Durumu Kartı -->
+                    <div id="weatherWidget" class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 text-center min-w-[90px]">
+                        <i id="weatherIcon" class="fa-solid fa-cloud-sun text-xl mb-1"></i>
+                        <div id="weatherTemp" class="text-sm font-bold">--°C</div>
+                        <div id="weatherDesc" class="text-[10px] opacity-80">Hava</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider opacity-60">Bugünün Özeti</h3>
+                <div id="todaySummaryList" class="space-y-2"></div>
+            </div>
+        </section>
+
+        <!-- 2. DERS PROGRAMI SEKMESİ -->
+        <section id="tab-schedule" class="space-y-4 hidden">
+            <div class="flex justify-between items-center">
+                <h2 class="text-sm font-bold">Ders Programı & Devamsızlık</h2>
+                <button onclick="openModal('lesson')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-indigo-600/30 flex items-center gap-1">
+                    <i class="fa-solid fa-plus"></i> Ders Ekle
+                </button>
+            </div>
+            <div class="flex gap-2 overflow-x-auto pb-1 hide-scrollbar" id="dayTabs"></div>
+            <div id="lessonsList" class="space-y-3"></div>
+        </section>
+
+        <!-- 3. ALIŞKANLIKLAR SEKMESİ -->
+        <section id="tab-habits" class="space-y-4 hidden">
+            <div class="flex justify-between items-center">
+                <h2 class="text-sm font-bold">Günlük Alışkanlıklar & Rutinler</h2>
+                <button onclick="openModal('habit')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-indigo-600/30 flex items-center gap-1">
+                    <i class="fa-solid fa-plus"></i> Rutin Ekle
+                </button>
+            </div>
+            <div id="habitsList" class="space-y-3"></div>
+        </section>
+
+        <!-- 4. NOTLAR SEKMESİ -->
+        <section id="tab-notes" class="space-y-4 hidden">
+            <div class="flex justify-between items-center">
+                <h2 class="text-sm font-bold">Hızlı Notlar</h2>
+                <button onclick="openModal('note')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-indigo-600/30 flex items-center gap-1">
+                    <i class="fa-solid fa-plus"></i> Not Ekle
+                </button>
+            </div>
+            <div id="notesList" class="space-y-3"></div>
+        </section>
+
+        <!-- 5. ÖDEVLER SEKMESİ -->
+        <section id="tab-todos" class="space-y-4 hidden">
+            <div class="flex justify-between items-center">
+                <h2 class="text-sm font-bold">Ödevler & Sınavlar</h2>
+                <button onclick="openModal('todo')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-indigo-600/30 flex items-center gap-1">
+                    <i class="fa-solid fa-plus"></i> Görev Ekle
+                </button>
+            </div>
+            <div id="todosList" class="space-y-3"></div>
+        </section>
+
+        <!-- 6. ORTALAMA HESAPLAMA SEKMESİ -->
+        <section id="tab-calc" class="space-y-4 hidden">
+            <div class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-4 shadow-md space-y-3">
+                <h2 class="text-sm font-bold">Akıllı Geçme Notu & AGNO Hesapla</h2>
+                <div>
+                    <label class="block text-[10px] font-medium opacity-60 mb-1">VİZE NOTU</label>
+                    <input type="number" id="vizeNot" placeholder="Örn: 70" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2.5 text-xs focus:outline-none focus:border-indigo-500">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-medium opacity-60 mb-1">VİZE ETKİSİ (%)</label>
+                        <input type="number" id="vizeOran" value="40" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2.5 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-medium opacity-60 mb-1">GEÇME NOTU (Ağırlıklı)</label>
+                        <input type="number" id="gecmeNotu" value="50" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2.5 text-xs">
+                    </div>
+                </div>
+                <button onclick="calculatePassingScore()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl text-xs transition shadow-lg shadow-indigo-600/30">Finalden Kaç Almalıyım?</button>
+                <div id="calcResult" class="text-center pt-2 text-xs font-bold text-indigo-400 space-y-1"></div>
+            </div>
+        </section>
+
     </main>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="script.js"></script>
-</body>
+    <!-- Alt Navigasyon Çubuğu -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/90 dark:bg-slate-900/90 bg-white/90 backdrop-blur-lg border-t border-slate-800 dark:border-slate-800 border-slate-200 py-2 px-1 z-40">
+        <div class="max-w-md mx-auto flex justify-around">
+            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-indigo-500 transition">
+                <i class="fa-solid fa-house text-sm"></i><span class="text-[9px] font-medium">Özet</span>
+            </button>
+            <button onclick="switchTab('schedule')" id="nav-schedule" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+                <i class="fa-solid fa-calendar-days text-sm"></i><span class="text-[9px] font-medium">Dersler</span>
+            </button>
+            <button onclick="switchTab('habits')" id="nav-habits" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+                <i class="fa-solid fa-bolt text-sm"></i><span class="text-[9px] font-medium">Rutin</span>
+            </button>
+            <button onclick="switchTab('notes')" id="nav-notes" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+                <i class="fa-solid fa-note-sticky text-sm"></i><span class="text-[9px] font-medium">Notlar</span>
+            </button>
+            <button onclick="switchTab('todos')" id="nav-todos" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+                <i class="fa-solid fa-list-check text-sm"></i><span class="text-[9px] font-medium">Görev</span>
+            </button>
+            <button onclick="switchTab('calc')" id="nav-calc" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+                <i class="fa-solid fa-calculator text-sm"></i><span class="text-[9px] font-medium">Hesapla</span>
+            </button>
+        </div>
+    </nav>
 
+    <!-- Modal Pencere -->
+    <div id="globalModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl text-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-sm font-bold">Yeni Kayıt</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <form id="dynamicForm" onsubmit="handleFormSubmit(event)" class="space-y-3"></form>
+        </div>
+    </div>
+
+    <!-- JavaScript Mantığı -->
+    <script>
+        const days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+        let dateToday = new Date().getDay();
+        let currentDayIndex = dateToday === 0 ? 6 : dateToday - 1;
+        let selectedDay = days[currentDayIndex];
+        let currentTab = 'home';
+        let activeModalType = '';
+
+        let db = JSON.parse(localStorage.getItem('super_student_db_v2')) || {
+            lessons: { "Pazartesi": [], "Salı": [], "Çarşamba": [], "Perşembe": [], "Cuma": [], "Cumartesi": [], "Pazar": [] },
+            habits: [
+                { id: 1, name: "Su İç (2 Litre)", completed: false },
+                { id: 2, name: "Günlük Tekrar Yap", completed: false }
+            ],
+            notes: [],
+            todos: []
+        };
+
+        function saveData() {
+            localStorage.setItem('super_student_db_v2', JSON.stringify(db));
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = "fa-solid fa-sun text-xs";
+            } else {
+                html.classList.add('dark');
+                icon.className = "fa-solid fa-moon text-xs";
+            }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            ['home', 'schedule', 'habits', 'notes', 'todos', 'calc'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).className = "flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition";
+            });
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            document.getElementById(`nav-${tab}`).className = "flex flex-col items-center gap-1 text-indigo-500 transition";
+            renderCurrentView();
+        }
+
+        function renderCurrentView() {
+            if (currentTab === 'home') { renderHome(); fetchWeather(); }
+            if (currentTab === 'schedule') { renderDays(); renderLessons(); }
+            if (currentTab === 'habits') renderHabits();
+            if (currentTab === 'notes') renderNotes();
+            if (currentTab === 'todos') renderTodos();
+        }
+
+        async function fetchWeather() {
+            try {
+                let lat = 39.1903, lon = 27.6156;
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        lat = pos.coords.latitude;
+                        lon = pos.coords.longitude;
+                        getWeatherData(lat, lon);
+                    }, () => getWeatherData(lat, lon));
+                } else {
+                    getWeatherData(lat, lon);
+                }
+            } catch (e) {
+                document.getElementById('weatherTemp').innerText = "22°C";
+                document.getElementById('weatherDesc').innerText = "Parçalı Bulutlu";
+            }
+        }
+
+        async function getWeatherData(lat, lon) {
+            try {
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                const data = await res.json();
+                const temp = Math.round(data.current_weather.temperature);
+                document.getElementById('weatherTemp').innerText = `${temp}°C`;
+                document.getElementById('weatherDesc').innerText = "Açık / Güneşli";
+            } catch (e) {
+                document.getElementById('weatherTemp').innerText = "20°C";
+                document.getElementById('weatherDesc').innerText = "Normal";
+            }
+        }
+
+        function renderHome() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('welcomeDate').innerText = new Date().toLocaleDateString('tr-TR', options);
+            
+            const container = document.getElementById('todaySummaryList');
+            const todayName = days[currentDayIndex];
+            const todayLessons = db.lessons[todayName] || [];
+            
+            let html = '';
+            if (todayLessons.length === 0) {
+                html += `<div class="bg-slate-900/50 dark:bg-slate-900/50 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-4 text-center text-xs opacity-60">Bugün planlanmış ders bulunmuyor. Harika gün! 🎉</div>`;
+            } else {
+                todayLessons.forEach(item => {
+                    html += `
+                        <div class="bg-slate-900/50 dark:bg-slate-900/50 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
+                            <div>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${item.start} - ${item.end}</span>
+                                <h4 class="text-sm font-bold mt-1">${item.name}</h4>
+                            </div>
+                            ${item.room ? `<span class="text-[10px] opacity-60"><i class="fa-solid fa-location-dot mr-1"></i>${item.room}</span>` : ''}
+                        </div>`;
+                });
+            }
+            container.innerHTML = html;
+        }
+
+        function renderDays() {
+            const container = document.getElementById('dayTabs');
+            container.innerHTML = '';
+            days.forEach(day => {
+                const isActive = day === selectedDay;
+                container.innerHTML += `
+                    <button onclick="selectDay('${day}')" class="px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition ${isActive ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-slate-900/50 dark:bg-slate-900 bg-white opacity-70 border border-slate-800 dark:border-slate-800 border-slate-200'}">
+                        ${day}
+                    </button>`;
+            });
+        }
+
+        function selectDay(day) { selectedDay = day; renderDays(); renderLessons(); }
+
+        function renderLessons() {
+            const container = document.getElementById('lessonsList');
+            const list = db.lessons[selectedDay] || [];
+            if (list.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 opacity-50 text-xs"><i class="fa-regular fa-calendar-xmark text-3xl mb-2"></i><p>Bu gün ders yok.</p></div>`;
+                return;
+            }
+            list.sort((a, b) => a.start.localeCompare(b.start));
+            container.innerHTML = '';
+            list.forEach(item => {
+                const abs = item.absence || 0;
+                container.innerHTML += `
+                    <div class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-3.5 shadow-sm space-y-2">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${item.start} - ${item.end}</span>
+                                <h3 class="text-sm font-bold mt-1">${item.name}</h3>
+                            </div>
+                            <button onclick="deleteItem('lessons', ${item.id})" class="opacity-50 hover:text-red-400 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-slate-800/30 dark:border-slate-800/30 border-slate-100 text-[11px]">
+                            <span class="opacity-60"><i class="fa-solid fa-user-xmark mr-1"></i>Devamsızlık: <strong class="text-indigo-400">${abs}</strong></span>
+                            <div class="flex gap-1">
+                                <button onclick="updateAbsence(${item.id}, -1)" class="w-6 h-6 rounded-lg bg-slate-800/50 border border-slate-700/50 flex items-center justify-center">-</button>
+                                <button onclick="updateAbsence(${item.id}, 1)" class="w-6 h-6 rounded-lg bg-slate-800/50 border border-slate-700/50 flex items-center justify-center">+</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function updateAbsence(id, val) {
+            const item = db.lessons[selectedDay].find(x => x.id === id);
+            if (item) {
+                item.absence = Math.max(0, (item.absence || 0) + val);
+                saveData();
+                renderLessons();
+            }
+        }
+
+        function renderHabits() {
+            const container = document.getElementById('habitsList');
+            if (db.habits.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 opacity-50 text-xs">Rutin bulunmuyor.</div>`;
+                return;
+            }
+            container.innerHTML = '';
+            db.habits.forEach(item => {
+                container.innerHTML += `
+                    <div class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="toggleHabit(${item.id})" class="w-4 h-4 accent-indigo-600 rounded">
+                            <span class="text-sm font-bold ${item.completed ? 'line-through opacity-40' : ''}">${item.name}</span>
+                        </div>
+                        <button onclick="deleteItem('habits', ${item.id})" class="opacity-50 hover:text-red-400 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                    </div>`;
+            });
+        }
+
+        function renderNotes() {
+            const container = document.getElementById('notesList');
+            if (db.notes.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 opacity-50 text-xs"><p>Not bulunmuyor.</p></div>`;
+                return;
+            }
+            container.innerHTML = '';
+            db.notes.forEach(item => {
+                container.innerHTML += `
+                    <div class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-4 shadow-sm space-y-1">
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-sm font-bold">${item.title}</h3>
+                            <button onclick="deleteItem('notes', ${item.id})" class="opacity-50 hover:text-red-400"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                        </div>
+                        <p class="text-xs opacity-80 whitespace-pre-line">${item.content}</p>
+                    </div>`;
+            });
+        }
+
+        function renderTodos() {
+            const container = document.getElementById('todosList');
+            if (db.todos.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 opacity-50 text-xs"><p>Görev bulunmuyor.</p></div>`;
+                return;
+            }
+            container.innerHTML = '';
+            db.todos.forEach(item => {
+                container.innerHTML += `
+                    <div class="bg-slate-900/50 dark:bg-slate-900 bg-white border border-slate-800/50 dark:border-slate-800 border-slate-200 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="toggleTodo(${item.id})" class="w-4 h-4 accent-indigo-600 rounded">
+                            <div>
+                                <h3 class="text-sm font-bold ${item.completed ? 'line-through opacity-40' : ''}">${item.title}</h3>
+                                <span class="text-[10px] opacity-65">Tarih: ${item.date || 'Belirtilmedi'}</span>
+                            </div>
+                        </div>
+                        <button onclick="deleteItem('todos', ${item.id})" class="opacity-50 hover:text-red-400 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                    </div>`;
+            });
+        }
+
+        function openModal(type) {
+            activeModalType = type;
+            document.getElementById('globalModal').classList.remove('hidden');
+            const form = document.getElementById('dynamicForm');
+            if (type === 'lesson') {
+                document.getElementById('modalTitle').innerText = 'Yeni Ders Ekle';
+                form.innerHTML = `
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">GÜN</label><select id="fDay" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs">${days.map(d=>`<option ${d===selectedDay?'selected':''}>${d}</option>`).join('')}</select></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERS ADI</label><input type="text" id="fName" required placeholder="Matematik" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLANGIÇ</label><input type="time" id="fStart" required class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BİTİŞ</label><input type="time" id="fEnd" required class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    </div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERSLİK</label><input type="text" id="fRoom" placeholder="Amfi 1" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
+            } else if (type === 'habit') {
+                document.getElementById('modalTitle').innerText = 'Yeni Rutin Ekle';
+                form.innerHTML = `
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">RUTİN ADI</label><input type="text" id="hName" required placeholder="Erken Uyu" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
+            } else if (type === 'note') {
+                document.getElementById('modalTitle').innerText = 'Yeni Not Ekle';
+                form.innerHTML = `
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLIK</label><input type="text" id="nTitle" required placeholder="Başlık" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">İÇERİK</label><textarea id="nContent" rows="3" required placeholder="İçerik..." class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></textarea></div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
+            } else if (type === 'todo') {
+                document.getElementById('modalTitle').innerText = 'Görev Ekle';
+                form.innerHTML = `
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">GÖREV ADI</label><input type="text" id="tTitle" required placeholder="Ödev adı" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">SON TARİH</label><input type="date" id="tDate" class="w-full bg-slate-800/50 dark:bg-slate-800 bg-slate-100 border border-slate-700/50 rounded-xl p-2 text-xs"></div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
+            }
+        }
+
+        function closeModal() { document.getElementById('globalModal').classList.add('hidden'); }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            if (activeModalType === 'lesson') {
+                const day = document.getElementById('fDay').value;
+                db.lessons[day].push({ id: Date.now(), name: document.getElementById('fName').value, start: document.getElementById('fStart').value, end: document.getElementById('fEnd').value, room: document.getElementById('fRoom').value, absence: 0 });
+                selectedDay = day;
+            } else if (activeModalType === 'habit') {
+                db.habits.push({ id: Date.now(), name: document.getElementById('hName').value, completed: false });
+            } else if (activeModalType === 'note') {
+                db.notes.push({ id: Date.now(), title: document.getElementById('nTitle').value, content: document.getElementById('nContent').value });
+            } else if (activeModalType === 'todo') {
+                db.todos.push({ id: Date.now(), title: document.getElementById('tTitle').value, date: document.getElementById('tDate').value, completed: false });
+            }
+            saveData(); closeModal(); renderCurrentView();
+        }
+
+        function deleteItem(type, id) {
+            if (type === 'lessons') db.lessons[selectedDay] = db.lessons[selectedDay].filter(x => x.id !== id);
+            else db[type] = db[type].filter(x => x.id !== id);
+            saveData(); renderCurrentView();
+        }
+
+        function toggleHabit(id) {
+            const item = db.habits.find(x => x.id === id);
+            if (item) { item.completed = !item.completed; saveData(); renderHabits(); }
+        }
+
+        function toggleTodo(id) {
+            const item = db.todos.find(x => x.id === id);
+            if (item) { item.completed = !item.completed; saveData(); renderTodos(); }
+        }
+
+        function calculatePassingScore() {
+            const vize = parseFloat(document.getElementById('vizeNot').value);
+            const oran = parseFloat(document.getElementById('vizeOran').value) / 100;
+            const hedef = parseFloat(document.getElementById('gecmeNotu').value);
+            const res = document.getElementById('calcResult');
+
+            if (isNaN(vize)) { res.innerText = "Lütfen vize notunu girin."; return; }
+
+            const finalOrani = 1 - oran;
+            const gerekenFinal = (hedef - (vize * oran)) / finalOrani;
+
+            if (gerekenFinal <= 0) {
+                res.innerHTML = `Tebrikler! Vizeden aldığın puanla zaten dersi geçiyorsun. 🎉`;
+            } else if (gerekenFinal > 100) {
+                res.innerHTML = `Maalesef bu vizeyle bu hedefi finalde 100 alarak bile yakalamak zor.`;
+            } else {
+                res.innerHTML = `Geçmek için finalden en az: <strong class="text-white text-sm">${gerekenFinal.toFixed(1)}</strong> alman gerekiyor!`;
+            }
+        }
+
+        function requestNotificationPermission() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(p => {
+                    alert(p === "granted" ? "Bildirimler aktif!" : "Bildirim izni verilmedi.");
+                });
+            }
+        }
+
+        setInterval(() => {
+            if (Notification.permission !== "granted") return;
+            const now = new Date();
+            const todayName = days[now.getDay() === 0 ? 6 : now.getDay() - 1];
+            const todayLessons = db.lessons[todayName] || [];
+            const curStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            
+            todayLessons.forEach(l => {
+                let [h, m] = l.start.split(':').map(Number);
+                m -= 10; if (m < 0) { m += 60; h -= 1; }
+                if (curStr === `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`) {
+                    new Notification("Yaklaşan Ders! 📚", { body: `${l.name} dersine 10 dakika kaldı!` });
+                }
+            });
+        }, 60000);
+
+        renderCurrentView();
+    </script>
+</body>
 </html>
