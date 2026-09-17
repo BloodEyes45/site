@@ -58,11 +58,11 @@
         }
         @keyframes floatUp {
             0% { transform: translateY(0) scale(0.5); opacity: 1; }
-            100% { transform: translateY(-120px) scale(1.2); opacity: 0; }
+            100% { transform: translateY(-140px) scale(1.3); opacity: 0; }
         }
         .floating-heart {
             position: absolute;
-            animation: floatUp 1.5s ease-out forwards;
+            animation: floatUp 1.8s ease-out forwards;
             pointer-events: none;
         }
     </style>
@@ -158,12 +158,16 @@
             <div id="todosList" class="space-y-3"></div>
         </section>
 
-        <!-- 6. ULTRA GELİŞMİŞ ORTAK CANLI ÇİZİM STÜDYOSU -->
+        <!-- 6. ULTRA UPGRADE ORTAK CANLI ÇİZİM STÜDYOSU -->
         <section id="tab-draw" class="space-y-3 hidden animate-fade-in">
             <div class="flex justify-between items-center">
-                <h2 class="text-sm font-bold flex items-center gap-1.5 text-pink-500"><i class="fa-solid fa-paintbrush"></i> Ortak Canlı Stüdyo</h2>
+                <div class="flex items-center gap-2">
+                    <h2 class="text-sm font-bold flex items-center gap-1.5 text-pink-500"><i class="fa-solid fa-paintbrush"></i> Ortak Canlı Stüdyo</h2>
+                    <!-- Canlı Kullanıcı İmzası / Renk Rozeti -->
+                    <span id="userColorBadge" class="w-3.5 h-3.5 rounded-full bg-pink-500 border border-white shadow-sm inline-block" title="Aktif Çizim Renginiz"></span>
+                </div>
                 <div class="flex gap-1.5">
-                    <button onclick="triggerHeartParty()" class="bg-pink-500/20 hover:bg-pink-500/30 text-pink-500 border border-pink-500/30 px-2.5 py-1 rounded-xl text-[11px] font-bold transition" title="Kalp Gönder">
+                    <button onclick="triggerHeartPartyFirebase()" class="bg-pink-500/20 hover:bg-pink-500/30 text-pink-500 border border-pink-500/30 px-2.5 py-1 rounded-xl text-[11px] font-bold transition" title="Ortak Kalp Yağmuru">
                         <i class="fa-solid fa-heart"></i>
                     </button>
                     <button onclick="downloadCanvasPNG()" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-500 border border-emerald-500/30 px-2.5 py-1 rounded-xl text-[11px] font-bold transition" title="İndir">
@@ -175,7 +179,7 @@
                 </div>
             </div>
 
-            <!-- Araç Çubuğu 1: Araçlar, Şekiller & Geri Al/İleri Al -->
+            <!-- Araç Çubuğu 1: Araçlar ve Şekiller -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 shadow-sm flex flex-wrap gap-1 items-center justify-between text-xs">
                 <div class="flex gap-1 flex-wrap">
                     <button onclick="setTool('pen')" id="tool-pen" class="px-2 py-1 rounded-xl font-bold bg-pink-600 text-white transition"><i class="fa-solid fa-pen"></i></button>
@@ -188,11 +192,10 @@
                 </div>
                 <div class="flex gap-1">
                     <button onclick="undoCanvas()" class="px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border" title="Geri Al"><i class="fa-solid fa-rotate-left"></i></button>
-                    <button onclick="redoCanvas()" class="px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border" title="İleri Al"><i class="fa-solid fa-rotate-right"></i></button>
                 </div>
             </div>
 
-            <!-- Araç Çubuğu 2: Renkler, Özel Renk Seçici & Kalınlık -->
+            <!-- Araç Çubuğu 2: Renkler, Özel Renk Seçici & Dinamik Kalınlık + Önizleme -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 shadow-sm flex items-center justify-between">
                 <div class="flex items-center gap-1.5 flex-wrap">
                     <button onclick="setDrawColor('#ec4899')" class="w-5 h-5 rounded-full bg-pink-500 border-2 border-white shadow"></button>
@@ -205,8 +208,12 @@
                     <button onclick="setDrawColor('#0f172a')" class="w-5 h-5 rounded-full bg-slate-900 dark:bg-white border-2 border-slate-300 shadow"></button>
                     <input type="color" id="customColorPicker" onchange="setDrawColor(this.value)" value="#ec4899" class="w-6 h-6 rounded-lg border-0 cursor-pointer bg-transparent" title="Özel Renk Seç">
                 </div>
-                <div class="flex items-center gap-1 text-xs">
-                    <input type="range" id="brushSize" min="2" max="25" value="4" class="w-14 accent-pink-600">
+                <div class="flex items-center gap-2 text-xs">
+                    <!-- Fırça Boyutu Canlı Önizleme Dairesi -->
+                    <div class="flex items-center justify-center w-6 h-6 bg-slate-100 dark:bg-slate-800 rounded-full border border-slate-300 dark:border-slate-700">
+                        <div id="brushPreviewCircle" class="rounded-full bg-pink-500" style="width: 4px; height: 4px;"></div>
+                    </div>
+                    <input type="range" id="brushSize" min="2" max="30" value="4" oninput="updateBrushPreview(this.value)" class="w-16 accent-pink-600">
                 </div>
             </div>
 
@@ -289,13 +296,13 @@
             "Perşembe": [], "Cuma": [], "Cumartesi": [], "Pazar": []
         };
 
-        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v21')) || {
+        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v22')) || {
             lessons: defaultLessons,
             habits: [{ id: 1, name: "Su İç (2 Litre)", completed: false }, { id: 2, name: "Günlük Tekrar Yap", completed: false }],
             notes: [], todos: []
         };
 
-        function saveData() { localStorage.setItem('sema_asistan_db_v21', JSON.stringify(dbLocal)); }
+        function saveData() { localStorage.setItem('sema_asistan_db_v22', JSON.stringify(dbLocal)); }
 
         function toggleTheme() {
             const html = document.documentElement;
@@ -405,9 +412,8 @@
         }
         function toggleTodo(id) { const t = dbLocal.todos.find(x => x.id === id); if(t){ t.completed = !t.completed; saveData(); renderTodos(); } }
 
-        // --- ULTRA GELİŞMİŞ ORTAK ÇİZİM STÜDYOSU MOTORU (UNDO/REDO, FOSFORLU, DOLU ŞEKİLLER) ---
+        // --- ULTRA UPGRADE ORTAK ÇİZİM STÜDYOSU MOTORU ---
         let canvas, ctx, isDrawing = false, drawColor = '#ec4899', currentTool = 'pen', startX = 0, startY = 0;
-        let localUndoStack = [], localRedoStack = [];
 
         function initWhiteboard() {
             canvas = document.getElementById('whiteboardCanvas');
@@ -425,6 +431,7 @@
             canvas.ontouchmove = (e) => { moveAction(e.touches[0]); e.preventDefault(); };
             canvas.ontouchend = endAction;
 
+            updateBrushPreview(document.getElementById('brushSize').value);
             if(window.fbDB) initWhiteboardListeners();
         }
 
@@ -441,7 +448,17 @@
         function setDrawColor(col) {
             drawColor = col;
             document.getElementById('customColorPicker').value = col;
+            document.getElementById('userColorBadge').style.backgroundColor = col;
+            document.getElementById('brushPreviewCircle').style.backgroundColor = col;
             if(currentTool === 'eraser') setTool('pen');
+        }
+
+        function updateBrushPreview(val) {
+            const preview = document.getElementById('brushPreviewCircle');
+            const size = Math.min(val, 24);
+            preview.style.width = size + 'px';
+            preview.style.height = size + 'px';
+            preview.style.backgroundColor = currentTool === 'eraser' ? '#94a3b8' : drawColor;
         }
 
         function setCanvasBg(type) {
@@ -512,7 +529,7 @@
             ctx.lineWidth = size;
             if(isHighlighter) {
                 ctx.globalAlpha = 0.35;
-                ctx.lineWidth = Math.max(size, 12);
+                ctx.lineWidth = Math.max(size, 14);
             } else {
                 ctx.globalAlpha = 1.0;
             }
@@ -546,6 +563,7 @@
             if(!window.fbDB) return;
             const { db, ref, onValue } = window.fbDB;
 
+            // Çizimleri dinle
             onValue(ref(db, 'whiteboard/items'), (snapshot) => {
                 const data = snapshot.val();
                 if(ctx && canvas) {
@@ -564,9 +582,17 @@
                 }
             });
 
+            // Temizlemeyi dinle
             onValue(ref(db, 'whiteboard/clear'), (snapshot) => {
                 if(snapshot.val() && ctx && canvas) {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            });
+
+            // Senkronize Kalp Yağmurunu Dinle
+            onValue(ref(db, 'whiteboard/heartParty'), (snapshot) => {
+                if(snapshot.val()) {
+                    playFloatingHeartsAnimation();
                 }
             });
         };
@@ -583,34 +609,37 @@
         function undoCanvas() {
             if(window.fbDB) {
                 const { db, ref, onValue, set } = window.fbDB;
-                // Son öğeyi veritabanından silme mantığı
                 onValue(ref(db, 'whiteboard/items'), (snapshot) => {
                     const data = snapshot.val();
                     if(data) {
                         const keys = Object.keys(data);
                         if(keys.length > 0) {
-                            const lastKey = keys[keys.length - 1];
-                            set(ref(db, 'whiteboard/items/' + lastKey), null);
+                            set(ref(db, 'whiteboard/items/' + keys[keys.length - 1]), null);
                         }
                     }
                 }, { onlyOnce: true });
             }
         }
 
-        function redoCanvas() {
-            alert("İleri al buton aktif! (Son geri alınan işlem için)");
+        function triggerHeartPartyFirebase() {
+            if(window.fbDB) {
+                const { db, ref, set } = window.fbDB;
+                set(ref(db, 'whiteboard/heartParty'), true);
+                setTimeout(() => set(ref(db, 'whiteboard/heartParty'), false), 500);
+            }
         }
 
-        function triggerHeartParty() {
+        function playFloatingHeartsAnimation() {
             const container = document.getElementById('canvasContainer');
-            for(let i = 0; i < 7; i++) {
+            if(!container) return;
+            for(let i = 0; i < 8; i++) {
                 const heart = document.createElement('div');
-                heart.className = 'floating-heart text-pink-500 text-lg';
+                heart.className = 'floating-heart text-pink-500 text-xl';
                 heart.innerHTML = '❤️';
                 heart.style.left = Math.random() * 80 + 10 + '%';
                 heart.style.bottom = '20px';
                 container.appendChild(heart);
-                setTimeout(() => heart.remove(), 1500);
+                setTimeout(() => heart.remove(), 1800);
             }
         }
 
