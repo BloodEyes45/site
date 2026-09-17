@@ -24,6 +24,11 @@
             100% { transform: rotate(1440deg); }
         }
         .spinning { animation: wheelSpin 3s cubic-bezier(0.15, 0.9, 0.2, 1) forwards; }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .animate-bounce-slow { animation: bounce-slow 2s infinite ease-in-out; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-28 transition-colors duration-300">
@@ -75,7 +80,7 @@
 
             <!-- Akordeon Hesaplama Aracı -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
-                <button onclick="toggleAccordion('calcAccordion')" class="w-full flex justify-between items-center text-xs font-bold text-pink-500">
+                <button onclick="playSound('click'); toggleAccordion('calcAccordion')" class="w-full flex justify-between items-center text-xs font-bold text-pink-500">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-calculator"></i> Not & Geçme Hesaplayıcı</span>
                     <i id="calcIcon" class="fa-solid fa-chevron-down text-[10px] transition-transform"></i>
                 </button>
@@ -94,7 +99,7 @@
                             <input type="number" id="gecmeNotu" value="50" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs">
                         </div>
                     </div>
-                    <button onclick="calculatePassingScore()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-medium py-2 rounded-xl text-xs transition">Finalden Kaç Almalıyım?</button>
+                    <button onclick="playSound('click'); calculatePassingScore()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-medium py-2 rounded-xl text-xs transition">Finalden Kaç Almalıyım?</button>
                     <div id="calcResult" class="text-center pt-1 text-xs font-bold text-pink-500"></div>
                 </div>
             </div>
@@ -104,7 +109,7 @@
         <section id="tab-schedule" class="space-y-4 hidden">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold">Ders Programı & Devamsızlık</h2>
-                <button onclick="openModal('lesson')" class="bg-pink-600 hover:bg-pink-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-pink-600/30 flex items-center gap-1">
+                <button onclick="playSound('click'); openModal('lesson')" class="bg-pink-600 hover:bg-pink-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-pink-600/30 flex items-center gap-1">
                     <i class="fa-solid fa-plus"></i> Ders Ekle
                 </button>
             </div>
@@ -116,7 +121,7 @@
         <section id="tab-habits" class="space-y-4 hidden">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold">Günlük Alışkanlıklar & Rutinler</h2>
-                <button onclick="openModal('habit')" class="bg-pink-600 hover:bg-pink-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-pink-600/30 flex items-center gap-1">
+                <button onclick="playSound('click'); openModal('habit')" class="bg-pink-600 hover:bg-pink-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-pink-600/30 flex items-center gap-1">
                     <i class="fa-solid fa-plus"></i> Rutin Ekle
                 </button>
             </div>
@@ -127,7 +132,7 @@
         <section id="tab-notes" class="space-y-4 hidden">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold">Hızlı Notlar</h2>
-                <button onclick="openModal('note')" class="bg-pink-600 hover:bg-pink-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-pink-600/30 flex items-center gap-1">
+                <button onclick="playSound('click'); openModal('note')" class="bg-pink-600 hover:bg-pink-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-pink-600/30 flex items-center gap-1">
                     <i class="fa-solid fa-plus"></i> Not Ekle
                 </button>
             </div>
@@ -138,14 +143,14 @@
         <section id="tab-todos" class="space-y-4 hidden">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold">Ödevler & Sınavlar</h2>
-                <button onclick="openModal('todo')" class="bg-pink-600 hover:bg-pink-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-pink-600/30 flex items-center gap-1">
+                <button onclick="playSound('click'); openModal('todo')" class="bg-pink-600 hover:bg-pink-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg shadow-pink-600/30 flex items-center gap-1">
                     <i class="fa-solid fa-plus"></i> Görev Ekle
                 </button>
             </div>
             <div id="todosList" class="space-y-3"></div>
         </section>
 
-        <!-- 6. BAHÇE VE ÇİÇEKÇİ DÜKKANI (MÜKEMMEL OYUN DENEYİMİ) -->
+        <!-- 6. BAHÇE VE ÇİÇEKÇİ DÜKKANI (GERÇEKÇİ OYUN DENEYİMİ) -->
         <section id="tab-garden" class="space-y-4 hidden">
             <!-- Oyun HUD (Üst Bilgi Paneli) -->
             <div class="bg-gradient-to-r from-amber-900 to-amber-950 border border-amber-800/50 rounded-2xl p-4 text-white shadow-lg space-y-2">
@@ -163,23 +168,23 @@
                     <div id="xpBar" class="bg-gradient-to-r from-amber-400 to-pink-500 h-full transition-all duration-500" style="width: 0%"></div>
                 </div>
                 <!-- Çark Butonu -->
-                <button onclick="openWheelModal()" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 text-white font-bold py-2 rounded-xl text-xs shadow-md flex items-center justify-center gap-2 transition active:scale-95">
+                <button onclick="playSound('click'); openWheelModal()" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 text-white font-bold py-2 rounded-xl text-xs shadow-md flex items-center justify-center gap-2 transition active:scale-95">
                     <i class="fa-solid fa-dharmachakra"></i> Günlük Şans Çarkını Aç! 🎡
                 </button>
             </div>
 
-            <!-- BAHÇE İÇİ GÖRSEL SÜSLER ALANI (Tarlaların Yanı Başı) -->
-            <div class="bg-gradient-to-r from-amber-950/40 to-slate-900/40 border border-amber-900/20 rounded-2xl p-3 flex items-center justify-between shadow-inner">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-400/30 flex items-center justify-center text-amber-300 text-sm">🏡</div>
-                    <div>
-                        <h4 class="text-[11px] font-bold text-amber-300">Bahçe Canlılık Alanı</h4>
-                        <div id="gardenDecorations" class="flex gap-1.5 text-[10px] text-amber-200/80 mt-0.5"></div>
-                    </div>
+            <!-- BAHÇE İÇİ SERBEST DEKORASYON ALANI (Tarlaların Yanı Başı / Canlı Bahçe) -->
+            <div class="bg-gradient-to-br from-emerald-900/40 to-amber-950/40 border border-emerald-500/30 rounded-2xl p-3 shadow-inner relative overflow-hidden">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-[11px] font-bold text-emerald-300 flex items-center gap-1"><i class="fa-solid fa-tree"></i> Bahçe Görünüm & Yaşam Alanı</span>
+                    <button onclick="playSound('click'); openDecorShop()" class="bg-pink-600 hover:bg-pink-500 text-white px-2.5 py-1 rounded-xl text-[10px] font-bold shadow transition active:scale-95 flex items-center gap-1">
+                        <i class="fa-solid fa-store"></i> Mağaza
+                    </button>
                 </div>
-                <button onclick="openDecorShop()" class="bg-pink-600 hover:bg-pink-500 text-white px-2.5 py-1.5 rounded-xl text-[10px] font-bold shadow transition active:scale-95 flex items-center gap-1">
-                    <i class="fa-solid fa-store"></i> Süs Ekle
-                </button>
+                <!-- Serbest Süslerin Konumlandığı Alan -->
+                <div id="gardenLiveObjects" class="flex flex-wrap gap-2 min-h-[40px] items-center">
+                    <span class="text-[10px] opacity-50 italic">Henüz bahçede süs yok. Mağazadan süs alarak bahçeni canlandır!</span>
+                </div>
             </div>
 
             <!-- Tarlalar (Toprak Parselleri) -->
@@ -210,22 +215,22 @@
     <!-- Alt Navigasyon Çubuğu -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 py-2 px-1 z-40">
         <div class="max-w-md mx-auto flex justify-around">
-            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-pink-500 transition">
+            <button onclick="playSound('click'); switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-pink-500 transition">
                 <i class="fa-solid fa-house text-sm"></i><span class="text-[9px] font-medium">Özet</span>
             </button>
-            <button onclick="switchTab('schedule')" id="nav-schedule" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+            <button onclick="playSound('click'); switchTab('schedule')" id="nav-schedule" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
                 <i class="fa-solid fa-calendar-days text-sm"></i><span class="text-[9px] font-medium">Dersler</span>
             </button>
-            <button onclick="switchTab('habits')" id="nav-habits" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+            <button onclick="playSound('click'); switchTab('habits')" id="nav-habits" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
                 <i class="fa-solid fa-bolt text-sm"></i><span class="text-[9px] font-medium">Rutin</span>
             </button>
-            <button onclick="switchTab('notes')" id="nav-notes" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+            <button onclick="playSound('click'); switchTab('notes')" id="nav-notes" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
                 <i class="fa-solid fa-note-sticky text-sm"></i><span class="text-[9px] font-medium">Notlar</span>
             </button>
-            <button onclick="switchTab('todos')" id="nav-todos" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+            <button onclick="playSound('click'); switchTab('todos')" id="nav-todos" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
                 <i class="fa-solid fa-list-check text-sm"></i><span class="text-[9px] font-medium">Görev</span>
             </button>
-            <button onclick="switchTab('garden')" id="nav-garden" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+            <button onclick="playSound('click'); switchTab('garden')" id="nav-garden" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
                 <i class="fa-solid fa-seedling text-sm"></i><span class="text-[9px] font-medium">Bahçe</span>
             </button>
         </div>
@@ -236,7 +241,7 @@
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl text-slate-900 dark:text-slate-100">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="modalTitle" class="text-sm font-bold">Yeni Kayıt</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-base"></i></button>
+                <button onclick="playSound('click'); closeModal()" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
             <form id="dynamicForm" onsubmit="handleFormSubmit(event)" class="space-y-3"></form>
         </div>
@@ -247,7 +252,7 @@
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-xs rounded-2xl p-5 shadow-2xl text-slate-900 dark:text-slate-100 space-y-3">
             <div class="flex justify-between items-center">
                 <h3 class="text-sm font-bold text-pink-500 flex items-center gap-1.5"><i class="fa-solid fa-seedling"></i> Tohum Seçimi</h3>
-                <button onclick="closeSeedModal()" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-base"></i></button>
+                <button onclick="playSound('click'); closeSeedModal()" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
             <div class="text-xs opacity-70">Bu tarlaya ekmek istediğin çiçeği seç:</div>
             <div id="seedList" class="space-y-2"></div>
@@ -257,7 +262,7 @@
     <!-- Gerçek Görsel Şans Çarkı Modalı -->
     <div id="wheelModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-pink-500/30 w-full max-w-xs rounded-3xl p-6 shadow-2xl text-center space-y-4 text-white relative">
-            <button onclick="closeWheelModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <button onclick="playSound('click'); closeWheelModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h3 class="text-base font-extrabold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">Günlük Şans Çarkı 🎡</h3>
             <p class="text-[11px] opacity-70">Günde 1 kez çevir, harika ödüller kazan!</p>
             
@@ -269,7 +274,7 @@
             </div>
 
             <div id="wheelResultText" class="text-xs font-bold text-amber-300 min-h-[20px]"></div>
-            <button id="spinBtn" onclick="executeWheelSpin()" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 text-white font-extrabold py-2.5 rounded-xl text-xs shadow-lg active:scale-95 transition">Şimdi Çevir! 🎯</button>
+            <button id="spinBtn" onclick="playSound('click'); executeWheelSpin()" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 text-white font-extrabold py-2.5 rounded-xl text-xs shadow-lg active:scale-95 transition">Şimdi Çevir! 🎯</button>
         </div>
     </div>
 
@@ -278,15 +283,44 @@
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl text-slate-900 dark:text-slate-100 space-y-4">
             <div class="flex justify-between items-center">
                 <h3 class="text-sm font-bold flex items-center gap-1.5 text-pink-500"><i class="fa-solid fa-store"></i> Bahçe Dekorasyon Mağazası</h3>
-                <button onclick="closeDecorShop()" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-base"></i></button>
+                <button onclick="playSound('click'); closeDecorShop()" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
             <div class="text-xs opacity-70">Altınlarınla bahçeni sevimli süslerle donat!</div>
             <div id="decorShopList" class="space-y-2 max-h-[250px] overflow-y-auto"></div>
         </div>
     </div>
 
-    <!-- JavaScript Mantığı -->
+    <!-- JavaScript ve Web Audio API Ses Motoru -->
     <script>
+        // Web Audio API Ses Efektleri Sentezleyicisi
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'success') {
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+                    osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.16); // G5
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch (e) {}
+        }
+
         const days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
         let dateToday = new Date().getDay();
         let currentDayIndex = dateToday === 0 ? 6 : dateToday - 1;
@@ -337,13 +371,13 @@
         ];
 
         const decorCatalog = [
-            { id: 'cat', name: 'Sevimli Bahçe Kedisi 🐱', cost: 150, icon: 'fa-cat' },
-            { id: 'fountain', name: 'Misket Su Çeşmesi ⛲', cost: 300, icon: 'fa-fountain' },
-            { id: 'bench', name: 'Pembe Ahşap Bank 🛋️', cost: 200, icon: 'fa-chair' },
-            { id: 'lights', name: 'Peri Bahçe Işıkları 💡', cost: 250, icon: 'fa-lightbulb' }
+            { id: 'cat', name: 'Bahçe Kedisi 🐱', cost: 150, icon: 'fa-cat' },
+            { id: 'fountain', name: 'Su Çeşmesi ⛲', cost: 300, icon: 'fa-fountain' },
+            { id: 'bench', name: 'Ahşap Bank 🛋️', cost: 200, icon: 'fa-chair' },
+            { id: 'lights', name: 'Peri Işıkları 💡', cost: 250, icon: 'fa-lightbulb' }
         ];
 
-        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v13')) || {
+        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v14')) || {
             lessons: defaultLessons,
             habits: [
                 { id: 1, name: "Su İç (2 Litre)", completed: false },
@@ -369,10 +403,11 @@
         };
 
         function saveData() {
-            localStorage.setItem('sema_asistan_db_v13', JSON.stringify(db));
+            localStorage.setItem('sema_asistan_db_v14', JSON.stringify(db));
         }
 
         function toggleTheme() {
+            playSound('click');
             const html = document.documentElement;
             const icon = document.getElementById('themeIcon');
             if (html.classList.contains('dark')) {
@@ -508,7 +543,7 @@
             days.forEach(day => {
                 const isActive = day === selectedDay;
                 container.innerHTML += `
-                    <button onclick="selectDay('${day}')" class="px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/30' : 'bg-white dark:bg-slate-900 opacity-70 border border-slate-200 dark:border-slate-800'}">
+                    <button onclick="playSound('click'); selectDay('${day}')" class="px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/30' : 'bg-white dark:bg-slate-900 opacity-70 border border-slate-200 dark:border-slate-800'}">
                         ${day}
                     </button>`;
             });
@@ -553,8 +588,8 @@
                                 <h3 class="text-sm font-bold mt-1">${item.name}</h3>
                             </div>
                             <div class="flex items-center gap-1">
-                                <button onclick="openModal('lesson', ${item.id})" class="opacity-60 hover:text-pink-500 p-2"><i class="fa-solid fa-pen text-xs"></i></button>
-                                <button onclick="deleteItem('lessons', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                <button onclick="playSound('click'); openModal('lesson', ${item.id})" class="opacity-60 hover:text-pink-500 p-2"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="playSound('click'); deleteItem('lessons', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
                             </div>
                         </div>
                         <div class="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-slate-800 text-[11px]">
@@ -563,8 +598,8 @@
                                 ${warningText}
                             </span>
                             <div class="flex gap-1">
-                                <button onclick="updateAbsence(${item.id}, -1)" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">-</button>
-                                <button onclick="updateAbsence(${item.id}, 1)" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">+</button>
+                                <button onclick="playSound('click'); updateAbsence(${item.id}, -1)" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">-</button>
+                                <button onclick="playSound('click'); updateAbsence(${item.id}, 1)" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">+</button>
                             </div>
                         </div>
                     </div>`;
@@ -591,10 +626,10 @@
                 container.innerHTML += `
                     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
                         <div class="flex items-center gap-3">
-                            <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="toggleHabit(${item.id})" class="w-4 h-4 accent-pink-600 rounded">
+                            <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="playSound('click'); toggleHabit(${item.id})" class="w-4 h-4 accent-pink-600 rounded">
                             <span class="text-sm font-bold ${item.completed ? 'line-through opacity-40' : ''}">${item.name}</span>
                         </div>
-                        <button onclick="deleteItem('habits', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                        <button onclick="playSound('click'); deleteItem('habits', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
                     </div>`;
             });
         }
@@ -611,7 +646,7 @@
                     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-1">
                         <div class="flex justify-between items-start">
                             <h3 class="text-sm font-bold">${item.title}</h3>
-                            <button onclick="deleteItem('notes', ${item.id})" class="opacity-50 hover:text-red-500"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                            <button onclick="playSound('click'); deleteItem('notes', ${item.id})" class="opacity-50 hover:text-red-500"><i class="fa-solid fa-trash-can text-xs"></i></button>
                         </div>
                         <p class="text-xs opacity-80 whitespace-pre-line">${item.content}</p>
                     </div>`;
@@ -633,7 +668,7 @@
                 container.innerHTML += `
                     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
                         <div class="flex items-center gap-3">
-                            <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="toggleTodo(${item.id})" class="w-4 h-4 accent-pink-600 rounded">
+                            <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="playSound('click'); toggleTodo(${item.id})" class="w-4 h-4 accent-pink-600 rounded">
                             <div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-[9px] font-bold px-2 py-0.5 rounded-md border ${badgeColor}">${item.priority || 'Görev'}</span>
@@ -642,12 +677,12 @@
                                 <span class="text-[10px] opacity-65">Son Tarih: ${item.date || 'Belirtilmedi'}</span>
                             </div>
                         </div>
-                        <button onclick="deleteItem('todos', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                        <button onclick="playSound('click'); deleteItem('todos', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
                     </div>`;
             });
         }
 
-        // --- GELİŞMİŞ OYUN VE DEKORASYON MANTIĞI ---
+        // --- GERÇEKÇİ OYUN VE SERBEST BAHÇE SÜSLERİ MANTIĞI ---
         function renderGarden() {
             document.getElementById('gardenCoins').innerText = db.garden.coins;
             document.getElementById('gardenLevel').innerText = db.garden.level;
@@ -657,16 +692,22 @@
             const xpPercent = Math.min(100, (db.garden.xp / xpNeeded) * 100);
             document.getElementById('xpBar').style.width = `${xpPercent}%`;
 
-            // Dekorasyonlar (Tarlaların yanındaki canlılık alanı)
-            const decorContainer = document.getElementById('gardenDecorations');
+            // Bahçe İçinde Serbest Konumlanan Canlı Süsler (Kedi, Çeşme vs.)
+            const liveObjectsContainer = document.getElementById('gardenLiveObjects');
             if (db.garden.decorations.length === 0) {
-                decorContainer.innerHTML = `<span>Henüz süs eklenmedi.</span>`;
+                liveObjectsContainer.innerHTML = `<span class="text-[10px] opacity-50 italic">Henüz bahçede süs yok. Mağazadan alarak bahçeni canlandır!</span>`;
             } else {
-                decorContainer.innerHTML = '';
+                liveObjectsContainer.innerHTML = '';
                 db.garden.decorations.forEach(dId => {
                     const decor = decorCatalog.find(x => x.id === dId);
                     if (decor) {
-                        decorContainer.innerHTML += `<span class="bg-amber-500/20 px-2 py-0.5 rounded-lg border border-amber-400/30 font-semibold"><i class="fa-solid ${decor.icon} mr-1"></i> ${decor.name.split(' ')[0]}</span>`;
+                        // Kediyse özel hafif zıplama animasyonu ekle
+                        const animClass = decor.id === 'cat' ? 'animate-bounce-slow' : '';
+                        liveObjectsContainer.innerHTML += `
+                            <div class="bg-emerald-950/80 border border-emerald-500/40 px-3 py-2 rounded-xl flex items-center gap-2 shadow-md ${animClass}">
+                                <i class="fa-solid ${decor.icon} text-amber-300 text-sm"></i>
+                                <span class="text-[11px] font-bold text-amber-200">${decor.name}</span>
+                            </div>`;
                     }
                 });
             }
@@ -686,13 +727,13 @@
                         <div class="bg-slate-200/50 dark:bg-slate-800/40 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[120px]">
                             <i class="fa-solid fa-lock text-slate-400 text-base mb-1"></i>
                             <span class="text-[10px] font-medium opacity-60 mb-2">Kilitli Parsel</span>
-                            <button onclick="unlockPlot(${plot.id})" class="bg-pink-600 hover:bg-pink-500 text-white text-[10px] px-3 py-1 rounded-xl font-bold shadow active:scale-95 transition">100 Altınla Aç</button>
+                            <button onclick="playSound('click'); unlockPlot(${plot.id})" class="bg-pink-600 hover:bg-pink-500 text-white text-[10px] px-3 py-1 rounded-xl font-bold shadow active:scale-95 transition">100 Altınla Aç</button>
                         </div>`;
                 } else if (plot.state === 'empty') {
                     plotsContainer.innerHTML += `
                         <div class="bg-gradient-to-br from-[#8d6e63] to-[#5d4037] border-2 border-[#795548] rounded-2xl p-3 text-center flex flex-col justify-between items-center min-h-[120px] shadow-md">
                             <span class="text-[10px] font-extrabold text-amber-200 tracking-wider">🌿 Boş Toprak Tarla</span>
-                            <button onclick="openSeedModal(${plot.id})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] py-2 rounded-xl font-extrabold shadow active:scale-95 transition flex items-center justify-center gap-1">
+                            <button onclick="playSound('click'); openSeedModal(${plot.id})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] py-2 rounded-xl font-extrabold shadow active:scale-95 transition flex items-center justify-center gap-1">
                                 <i class="fa-solid fa-seedling"></i> Tohum Eker
                             </button>
                         </div>`;
@@ -711,7 +752,7 @@
                         <div class="bg-gradient-to-br from-[#558b2f] to-[#33691e] border-2 border-emerald-400 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[120px] shadow-lg">
                             <i class="fa-solid ${fInfo.icon} text-emerald-200 text-2xl mb-1 animate-bounce"></i>
                             <span class="text-[10px] font-bold text-white mb-1">${plot.flower} Açtı! ✨</span>
-                            <button onclick="harvestFlower(${plot.id})" class="bg-pink-500 hover:bg-pink-400 text-white text-[10px] px-3.5 py-1 rounded-xl font-extrabold shadow-md active:scale-95 transition">Hasat Et 🌸</button>
+                            <button onclick="playSound('success'); harvestFlower(${plot.id})" class="bg-pink-500 hover:bg-pink-400 text-white text-[10px] px-3.5 py-1 rounded-xl font-extrabold shadow-md active:scale-95 transition">Hasat Et 🌸</button>
                         </div>`;
                 }
             });
@@ -731,8 +772,8 @@
                         <p class="text-[10px] text-amber-400 font-bold mt-0.5"><i class="fa-solid fa-coins"></i> Ödül: ${cust.reward} Altın</p>
                     </div>
                     <div class="flex flex-col gap-1.5">
-                        <button onclick="sellBouquet()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white px-3.5 py-1.5 rounded-xl font-bold text-xs shadow active:scale-95 transition">Satış Yap 💰</button>
-                        <button onclick="skipCustomer()" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 px-2 py-1 rounded-xl font-semibold text-[10px] transition">Müşteriyi Geç (-15 XP)</button>
+                        <button onclick="playSound('success'); sellBouquet()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white px-3.5 py-1.5 rounded-xl font-bold text-xs shadow active:scale-95 transition">Satış Yap 💰</button>
+                        <button onclick="playSound('click'); skipCustomer()" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 px-2 py-1 rounded-xl font-semibold text-[10px] transition">Müşteriyi Geç (-15 XP)</button>
                     </div>
                 </div>`;
 
@@ -752,7 +793,7 @@
             list.innerHTML = '';
             for (let [fName, fData] of Object.entries(flowerTypes)) {
                 list.innerHTML += `
-                    <button onclick="plantFlowerFromModal('${fName}')" class="w-full bg-slate-100 dark:bg-slate-800 hover:bg-pink-500 hover:text-white p-2.5 rounded-xl text-xs font-bold flex justify-between items-center px-3 transition shadow-sm">
+                    <button onclick="playSound('click'); plantFlowerFromModal('${fName}')" class="w-full bg-slate-100 dark:bg-slate-800 hover:bg-pink-500 hover:text-white p-2.5 rounded-xl text-xs font-bold flex justify-between items-center px-3 transition shadow-sm">
                         <span>🌱 ${fName} (${fData.time}s)</span>
                         <span class="text-amber-500 font-extrabold">${fData.cost} 🪙</span>
                     </button>`;
@@ -793,7 +834,7 @@
                                 <span class="text-[10px] opacity-60">${d.cost} Altın</span>
                             </div>
                         </div>
-                        ${sahip ? '<span class="text-[10px] text-emerald-500 font-bold">Sahipsin ✓</span>' : `<button onclick="buyDecor('${d.id}', ${d.cost})" class="bg-pink-600 text-white text-[10px] px-3 py-1 rounded-lg font-bold">Satın Al</button>`}
+                        ${sahip ? '<span class="text-[10px] text-emerald-500 font-bold">Sahipsin ✓</span>' : `<button onclick="playSound('success'); buyDecor('${d.id}', ${d.cost})" class="bg-pink-600 text-white text-[10px] px-3 py-1 rounded-lg font-bold">Satın Al</button>`}
                     </div>`;
             });
         }
@@ -836,6 +877,7 @@
             wheel.classList.add('spinning');
 
             setTimeout(() => {
+                playSound('success');
                 const rewards = [
                     { type: 'coins', val: 50, text: "50 Altın Para Kazandın! 🪙" },
                     { type: 'coins', val: 120, text: "120 Büyük Altın Ödülü! 💰" },
