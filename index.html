@@ -145,7 +145,7 @@
             <div id="todosList" class="space-y-3"></div>
         </section>
 
-        <!-- 6. BAHÇE VE ÇİÇEKÇİ DÜKKANI (EN GELİŞMİŞ OYUN) -->
+        <!-- 6. BAHÇE VE ÇİÇEKÇİ DÜKKANI (MÜKEMMEL OYUN DENEYİMİ) -->
         <section id="tab-garden" class="space-y-4 hidden">
             <!-- Oyun HUD (Üst Bilgi Paneli) -->
             <div class="bg-gradient-to-r from-amber-900 to-amber-950 border border-amber-800/50 rounded-2xl p-4 text-white shadow-lg space-y-2">
@@ -168,15 +168,23 @@
                 </button>
             </div>
 
-            <!-- Dekoratif Süsler Alanı -->
-            <div id="gardenDecorations" class="flex gap-2 overflow-x-auto pb-1 text-xs"></div>
+            <!-- BAHÇE İÇİ GÖRSEL SÜSLER ALANI (Tarlaların Yanı Başı) -->
+            <div class="bg-gradient-to-r from-amber-950/40 to-slate-900/40 border border-amber-900/20 rounded-2xl p-3 flex items-center justify-between shadow-inner">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-400/30 flex items-center justify-center text-amber-300 text-sm">🏡</div>
+                    <div>
+                        <h4 class="text-[11px] font-bold text-amber-300">Bahçe Canlılık Alanı</h4>
+                        <div id="gardenDecorations" class="flex gap-1.5 text-[10px] text-amber-200/80 mt-0.5"></div>
+                    </div>
+                </div>
+                <button onclick="openDecorShop()" class="bg-pink-600 hover:bg-pink-500 text-white px-2.5 py-1.5 rounded-xl text-[10px] font-bold shadow transition active:scale-95 flex items-center gap-1">
+                    <i class="fa-solid fa-store"></i> Süs Ekle
+                </button>
+            </div>
 
             <!-- Tarlalar (Toprak Parselleri) -->
             <div class="space-y-2">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Bahçe Parselleri (Tarlalar)</h3>
-                    <button onclick="openDecorShop()" class="text-[10px] text-pink-500 font-bold hover:underline"><i class="fa-solid fa-store"></i> Süs & Dekor Mağazası</button>
-                </div>
+                <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Bahçe Parselleri (Tarlalar)</h3>
                 <div id="gardenPlots" class="grid grid-cols-2 gap-2.5"></div>
             </div>
 
@@ -234,6 +242,18 @@
         </div>
     </div>
 
+    <!-- Tohum Seçim Modalı -->
+    <div id="seedModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-xs rounded-2xl p-5 shadow-2xl text-slate-900 dark:text-slate-100 space-y-3">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-bold text-pink-500 flex items-center gap-1.5"><i class="fa-solid fa-seedling"></i> Tohum Seçimi</h3>
+                <button onclick="closeSeedModal()" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <div class="text-xs opacity-70">Bu tarlaya ekmek istediğin çiçeği seç:</div>
+            <div id="seedList" class="space-y-2"></div>
+        </div>
+    </div>
+
     <!-- Gerçek Görsel Şans Çarkı Modalı -->
     <div id="wheelModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-pink-500/30 w-full max-w-xs rounded-3xl p-6 shadow-2xl text-center space-y-4 text-white relative">
@@ -241,7 +261,6 @@
             <h3 class="text-base font-extrabold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">Günlük Şans Çarkı 🎡</h3>
             <p class="text-[11px] opacity-70">Günde 1 kez çevir, harika ödüller kazan!</p>
             
-            <!-- Görsel Çark Çizimi -->
             <div class="relative w-44 h-44 mx-auto my-3 flex items-center justify-center">
                 <div id="visualWheel" class="w-full h-full rounded-full border-4 border-pink-500/50 bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 shadow-xl flex items-center justify-center transition-all">
                     <i class="fa-solid fa-star text-white text-3xl drop-shadow-md"></i>
@@ -275,6 +294,7 @@
         let currentTab = 'home';
         let activeModalType = '';
         let editingLessonId = null;
+        let selectedPlotId = null;
 
         const defaultLessons = {
             "Pazartesi": [
@@ -302,7 +322,6 @@
             "Orkide": { cost: 60, reward: 200, time: 60, xp: 120, icon: "fa-tree" }
         };
 
-        // Genişletilmiş Müşteri Havuzu
         const customerPool = [
             { name: "Ahmet Amca", isVip: false },
             { name: "Ayşe Teyze", isVip: false },
@@ -317,7 +336,6 @@
             { name: "Gizemli Gezgin", isVip: true }
         ];
 
-        // Dekorasyon Kataloğu
         const decorCatalog = [
             { id: 'cat', name: 'Sevimli Bahçe Kedisi 🐱', cost: 150, icon: 'fa-cat' },
             { id: 'fountain', name: 'Misket Su Çeşmesi ⛲', cost: 300, icon: 'fa-fountain' },
@@ -325,7 +343,7 @@
             { id: 'lights', name: 'Peri Bahçe Işıkları 💡', cost: 250, icon: 'fa-lightbulb' }
         ];
 
-        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v12')) || {
+        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v13')) || {
             lessons: defaultLessons,
             habits: [
                 { id: 1, name: "Su İç (2 Litre)", completed: false },
@@ -351,7 +369,7 @@
         };
 
         function saveData() {
-            localStorage.setItem('sema_asistan_db_v12', JSON.stringify(db));
+            localStorage.setItem('sema_asistan_db_v13', JSON.stringify(db));
         }
 
         function toggleTheme() {
@@ -639,16 +657,16 @@
             const xpPercent = Math.min(100, (db.garden.xp / xpNeeded) * 100);
             document.getElementById('xpBar').style.width = `${xpPercent}%`;
 
-            // Dekorasyonlar
+            // Dekorasyonlar (Tarlaların yanındaki canlılık alanı)
             const decorContainer = document.getElementById('gardenDecorations');
             if (db.garden.decorations.length === 0) {
-                decorContainer.innerHTML = `<span class="text-[10px] opacity-50 italic">Henüz bahçede süs eşyası yok. Mağazadan alabilirsin!</span>`;
+                decorContainer.innerHTML = `<span>Henüz süs eklenmedi.</span>`;
             } else {
                 decorContainer.innerHTML = '';
                 db.garden.decorations.forEach(dId => {
                     const decor = decorCatalog.find(x => x.id === dId);
                     if (decor) {
-                        decorContainer.innerHTML += `<div class="bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl font-medium text-amber-300 shrink-0"><i class="fa-solid ${decor.icon} mr-1"></i> ${decor.name}</div>`;
+                        decorContainer.innerHTML += `<span class="bg-amber-500/20 px-2 py-0.5 rounded-lg border border-amber-400/30 font-semibold"><i class="fa-solid ${decor.icon} mr-1"></i> ${decor.name.split(' ')[0]}</span>`;
                     }
                 });
             }
@@ -671,20 +689,18 @@
                             <button onclick="unlockPlot(${plot.id})" class="bg-pink-600 hover:bg-pink-500 text-white text-[10px] px-3 py-1 rounded-xl font-bold shadow active:scale-95 transition">100 Altınla Aç</button>
                         </div>`;
                 } else if (plot.state === 'empty') {
-                    let optionsHtml = '';
-                    for (let [fName, fData] of Object.entries(flowerTypes)) {
-                        optionsHtml += `<button onclick="plantFlower(${plot.id}, '${fName}')" class="bg-white/80 dark:bg-slate-800/80 hover:bg-emerald-500 hover:text-white p-1 rounded-lg text-[10px] flex justify-between px-2 font-medium shadow-sm transition"><span>🌱 ${fName}</span> <span class="opacity-70">${fData.cost} 🪙</span></button>`;
-                    }
                     plotsContainer.innerHTML += `
-                        <div class="bg-gradient-to-br from-[#8d6e63] to-[#5d4037] border-2 border-[#795548] rounded-2xl p-2.5 text-center flex flex-col justify-between min-h-[130px] shadow-md">
+                        <div class="bg-gradient-to-br from-[#8d6e63] to-[#5d4037] border-2 border-[#795548] rounded-2xl p-3 text-center flex flex-col justify-between items-center min-h-[120px] shadow-md">
                             <span class="text-[10px] font-extrabold text-amber-200 tracking-wider">🌿 Boş Toprak Tarla</span>
-                            <div class="space-y-1 my-1 max-h-[75px] overflow-y-auto hide-scrollbar text-left">${optionsHtml}</div>
+                            <button onclick="openSeedModal(${plot.id})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] py-2 rounded-xl font-extrabold shadow active:scale-95 transition flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-seedling"></i> Tohum Eker
+                            </button>
                         </div>`;
                 } else if (plot.state === 'growing') {
                     const fInfo = flowerTypes[plot.flower];
                     const remainingSec = Math.max(0, Math.ceil((plot.finishTime - Date.now()) / 1000));
                     plotsContainer.innerHTML += `
-                        <div class="bg-gradient-to-br from-[#6d4c41] to-[#4e342e] border-2 border-amber-500/40 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[130px] shadow-md relative animate-pulse">
+                        <div class="bg-gradient-to-br from-[#6d4c41] to-[#4e342e] border-2 border-amber-500/40 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[120px] shadow-md relative animate-pulse">
                             <i class="fa-solid ${fInfo.icon} text-amber-300 text-2xl mb-1"></i>
                             <span class="text-[10px] font-bold text-amber-200">${plot.flower} Büyüyor...</span>
                             <span class="text-[11px] font-extrabold text-white bg-black/40 px-2 py-0.5 rounded-md mt-1">⏳ ${remainingSec}s</span>
@@ -692,7 +708,7 @@
                 } else if (plot.state === 'ready') {
                     const fInfo = flowerTypes[plot.flower];
                     plotsContainer.innerHTML += `
-                        <div class="bg-gradient-to-br from-[#558b2f] to-[#33691e] border-2 border-emerald-400 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[130px] shadow-lg">
+                        <div class="bg-gradient-to-br from-[#558b2f] to-[#33691e] border-2 border-emerald-400 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[120px] shadow-lg">
                             <i class="fa-solid ${fInfo.icon} text-emerald-200 text-2xl mb-1 animate-bounce"></i>
                             <span class="text-[10px] font-bold text-white mb-1">${plot.flower} Açtı! ✨</span>
                             <button onclick="harvestFlower(${plot.id})" class="bg-pink-500 hover:bg-pink-400 text-white text-[10px] px-3.5 py-1 rounded-xl font-extrabold shadow-md active:scale-95 transition">Hasat Et 🌸</button>
@@ -725,6 +741,39 @@
             invContainer.innerHTML = '';
             for (let [flower, count] of Object.entries(db.garden.inventory)) {
                 invContainer.innerHTML += `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2 rounded-xl text-center shadow-sm">🌸 <span class="font-bold">${flower}</span><br><strong class="text-pink-500">${count} adet</strong></div>`;
+            }
+        }
+
+        // --- TOHUM SEÇİM MODALI ---
+        function openSeedModal(plotId) {
+            selectedPlotId = plotId;
+            document.getElementById('seedModal').classList.remove('hidden');
+            const list = document.getElementById('seedList');
+            list.innerHTML = '';
+            for (let [fName, fData] of Object.entries(flowerTypes)) {
+                list.innerHTML += `
+                    <button onclick="plantFlowerFromModal('${fName}')" class="w-full bg-slate-100 dark:bg-slate-800 hover:bg-pink-500 hover:text-white p-2.5 rounded-xl text-xs font-bold flex justify-between items-center px-3 transition shadow-sm">
+                        <span>🌱 ${fName} (${fData.time}s)</span>
+                        <span class="text-amber-500 font-extrabold">${fData.cost} 🪙</span>
+                    </button>`;
+            }
+        }
+
+        function closeSeedModal() { document.getElementById('seedModal').classList.add('hidden'); }
+
+        function plantFlowerFromModal(flowerName) {
+            closeSeedModal();
+            const fData = flowerTypes[flowerName];
+            if (db.garden.coins >= fData.cost) {
+                db.garden.coins -= fData.cost;
+                const plot = db.garden.plots.find(p => p.id === selectedPlotId);
+                plot.state = 'growing';
+                plot.flower = flowerName;
+                plot.finishTime = Date.now() + (fData.time * 1000);
+                saveData();
+                renderGarden();
+            } else {
+                alert(`Yeterli altın yok! Bu tohum ${fData.cost} altın.`);
             }
         }
 
@@ -763,7 +812,7 @@
             }
         }
 
-        // --- GERÇEK ÇARK ANIMASYONLARI ---
+        // --- ÇARK ANIMASYONLARI ---
         function openWheelModal() {
             const today = new Date().toDateString();
             if (db.garden.lastSpinDate === today) {
@@ -815,21 +864,6 @@
                 renderGarden();
             } else {
                 alert("Parsel açmak için 100 altın gerekiyor!");
-            }
-        }
-
-        function plantFlower(id, flowerName) {
-            const fData = flowerTypes[flowerName];
-            if (db.garden.coins >= fData.cost) {
-                db.garden.coins -= fData.cost;
-                const plot = db.garden.plots.find(p => p.id === id);
-                plot.state = 'growing';
-                plot.flower = flowerName;
-                plot.finishTime = Date.now() + (fData.time * 1000);
-                saveData();
-                renderGarden();
-            } else {
-                alert(`Yeterli altın yok! Bu tohum ${fData.cost} altın.`);
             }
         }
 
