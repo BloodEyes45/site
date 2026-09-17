@@ -68,7 +68,7 @@
                 <div id="todaySummaryList" class="space-y-2"></div>
             </div>
 
-            <!-- Akordeon Hesaplama Aracı (Ana Sayfaya Taşındı) -->
+            <!-- Akordeon Hesaplama Aracı -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
                 <button onclick="toggleAccordion('calcAccordion')" class="w-full flex justify-between items-center text-xs font-bold text-pink-500">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-calculator"></i> Not & Geçme Hesaplayıcı</span>
@@ -140,49 +140,51 @@
             <div id="todosList" class="space-y-3"></div>
         </section>
 
-        <!-- 6. BAHÇE VE ÇİÇEKÇİ DÜKKANI (YENİ MİNİ OYUN) -->
+        <!-- 6. BAHÇE VE ÇİÇEKÇİ DÜKKANI (GELİŞMİŞ OYUN) -->
         <section id="tab-garden" class="space-y-4 hidden">
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-3">
                 <div class="flex justify-between items-center">
                     <div>
                         <h2 class="text-sm font-bold flex items-center gap-1.5 text-pink-500"><i class="fa-solid fa-seedling"></i> Sema'nın Çiçek Bahçesi</h2>
-                        <p class="text-[10px] opacity-60">Çiçek yetiştir, misafirlere buket sat, altın kazan!</p>
+                        <p class="text-[10px] opacity-60">Bahçe Seviyesi: <strong id="gardenLevel" class="text-pink-500">1</strong> (XP: <span id="gardenXp">0</span>/100)</p>
                     </div>
-                    <div class="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1">
-                        <i class="fa-solid fa-coins"></i> <span id="gardenCoins">150</span> Altın
+                    <div class="flex gap-2">
+                        <div class="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-coins"></i> <span id="gardenCoins">150</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Günlük Çark Butonu -->
+                <!-- Günlük Şans Çarkı Butonu -->
                 <button onclick="spinWheel()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-medium py-2 rounded-xl text-xs shadow-md flex items-center justify-center gap-2">
                     <i class="fa-solid fa-dharmachakra"></i> Günlük Şans Çarkını Çevir! 🎡
                 </button>
 
                 <!-- Tarlalar / Saksılar -->
                 <div class="space-y-2 pt-2">
-                    <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Bahçe Parselleri</h3>
+                    <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Bahçe Parselleri (Tarlalar)</h3>
                     <div id="gardenPlots" class="grid grid-cols-2 gap-2"></div>
                 </div>
 
-                <!-- Müşteri Tezgahı -->
+                <!-- Ahşap Tezgah & Müşteri Alanı -->
                 <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                    <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Çiçekçi Dükkanı & Müşteriler</h3>
-                    <div id="customerStand" class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                    <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Ahşap Çiçek Tezgahı</h3>
+                    <div id="customerStand" class="bg-amber-900/5 dark:bg-slate-800/60 p-3.5 rounded-xl border border-amber-900/10 dark:border-slate-700 text-xs space-y-2">
                         Yükleniyor...
                     </div>
                 </div>
 
-                <!-- Envanter -->
+                <!-- Envanter (Çeşitli Çiçekler) -->
                 <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
-                    <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60 mb-1">Çiçek Deposu (Envanter)</h3>
-                    <div id="flowerInventory" class="flex gap-2 text-xs"></div>
+                    <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60 mb-1.5">Çiçek Deposu (Envanter)</h3>
+                    <div id="flowerInventory" class="grid grid-cols-3 gap-1.5 text-xs"></div>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Alt Navigasyon Çubuğu (Hesapla Yerine Bahçe Eklendi) -->
+    <!-- Alt Navigasyon Çubuğu -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 py-2 px-1 z-40">
         <div class="max-w-md mx-auto flex justify-around">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-pink-500 transition">
@@ -245,7 +247,16 @@
             "Perşembe": [], "Cuma": [], "Cumartesi": [], "Pazar": []
         };
 
-        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v9')) || {
+        // Çiçek Veritabanı (Çeşitler, Maliyet, Kazanç, Süre)
+        const flowerTypes = {
+            "Papatya": { cost: 5, reward: 15, time: 5, xp: 10, icon: "fa-fan" },
+            "Gül": { cost: 12, reward: 35, time: 10, xp: 25, icon: "fa-spa" },
+            "Lale": { cost: 20, reward: 60, time: 15, xp: 40, icon: "fa-seedling" },
+            "Lavanta": { cost: 35, reward: 110, time: 25, xp: 70, icon: "fa-leaf" },
+            "Orkide": { cost: 60, reward: 200, time: 40, xp: 120, icon: "fa-tree" }
+        };
+
+        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v10')) || {
             lessons: defaultLessons,
             habits: [
                 { id: 1, name: "Su İç (2 Litre)", completed: false },
@@ -254,20 +265,23 @@
             notes: [],
             todos: [],
             garden: {
-                coins: 100,
+                coins: 150,
+                xp: 0,
+                level: 1,
+                lastSpinDate: "",
                 plots: [
-                    { id: 1, state: 'empty', flower: null, plantedTime: 0, duration: 15 }, // 15 saniye test süresi
-                    { id: 2, state: 'empty', flower: null, plantedTime: 0, duration: 15 },
-                    { id: 3, state: 'locked', flower: null, plantedTime: 0, duration: 15 },
-                    { id: 4, state: 'locked', flower: null, plantedTime: 0, duration: 15 }
+                    { id: 1, state: 'empty', flower: null },
+                    { id: 2, state: 'empty', flower: null },
+                    { id: 3, state: 'locked', flower: null },
+                    { id: 4, state: 'locked', flower: null }
                 ],
-                inventory: { Papatya: 2, Gül: 1 },
-                customer: { name: "Ahmet Amca", want: "Papatya", count: 2, reward: 40 }
+                inventory: { Papatya: 3, Gül: 1, Lale: 0, Lavanta: 0, Orkide: 0 },
+                customer: { name: "Ahmet Amca", want: "Papatya", count: 2, reward: 30, isVip: false }
             }
         };
 
         function saveData() {
-            localStorage.setItem('sema_asistan_db_v9', JSON.stringify(db));
+            localStorage.setItem('sema_asistan_db_v10', JSON.stringify(db));
         }
 
         function toggleTheme() {
@@ -350,7 +364,7 @@
 
         async function fetchWeatherAndCity() {
             try {
-                let lat = 39.1903, lon = 27.6156; // Soma / Manisa varsayılan
+                let lat = 39.1903, lon = 27.6156;
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(async pos => {
                         await getWeatherData(pos.coords.latitude, pos.coords.longitude);
@@ -367,8 +381,7 @@
                 const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
                 const data = await res.json();
                 document.getElementById('weatherTemp').innerText = `${Math.round(data.current_weather.temperature)}°C`;
-                // Şehir tahmini veya konuma göre sabit
-                document.getElementById('weatherCity').innerText = lat === 39.1903 ? "Soma, Manisa" : "Konumunuz";
+                document.getElementById('weatherCity').innerText = "Soma, Manisa";
             } catch (e) {
                 document.getElementById('weatherTemp').innerText = "20°C";
                 document.getElementById('weatherCity').innerText = "Soma, Manisa";
@@ -546,100 +559,121 @@
             });
         }
 
-        // --- BAHÇE & ÇİÇEKÇİ OYUN MANTIĞI ---
+        // --- GELİŞMİŞ BAHÇE VE ÇİÇEKÇİ MİNİ OYUNU ---
         function renderGarden() {
             document.getElementById('gardenCoins').innerText = db.garden.coins;
-            
+            document.getElementById('gardenLevel').innerText = db.garden.level;
+            document.getElementById('gardenXp').innerText = db.garden.xp;
+
             // Parseller
             const plotsContainer = document.getElementById('gardenPlots');
             plotsContainer.innerHTML = '';
             db.garden.plots.forEach(plot => {
                 if (plot.state === 'locked') {
                     plotsContainer.innerHTML += `
-                        <div class="bg-slate-100 dark:bg-slate-800/40 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[90px]">
+                        <div class="bg-slate-100 dark:bg-slate-800/40 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[100px]">
                             <i class="fa-solid fa-lock text-slate-400 text-sm mb-1"></i>
                             <span class="text-[10px] opacity-60 mb-1">Kilitli Parsel</span>
-                            <button onclick="unlockPlot(${plot.id})" class="bg-pink-600 text-white text-[9px] px-2 py-0.5 rounded-lg font-medium">50 Altınla Aç</button>
+                            <button onclick="unlockPlot(${plot.id})" class="bg-pink-600 text-white text-[9px] px-2 py-1 rounded-lg font-medium">100 Altınla Aç</button>
                         </div>`;
                 } else if (plot.state === 'empty') {
+                    // Tohum ekme menüsü
+                    let optionsHtml = '';
+                    for (let [fName, fData] of Object.entries(flowerTypes)) {
+                        optionsHtml += `<button onclick="plantFlower(${plot.id}, '${fName}')" class="bg-slate-100 dark:bg-slate-800 hover:bg-pink-500 hover:text-white p-1 rounded text-[10px] flex justify-between px-2"><span>${fName}</span> <span class="opacity-70">${fData.cost} Altın</span></button>`;
+                    }
                     plotsContainer.innerHTML += `
-                        <div class="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[90px]">
-                            <i class="fa-solid fa-seedling text-emerald-500 text-base mb-1"></i>
-                            <span class="text-[10px] opacity-60 mb-1">Boş Toprak</span>
-                            <button onclick="plantFlower(${plot.id})" class="bg-emerald-600 text-white text-[9px] px-2 py-0.5 rounded-lg font-medium">Papatya Ek (10 Altın)</button>
+                        <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-2.5 text-center flex flex-col justify-between min-h-[110px]">
+                            <span class="text-[10px] font-bold text-emerald-600">Boş Tarla 🌱</span>
+                            <div class="space-y-1 my-1 max-h-[60px] overflow-y-auto hide-scrollbar text-left">${optionsHtml}</div>
                         </div>`;
-                    } else if (plot.state === 'growing') {
+                } else if (plot.state === 'growing') {
+                    const fInfo = flowerTypes[plot.flower];
                     plotsContainer.innerHTML += `
-                        <div class="bg-amber-500/5 border border-amber-500/30 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[90px]">
-                            <i class="fa-solid fa-spa text-amber-500 text-base mb-1 animate-pulse"></i>
-                            <span class="text-[10px] font-bold text-amber-500">Büyüyor... ⏳</span>
+                        <div class="bg-amber-500/5 border border-amber-500/30 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[110px]">
+                            <i class="fa-solid ${fInfo.icon} text-amber-500 text-xl mb-1 animate-pulse"></i>
+                            <span class="text-[10px] font-bold text-amber-500">${plot.flower} Büyüyor... ⏳</span>
                         </div>`;
                 } else if (plot.state === 'ready') {
+                    const fInfo = flowerTypes[plot.flower];
                     plotsContainer.innerHTML += `
-                        <div class="bg-pink-500/10 border border-pink-500/40 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[90px]">
-                            <i class="fa-solid fa-fan text-pink-500 text-base mb-1"></i>
-                            <span class="text-[10px] font-bold text-pink-500 mb-1">Hasada Hazır! ✨</span>
-                            <button onclick="harvestFlower(${plot.id})" class="bg-pink-600 text-white text-[9px] px-2.5 py-0.5 rounded-lg font-bold shadow">Hasat Et</button>
+                        <div class="bg-pink-500/10 border border-pink-500/40 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[110px]">
+                            <i class="fa-solid ${fInfo.icon} text-pink-500 text-xl mb-1"></i>
+                            <span class="text-[10px] font-bold text-pink-500 mb-1">${plot.flower} Hazır! ✨</span>
+                            <button onclick="harvestFlower(${plot.id})" class="bg-pink-600 text-white text-[10px] px-3 py-1 rounded-lg font-bold shadow">Hasat Et</button>
                         </div>`;
                 }
             });
 
-            // Müşteri Tezgahı
+            // Müşteri / Ahşap Tezgah Alanı
             const cust = db.garden.customer;
             const standContainer = document.getElementById('customerStand');
+            const vipBadge = cust.isVip ? '<span class="bg-amber-500 text-slate-950 px-2 py-0.5 rounded text-[9px] font-extrabold ml-1">⭐ VIP MÜŞTERİ</span>' : '';
+            
             standContainer.innerHTML = `
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-start">
                     <div>
-                        <strong class="text-pink-500">${cust.name}</strong> dükkana geldi! <br>
-                        <span class="opacity-80">İstediği: <strong>${cust.count} Adet ${cust.want}</strong></span>
+                        <div class="flex items-center">
+                            <strong class="text-pink-500 text-sm">${cust.name}</strong> ${vipBadge}
+                        </div>
+                        <p class="text-xs opacity-90 mt-1">İstediği Buket: <strong>${cust.count} Adet ${cust.want}</strong></p>
+                        <p class="text-[10px] text-amber-500 font-semibold mt-0.5">Ödül: ${cust.reward} Altın</p>
                     </div>
-                    <button onclick="sellBouquet()" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-xl font-bold text-xs shadow">Buket Ver (+${cust.reward} Altın)</button>
+                    <div class="flex flex-col gap-1.5">
+                        <button onclick="sellBouquet()" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-xl font-bold text-xs shadow">Satış Yap</button>
+                        <button onclick="skipCustomer()" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-2 py-1 rounded-xl font-medium text-[10px]">Geç (-15 XP)</button>
+                    </div>
                 </div>`;
 
             // Envanter
             const invContainer = document.getElementById('flowerInventory');
             invContainer.innerHTML = '';
             for (let [flower, count] of Object.entries(db.garden.inventory)) {
-                invContainer.innerHTML += `<div class="bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">🌸 ${flower}: <strong>${count}</strong></div>`;
+                invContainer.innerHTML += `<div class="bg-slate-100 dark:bg-slate-800 px-2 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center">🌸 ${flower}<br><strong>${count} adet</strong></div>`;
             }
         }
 
         function unlockPlot(id) {
-            if (db.garden.coins >= 50) {
-                db.garden.coins -= 50;
+            if (db.garden.coins >= 100) {
+                db.garden.coins -= 100;
                 const plot = db.garden.plots.find(p => p.id === id);
                 plot.state = 'empty';
                 saveData();
                 renderGarden();
             } else {
-                alert("Yeterli altın yok!");
+                alert("Parsel açmak için 100 altın gerekiyor!");
             }
         }
 
-        function plantFlower(id) {
-            if (db.garden.coins >= 10) {
-                db.garden.coins -= 10;
+        function plantFlower(id, flowerName) {
+            const fData = flowerTypes[flowerName];
+            if (db.garden.coins >= fData.cost) {
+                db.garden.coins -= fData.cost;
                 const plot = db.garden.plots.find(p => p.id === id);
                 plot.state = 'growing';
-                plot.flower = 'Papatya';
+                plot.flower = flowerName;
                 saveData();
                 renderGarden();
 
-                // 5 saniye sonra büyüsün
+                // Gerçek süreye göre (saniye cinsinden) büyüme
                 setTimeout(() => {
                     plot.state = 'ready';
                     saveData();
                     if (currentTab === 'garden') renderGarden();
-                }, 5000);
+                }, fData.time * 1000);
             } else {
-                alert("Tohum ekmek için 10 altın lazımdır!");
+                alert(`Yeterli altın yok! Bu tohum ${fData.cost} altın.`);
             }
         }
 
         function harvestFlower(id) {
             const plot = db.garden.plots.find(p => p.id === id);
-            const flower = plot.flower || 'Papatya';
+            const flower = plot.flower;
+            const fData = flowerTypes[flower];
+            
             db.garden.inventory[flower] = (db.garden.inventory[flower] || 0) + 1;
+            addXp(fData.xp);
+
             plot.state = 'empty';
             plot.flower = null;
             saveData();
@@ -651,21 +685,75 @@
             if ((db.garden.inventory[cust.want] || 0) >= cust.count) {
                 db.garden.inventory[cust.want] -= cust.count;
                 db.garden.coins += cust.reward;
-                // Yeni müşteri getir
-                db.garden.customer = { name: "Ayşe Teyze", want: "Gül", count: 1, reward: 30 };
+                addXp(cust.isVip ? 80 : 30);
+                
+                // Yeni müşteri oluştur (Rastgele normal veya %25 ihtimalle VIP)
+                generateNewCustomer();
                 saveData();
                 renderGarden();
             } else {
-                alert(`Depoda yeterli ${cust.want} yok! Önce çiçek yetiştirip hasat etmelisin.`);
+                alert(`Depoda yeterli ${cust.want} yok! Önce tarlada yetiştirip hasat etmelisin.`);
+            }
+        }
+
+        function skipCustomer() {
+            if (confirm("Müşteriyi geçmek istediğine emin misin? 15 XP ceza alacaksın!")) {
+                db.garden.xp = Math.max(0, db.garden.xp - 15);
+                generateNewCustomer();
+                saveData();
+                renderGarden();
+            }
+        }
+
+        function generateNewCustomer() {
+            const flowers = Object.keys(flowerTypes);
+            const randomFlower = flowers[Math.floor(Math.random() * flowers.length)];
+            const isVip = Math.random() < 0.25; // %25 VIP şansı
+            const count = isVip ? Math.floor(Math.random() * 3) + 3 : Math.floor(Math.random() * 2) + 1;
+            const multiplier = isVip ? 3.5 : 1;
+            const reward = Math.round(flowerTypes[randomFlower].reward * count * multiplier);
+            
+            const names = isVip ? ["Müge Hanım (VIP)", "Belediye Başkanı (VIP)", "Zengin Esnaf (VIP)"] : ["Ahmet Amca", "Ayşe Teyze", "Mehmet Bey", "Zeynep Öğrenci", "Fatma Nine"];
+            const name = names[Math.floor(Math.random() * names.length)];
+
+            db.garden.customer = { name, want: randomFlower, count, reward, isVip };
+        }
+
+        function addXp(amount) {
+            db.garden.xp += amount;
+            if (db.garden.xp >= db.garden.level * 100) {
+                db.garden.xp -= db.garden.level * 100;
+                db.garden.level += 1;
+                alert(`🎉 TEBRİKLER! Bahçeniz Seviye ${db.garden.level} oldu!`);
             }
         }
 
         function spinWheel() {
-            const rewardCoins = 50;
-            db.garden.coins += rewardCoins;
+            const today = new Date().toDateString();
+            if (db.garden.lastSpinDate === today) {
+                alert("Bugünlük çark hakkını kullandın! Yarın tekrar gel. 🎡");
+                return;
+            }
+
+            db.garden.lastSpinDate = today;
+            
+            // Rastgele Ödül Havuzu
+            const rewards = [
+                { type: 'coins', val: 50, text: "50 Altın Para!" },
+                { type: 'coins', val: 120, text: "120 Büyük Altın Ödülü!" },
+                { type: 'flower', name: 'Gül', count: 3, text: "3 Adet Gül Hediyesi!" },
+                { type: 'flower', name: 'Orkide', count: 1, text: "Nadir 1 Adet Orkide!" },
+                { type: 'xp', val: 50, text: "50 Ekstra XP Puanı!" }
+            ];
+            
+            const won = rewards[Math.floor(Math.random() * rewards.length)];
+            if (won.type === 'coins') db.garden.coins += won.val;
+            else if (won.type === 'xp') addXp(won.val);
+            else if (won.type === 'flower') db.garden.inventory[won.name] = (db.garden.inventory[won.name] || 0) + won.count;
+
             saveData();
             renderGarden();
-            alert(`🎡 Çark çevrildi! Hediyen: +${rewardCoins} Altın Kazandın! 🎉`);
+            alert(`🎡 Çark Çevrildi!\n\nÇıkan Ödül: ${won.text} 🎉`);
         }
 
         // --- GENEL MODAL VE FORM YÖNETİMİ ---
