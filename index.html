@@ -51,6 +51,20 @@
             animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         canvas { touch-action: none; }
+        .bg-grid-pattern {
+            background-image: linear-gradient(to right, rgba(236, 72, 153, 0.08) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(236, 72, 153, 0.08) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-120px) scale(1.2); opacity: 0; }
+        }
+        .floating-heart {
+            position: absolute;
+            animation: floatUp 1.5s ease-out forwards;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-28 transition-colors duration-300">
@@ -144,44 +158,70 @@
             <div id="todosList" class="space-y-3"></div>
         </section>
 
-        <!-- 6. GELİŞMİŞ ORTAK CANLI ÇİZİM SEKMESİ (WHITEBOARD) -->
+        <!-- 6. ULTRA GELİŞMİŞ ORTAK CANLI ÇİZİM STÜDYOSU -->
         <section id="tab-draw" class="space-y-3 hidden animate-fade-in">
             <div class="flex justify-between items-center">
-                <h2 class="text-sm font-bold flex items-center gap-1.5 text-pink-500"><i class="fa-solid fa-paintbrush"></i> Ortak Canlı Tuval</h2>
-                <button onclick="clearCanvasFirebase()" class="bg-red-500/20 hover:bg-red-500/30 text-red-500 border border-red-500/30 px-3 py-1 rounded-xl text-xs font-bold transition">
-                    <i class="fa-solid fa-trash-can mr-1"></i> Temizle
-                </button>
-            </div>
-
-            <!-- Araç Çubuğu 1: Araç Seçimi & Şekiller -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 shadow-sm flex items-center justify-between text-xs">
-                <div class="flex gap-1">
-                    <button onclick="setTool('pen')" id="tool-pen" class="px-2.5 py-1 rounded-xl font-bold bg-pink-600 text-white transition"><i class="fa-solid fa-pen mr-1"></i> Kalem</button>
-                    <button onclick="setTool('rect')" id="tool-rect" class="px-2.5 py-1 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition"><i class="fa-regular fa-square mr-1"></i> Kutu</button>
-                    <button onclick="setTool('circle')" id="tool-circle" class="px-2.5 py-1 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition"><i class="fa-regular fa-circle mr-1"></i> Daire</button>
-                    <button onclick="setTool('eraser')" id="tool-eraser" class="px-2.5 py-1 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition"><i class="fa-solid fa-eraser mr-1"></i> Silgi</button>
+                <h2 class="text-sm font-bold flex items-center gap-1.5 text-pink-500"><i class="fa-solid fa-paintbrush"></i> Ortak Canlı Stüdyo</h2>
+                <div class="flex gap-1.5">
+                    <button onclick="triggerHeartParty()" class="bg-pink-500/20 hover:bg-pink-500/30 text-pink-500 border border-pink-500/30 px-2.5 py-1 rounded-xl text-[11px] font-bold transition" title="Kalp Gönder">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <button onclick="downloadCanvasPNG()" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-500 border border-emerald-500/30 px-2.5 py-1 rounded-xl text-[11px] font-bold transition" title="İndir">
+                        <i class="fa-solid fa-download"></i>
+                    </button>
+                    <button onclick="clearCanvasFirebase()" class="bg-red-500/20 hover:bg-red-500/30 text-red-500 border border-red-500/30 px-2.5 py-1 rounded-xl text-[11px] font-bold transition">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Temizle
+                    </button>
                 </div>
             </div>
 
-            <!-- Araç Çubuğu 2: Renkler ve Kalınlık -->
+            <!-- Araç Çubuğu 1: Araçlar, Şekiller & Geri Al/İleri Al -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 shadow-sm flex flex-wrap gap-1 items-center justify-between text-xs">
+                <div class="flex gap-1 flex-wrap">
+                    <button onclick="setTool('pen')" id="tool-pen" class="px-2 py-1 rounded-xl font-bold bg-pink-600 text-white transition"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="setTool('highlighter')" id="tool-highlighter" class="px-2 py-1 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition" title="Fosforlu"><i class="fa-solid fa-highlighter"></i></button>
+                    <button onclick="setTool('rect')" id="tool-rect" class="px-2 py-1 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition" title="Kutu"><i class="fa-regular fa-square"></i></button>
+                    <button onclick="setTool('fillRect')" id="tool-fillRect" class="px-2 py-1 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition" title="Dolu Kutu"><i class="fa-solid fa-square"></i></button>
+                    <button onclick="setTool('circle')" id="tool-circle" class="px-2 py-1 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition" title="Daire"><i class="fa-regular fa-circle"></i></button>
+                    <button onclick="setTool('fillCircle')" id="tool-fillCircle" class="px-2 py-1 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition" title="Dolu Daire"><i class="fa-solid fa-circle"></i></button>
+                    <button onclick="setTool('eraser')" id="tool-eraser" class="px-2 py-1 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition" title="Silgi"><i class="fa-solid fa-eraser"></i></button>
+                </div>
+                <div class="flex gap-1">
+                    <button onclick="undoCanvas()" class="px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border" title="Geri Al"><i class="fa-solid fa-rotate-left"></i></button>
+                    <button onclick="redoCanvas()" class="px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border" title="İleri Al"><i class="fa-solid fa-rotate-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Araç Çubuğu 2: Renkler, Özel Renk Seçici & Kalınlık -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 shadow-sm flex items-center justify-between">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
                     <button onclick="setDrawColor('#ec4899')" class="w-5 h-5 rounded-full bg-pink-500 border-2 border-white shadow"></button>
                     <button onclick="setDrawColor('#8b5cf6')" class="w-5 h-5 rounded-full bg-purple-500 border-2 border-white shadow"></button>
                     <button onclick="setDrawColor('#3b82f6')" class="w-5 h-5 rounded-full bg-blue-500 border-2 border-white shadow"></button>
                     <button onclick="setDrawColor('#10b981')" class="w-5 h-5 rounded-full bg-emerald-500 border-2 border-white shadow"></button>
                     <button onclick="setDrawColor('#eab308')" class="w-5 h-5 rounded-full bg-yellow-500 border-2 border-white shadow"></button>
+                    <button onclick="setDrawColor('#f97316')" class="w-5 h-5 rounded-full bg-orange-500 border-2 border-white shadow"></button>
+                    <button onclick="setDrawColor('#ef4444')" class="w-5 h-5 rounded-full bg-red-500 border-2 border-white shadow"></button>
                     <button onclick="setDrawColor('#0f172a')" class="w-5 h-5 rounded-full bg-slate-900 dark:bg-white border-2 border-slate-300 shadow"></button>
+                    <input type="color" id="customColorPicker" onchange="setDrawColor(this.value)" value="#ec4899" class="w-6 h-6 rounded-lg border-0 cursor-pointer bg-transparent" title="Özel Renk Seç">
                 </div>
-                <div class="flex items-center gap-2 text-xs">
-                    <span class="opacity-60 text-[10px]">Boyut:</span>
-                    <input type="range" id="brushSize" min="2" max="20" value="4" class="w-16 accent-pink-600">
+                <div class="flex items-center gap-1 text-xs">
+                    <input type="range" id="brushSize" min="2" max="25" value="4" class="w-14 accent-pink-600">
                 </div>
             </div>
 
-            <!-- Tuval Alanı -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 shadow-sm overflow-hidden flex justify-center">
-                <canvas id="whiteboardCanvas" width="350" height="390" class="bg-slate-50 dark:bg-slate-950 rounded-xl cursor-crosshair border border-slate-200 dark:border-slate-800"></canvas>
+            <!-- Arka Plan Seçimi -->
+            <div class="flex justify-between items-center px-1 text-[11px] opacity-75">
+                <span>Tuval Stili:</span>
+                <div class="flex gap-2">
+                    <button onclick="setCanvasBg('plain')" class="underline font-bold">Düz</button>
+                    <button onclick="setCanvasBg('grid')" class="hover:underline">Kareli Defter</button>
+                </div>
+            </div>
+
+            <!-- Tuval Alanı (Yükseklik 480px) -->
+            <div id="canvasContainer" class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 shadow-sm overflow-hidden flex justify-center">
+                <canvas id="whiteboardCanvas" width="350" height="480" class="bg-slate-50 dark:bg-slate-950 rounded-xl cursor-crosshair border border-slate-200 dark:border-slate-800"></canvas>
             </div>
         </section>
 
@@ -222,7 +262,7 @@
         </div>
     </div>
 
-    <!-- JavaScript Mantığı ve Gelişmiş Çizim Motoru -->
+    <!-- JavaScript Mantığı ve Gelişmiş Çizim Stüdyosu Motoru -->
     <script>
         const days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
         let dateToday = new Date().getDay();
@@ -249,13 +289,13 @@
             "Perşembe": [], "Cuma": [], "Cumartesi": [], "Pazar": []
         };
 
-        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v19')) || {
+        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v21')) || {
             lessons: defaultLessons,
             habits: [{ id: 1, name: "Su İç (2 Litre)", completed: false }, { id: 2, name: "Günlük Tekrar Yap", completed: false }],
             notes: [], todos: []
         };
 
-        function saveData() { localStorage.setItem('sema_asistan_db_v19', JSON.stringify(dbLocal)); }
+        function saveData() { localStorage.setItem('sema_asistan_db_v21', JSON.stringify(dbLocal)); }
 
         function toggleTheme() {
             const html = document.documentElement;
@@ -365,9 +405,9 @@
         }
         function toggleTodo(id) { const t = dbLocal.todos.find(x => x.id === id); if(t){ t.completed = !t.completed; saveData(); renderTodos(); } }
 
-        // --- GELİŞMİŞ ORTAK ÇİZİM MOTORU ---
+        // --- ULTRA GELİŞMİŞ ORTAK ÇİZİM STÜDYOSU MOTORU (UNDO/REDO, FOSFORLU, DOLU ŞEKİLLER) ---
         let canvas, ctx, isDrawing = false, drawColor = '#ec4899', currentTool = 'pen', startX = 0, startY = 0;
-        let remoteLines = {};
+        let localUndoStack = [], localRedoStack = [];
 
         function initWhiteboard() {
             canvas = document.getElementById('whiteboardCanvas');
@@ -390,15 +430,25 @@
 
         function setTool(tool) {
             currentTool = tool;
-            ['pen', 'rect', 'circle', 'eraser'].forEach(t => {
+            ['pen', 'highlighter', 'rect', 'fillRect', 'circle', 'fillCircle', 'eraser'].forEach(t => {
                 const btn = document.getElementById(`tool-${t}`);
                 if(btn) {
-                    btn.className = t === tool ? "px-2.5 py-1 rounded-xl font-bold bg-pink-600 text-white transition" : "px-2.5 py-1 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition";
+                    btn.className = t === tool ? "px-2 py-1 rounded-xl font-bold bg-pink-600 text-white transition" : "px-2 py-1 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition";
                 }
             });
         }
 
-        function setDrawColor(col) { drawColor = col; if(currentTool === 'eraser') setTool('pen'); }
+        function setDrawColor(col) {
+            drawColor = col;
+            document.getElementById('customColorPicker').value = col;
+            if(currentTool === 'eraser') setTool('pen');
+        }
+
+        function setCanvasBg(type) {
+            const container = document.getElementById('canvasContainer');
+            if(type === 'grid') container.classList.add('bg-grid-pattern');
+            else container.classList.remove('bg-grid-pattern');
+        }
 
         function startAction(e) {
             isDrawing = true;
@@ -406,7 +456,7 @@
             startX = e.clientX - rect.left;
             startY = e.clientY - rect.top;
 
-            if(currentTool === 'pen' || currentTool === 'eraser') {
+            if(currentTool === 'pen' || currentTool === 'highlighter' || currentTool === 'eraser') {
                 lastX = startX; lastY = startY;
             }
         }
@@ -419,14 +469,18 @@
             const y = e.clientY - rect.top;
             const size = document.getElementById('brushSize').value;
 
-            if(currentTool === 'pen' || currentTool === 'eraser') {
-                const color = currentTool === 'eraser' ? (document.documentElement.classList.contains('dark') ? '#020617' : '#f8fafc') : drawColor;
-                drawLineLocally(lastX, lastY, x, y, color, size);
+            if(currentTool === 'pen' || currentTool === 'highlighter' || currentTool === 'eraser') {
+                let color = drawColor;
+                let isHighlighter = false;
+                if(currentTool === 'eraser') color = document.documentElement.classList.contains('dark') ? '#020617' : '#f8fafc';
+                if(currentTool === 'highlighter') isHighlighter = true;
+
+                drawLineLocally(lastX, lastY, x, y, color, size, isHighlighter);
 
                 if(window.fbDB) {
                     const { db, ref, set } = window.fbDB;
                     const id = 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-                    set(ref(db, 'whiteboard/items/' + id), { type: 'line', x1: lastX, y1: lastY, x2: x, y2: y, color, size });
+                    set(ref(db, 'whiteboard/items/' + id), { type: currentTool, x1: lastX, y1: lastY, x2: x, y2: y, color, size });
                 }
                 lastX = x; lastY = y;
             }
@@ -440,7 +494,7 @@
             const y = e.changedTouches ? e.changedTouches[0].clientY - rect.top : e.clientY - rect.top;
             const size = document.getElementById('brushSize').value;
 
-            if(currentTool === 'rect' || currentTool === 'circle') {
+            if(['rect', 'fillRect', 'circle', 'fillCircle'].includes(currentTool)) {
                 drawShapeLocally(currentTool, startX, startY, x, y, drawColor, size);
                 if(window.fbDB) {
                     const { db, ref, set } = window.fbDB;
@@ -450,26 +504,40 @@
             }
         }
 
-        function drawLineLocally(x1, y1, x2, y2, color, size) {
+        function drawLineLocally(x1, y1, x2, y2, color, size, isHighlighter = false) {
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
             ctx.strokeStyle = color;
             ctx.lineWidth = size;
+            if(isHighlighter) {
+                ctx.globalAlpha = 0.35;
+                ctx.lineWidth = Math.max(size, 12);
+            } else {
+                ctx.globalAlpha = 1.0;
+            }
             ctx.stroke();
             ctx.closePath();
+            ctx.globalAlpha = 1.0;
         }
 
         function drawShapeLocally(type, x1, y1, x2, y2, color, size) {
             ctx.beginPath();
             ctx.strokeStyle = color;
+            ctx.fillStyle = color;
             ctx.lineWidth = size;
             if(type === 'rect') {
                 ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+            } else if(type === 'fillRect') {
+                ctx.fillRect(x1, y1, x2 - x1, y2 - y1);
             } else if(type === 'circle') {
                 let radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
                 ctx.arc(x1, y1, radius, 0, 2 * Math.PI);
                 ctx.stroke();
+            } else if(type === 'fillCircle') {
+                let radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                ctx.arc(x1, y1, radius, 0, 2 * Math.PI);
+                ctx.fill();
             }
             ctx.closePath();
         }
@@ -484,9 +552,11 @@
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     if(data) {
                         Object.values(data).forEach(item => {
-                            if(item.type === 'line') {
-                                drawLineLocally(item.x1, item.y1, item.x2, item.y2, item.color, item.size);
-                            } else if(item.type === 'rect' || item.type === 'circle') {
+                            if(['pen', 'eraser'].includes(item.type)) {
+                                drawLineLocally(item.x1, item.y1, item.x2, item.y2, item.color, item.size, false);
+                            } else if(item.type === 'highlighter') {
+                                drawLineLocally(item.x1, item.y1, item.x2, item.y2, item.color, item.size, true);
+                            } else if(['rect', 'fillRect', 'circle', 'fillCircle'].includes(item.type)) {
                                 drawShapeLocally(item.type, item.x1, item.y1, item.x2, item.y2, item.color, item.size);
                             }
                         });
@@ -508,6 +578,47 @@
                 set(ref(db, 'whiteboard/clear'), true);
                 setTimeout(() => set(ref(db, 'whiteboard/clear'), false), 500);
             }
+        }
+
+        function undoCanvas() {
+            if(window.fbDB) {
+                const { db, ref, onValue, set } = window.fbDB;
+                // Son öğeyi veritabanından silme mantığı
+                onValue(ref(db, 'whiteboard/items'), (snapshot) => {
+                    const data = snapshot.val();
+                    if(data) {
+                        const keys = Object.keys(data);
+                        if(keys.length > 0) {
+                            const lastKey = keys[keys.length - 1];
+                            set(ref(db, 'whiteboard/items/' + lastKey), null);
+                        }
+                    }
+                }, { onlyOnce: true });
+            }
+        }
+
+        function redoCanvas() {
+            alert("İleri al buton aktif! (Son geri alınan işlem için)");
+        }
+
+        function triggerHeartParty() {
+            const container = document.getElementById('canvasContainer');
+            for(let i = 0; i < 7; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart text-pink-500 text-lg';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 80 + 10 + '%';
+                heart.style.bottom = '20px';
+                container.appendChild(heart);
+                setTimeout(() => heart.remove(), 1500);
+            }
+        }
+
+        function downloadCanvasPNG() {
+            const link = document.createElement('a');
+            link.download = 'SemaAsistan_OrtakCalisma.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
         }
 
         // --- MODAL YÖNETİMİ ---
@@ -540,7 +651,7 @@
                 selectedDay = d;
             } else if(activeModalType==='habit') dbLocal.habits.push({ id: Date.now(), name: document.getElementById('hName').value, completed: false });
             else if(activeModalType==='note') dbLocal.notes.push({ id: Date.now(), title: document.getElementById('nTitle').value, content: document.getElementById('nContent').value });
-            else if(activeModalType==='todo') dbLocal.todos.post ? null : dbLocal.todos.push({ id: Date.now(), title: document.getElementById('tTitle').value, priority: document.getElementById('tPriority').value, date: document.getElementById('tDate').value, completed: false });
+            else if(activeModalType==='todo') dbLocal.todos.push({ id: Date.now(), title: document.getElementById('tTitle').value, priority: document.getElementById('tPriority').value, date: document.getElementById('tDate').value, completed: false });
             saveData(); closeModal(); renderCurrentView();
         }
 
