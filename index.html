@@ -19,10 +19,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
-        @keyframes pulse-slow {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-        .game-card { animation: pulse-slow 3s infinite ease-in-out; }
+        @keyframes wheelSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(1440deg); }
+        }
+        .spinning { animation: wheelSpin 3s cubic-bezier(0.15, 0.9, 0.2, 1) forwards; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-28 transition-colors duration-300">
@@ -144,7 +145,7 @@
             <div id="todosList" class="space-y-3"></div>
         </section>
 
-        <!-- 6. BAHÇE VE ÇİÇEKÇİ DÜKKANI (GERÇEK OYUN ARAYÜZÜ) -->
+        <!-- 6. BAHÇE VE ÇİÇEKÇİ DÜKKANI (EN GELİŞMİŞ OYUN) -->
         <section id="tab-garden" class="space-y-4 hidden">
             <!-- Oyun HUD (Üst Bilgi Paneli) -->
             <div class="bg-gradient-to-r from-amber-900 to-amber-950 border border-amber-800/50 rounded-2xl p-4 text-white shadow-lg space-y-2">
@@ -162,14 +163,20 @@
                     <div id="xpBar" class="bg-gradient-to-r from-amber-400 to-pink-500 h-full transition-all duration-500" style="width: 0%"></div>
                 </div>
                 <!-- Çark Butonu -->
-                <button onclick="spinWheel()" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 text-white font-bold py-2 rounded-xl text-xs shadow-md flex items-center justify-center gap-2 transition active:scale-95">
-                    <i class="fa-solid fa-dharmachakra animate-spin"></i> Günlük Şans Çarkını Çevir! 🎡
+                <button onclick="openWheelModal()" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 text-white font-bold py-2 rounded-xl text-xs shadow-md flex items-center justify-center gap-2 transition active:scale-95">
+                    <i class="fa-solid fa-dharmachakra"></i> Günlük Şans Çarkını Aç! 🎡
                 </button>
             </div>
 
+            <!-- Dekoratif Süsler Alanı -->
+            <div id="gardenDecorations" class="flex gap-2 overflow-x-auto pb-1 text-xs"></div>
+
             <!-- Tarlalar (Toprak Parselleri) -->
             <div class="space-y-2">
-                <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Bahçe Parselleri (Tarlalar)</h3>
+                <div class="flex justify-between items-center">
+                    <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Bahçe Parselleri (Tarlalar)</h3>
+                    <button onclick="openDecorShop()" class="text-[10px] text-pink-500 font-bold hover:underline"><i class="fa-solid fa-store"></i> Süs & Dekor Mağazası</button>
+                </div>
                 <div id="gardenPlots" class="grid grid-cols-2 gap-2.5"></div>
             </div>
 
@@ -227,6 +234,38 @@
         </div>
     </div>
 
+    <!-- Gerçek Görsel Şans Çarkı Modalı -->
+    <div id="wheelModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-pink-500/30 w-full max-w-xs rounded-3xl p-6 shadow-2xl text-center space-y-4 text-white relative">
+            <button onclick="closeWheelModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-base font-extrabold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">Günlük Şans Çarkı 🎡</h3>
+            <p class="text-[11px] opacity-70">Günde 1 kez çevir, harika ödüller kazan!</p>
+            
+            <!-- Görsel Çark Çizimi -->
+            <div class="relative w-44 h-44 mx-auto my-3 flex items-center justify-center">
+                <div id="visualWheel" class="w-full h-full rounded-full border-4 border-pink-500/50 bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 shadow-xl flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-star text-white text-3xl drop-shadow-md"></i>
+                </div>
+                <div class="absolute -top-3 text-pink-400 text-xl drop-shadow"><i class="fa-solid fa-caret-down"></i></div>
+            </div>
+
+            <div id="wheelResultText" class="text-xs font-bold text-amber-300 min-h-[20px]"></div>
+            <button id="spinBtn" onclick="executeWheelSpin()" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 text-white font-extrabold py-2.5 rounded-xl text-xs shadow-lg active:scale-95 transition">Şimdi Çevir! 🎯</button>
+        </div>
+    </div>
+
+    <!-- Dekor Mağazası Modalı -->
+    <div id="decorShopModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl text-slate-900 dark:text-slate-100 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-bold flex items-center gap-1.5 text-pink-500"><i class="fa-solid fa-store"></i> Bahçe Dekorasyon Mağazası</h3>
+                <button onclick="closeDecorShop()" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <div class="text-xs opacity-70">Altınlarınla bahçeni sevimli süslerle donat!</div>
+            <div id="decorShopList" class="space-y-2 max-h-[250px] overflow-y-auto"></div>
+        </div>
+    </div>
+
     <!-- JavaScript Mantığı -->
     <script>
         const days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
@@ -263,7 +302,30 @@
             "Orkide": { cost: 60, reward: 200, time: 60, xp: 120, icon: "fa-tree" }
         };
 
-        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v11')) || {
+        // Genişletilmiş Müşteri Havuzu
+        const customerPool = [
+            { name: "Ahmet Amca", isVip: false },
+            { name: "Ayşe Teyze", isVip: false },
+            { name: "Mehmet Bey", isVip: false },
+            { name: "Zeynep Öğrenci", isVip: false },
+            { name: "Fatma Nine", isVip: false },
+            { name: "Can (Romantik Genç)", isVip: false },
+            { name: "Elif (Çiçek Sever)", isVip: false },
+            { name: "Müge Hanım", isVip: true },
+            { name: "Belediye Başkanı", isVip: true },
+            { name: "Mahalle Muhtarı", isVip: true },
+            { name: "Gizemli Gezgin", isVip: true }
+        ];
+
+        // Dekorasyon Kataloğu
+        const decorCatalog = [
+            { id: 'cat', name: 'Sevimli Bahçe Kedisi 🐱', cost: 150, icon: 'fa-cat' },
+            { id: 'fountain', name: 'Misket Su Çeşmesi ⛲', cost: 300, icon: 'fa-fountain' },
+            { id: 'bench', name: 'Pembe Ahşap Bank 🛋️', cost: 200, icon: 'fa-chair' },
+            { id: 'lights', name: 'Peri Bahçe Işıkları 💡', cost: 250, icon: 'fa-lightbulb' }
+        ];
+
+        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v12')) || {
             lessons: defaultLessons,
             habits: [
                 { id: 1, name: "Su İç (2 Litre)", completed: false },
@@ -272,7 +334,7 @@
             notes: [],
             todos: [],
             garden: {
-                coins: 150,
+                coins: 200,
                 xp: 0,
                 level: 1,
                 lastSpinDate: "",
@@ -283,12 +345,13 @@
                     { id: 4, state: 'locked', flower: null, finishTime: 0 }
                 ],
                 inventory: { Papatya: 3, Gül: 1, Lale: 0, Lavanta: 0, Orkide: 0 },
-                customer: { name: "Ahmet Amca", want: "Papatya", count: 2, reward: 30, isVip: false }
+                customer: { name: "Ahmet Amca", want: "Papatya", count: 2, reward: 30, isVip: false },
+                decorations: []
             }
         };
 
         function saveData() {
-            localStorage.setItem('sema_asistan_db_v11', JSON.stringify(db));
+            localStorage.setItem('sema_asistan_db_v12', JSON.stringify(db));
         }
 
         function toggleTheme() {
@@ -566,7 +629,7 @@
             });
         }
 
-        // --- GERÇEK OYUN ARAYÜZÜ VE TARLA MANTIĞI ---
+        // --- GELİŞMİŞ OYUN VE DEKORASYON MANTIĞI ---
         function renderGarden() {
             document.getElementById('gardenCoins').innerText = db.garden.coins;
             document.getElementById('gardenLevel').innerText = db.garden.level;
@@ -576,12 +639,25 @@
             const xpPercent = Math.min(100, (db.garden.xp / xpNeeded) * 100);
             document.getElementById('xpBar').style.width = `${xpPercent}%`;
 
+            // Dekorasyonlar
+            const decorContainer = document.getElementById('gardenDecorations');
+            if (db.garden.decorations.length === 0) {
+                decorContainer.innerHTML = `<span class="text-[10px] opacity-50 italic">Henüz bahçede süs eşyası yok. Mağazadan alabilirsin!</span>`;
+            } else {
+                decorContainer.innerHTML = '';
+                db.garden.decorations.forEach(dId => {
+                    const decor = decorCatalog.find(x => x.id === dId);
+                    if (decor) {
+                        decorContainer.innerHTML += `<div class="bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl font-medium text-amber-300 shrink-0"><i class="fa-solid ${decor.icon} mr-1"></i> ${decor.name}</div>`;
+                    }
+                });
+            }
+
             // Parseller (Tarlalar)
             const plotsContainer = document.getElementById('gardenPlots');
             plotsContainer.innerHTML = '';
             
             db.garden.plots.forEach(plot => {
-                // Zaman kontrolü (Büyüme bittiyse otomatik hazır yap)
                 if (plot.state === 'growing' && Date.now() >= plot.finishTime) {
                     plot.state = 'ready';
                     saveData();
@@ -650,6 +726,84 @@
             for (let [flower, count] of Object.entries(db.garden.inventory)) {
                 invContainer.innerHTML += `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2 rounded-xl text-center shadow-sm">🌸 <span class="font-bold">${flower}</span><br><strong class="text-pink-500">${count} adet</strong></div>`;
             }
+        }
+
+        // --- DEKORASYON MAĞAZASI ---
+        function openDecorShop() {
+            document.getElementById('decorShopModal').classList.remove('hidden');
+            const list = document.getElementById('decorShopList');
+            list.innerHTML = '';
+            decorCatalog.forEach(d => {
+                const sahip = db.garden.decorations.includes(d.id);
+                list.innerHTML += `
+                    <div class="bg-slate-100 dark:bg-slate-800 p-3 rounded-xl flex justify-between items-center border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid ${d.icon} text-pink-500 text-lg"></i>
+                            <div>
+                                <h4 class="text-xs font-bold">${d.name}</h4>
+                                <span class="text-[10px] opacity-60">${d.cost} Altın</span>
+                            </div>
+                        </div>
+                        ${sahip ? '<span class="text-[10px] text-emerald-500 font-bold">Sahipsin ✓</span>' : `<button onclick="buyDecor('${d.id}', ${d.cost})" class="bg-pink-600 text-white text-[10px] px-3 py-1 rounded-lg font-bold">Satın Al</button>`}
+                    </div>`;
+            });
+        }
+
+        function closeDecorShop() { document.getElementById('decorShopModal').classList.add('hidden'); }
+
+        function buyDecor(id, cost) {
+            if (db.garden.coins >= cost) {
+                db.garden.coins -= cost;
+                db.garden.decorations.push(id);
+                saveData();
+                openDecorShop();
+                renderGarden();
+            } else {
+                alert("Yeterli altının yok!");
+            }
+        }
+
+        // --- GERÇEK ÇARK ANIMASYONLARI ---
+        function openWheelModal() {
+            const today = new Date().toDateString();
+            if (db.garden.lastSpinDate === today) {
+                alert("Bugünlük çark hakkını kullandın! Yarın tekrar bekleriz. 🎡");
+                return;
+            }
+            document.getElementById('wheelResultText').innerText = "";
+            document.getElementById('spinBtn').disabled = false;
+            document.getElementById('visualWheel').classList.remove('spinning');
+            document.getElementById('wheelModal').classList.remove('hidden');
+        }
+
+        function closeWheelModal() { document.getElementById('wheelModal').classList.add('hidden'); }
+
+        function executeWheelSpin() {
+            const today = new Date().toDateString();
+            db.garden.lastSpinDate = today;
+            document.getElementById('spinBtn').disabled = true;
+
+            const wheel = document.getElementById('visualWheel');
+            wheel.classList.add('spinning');
+
+            setTimeout(() => {
+                const rewards = [
+                    { type: 'coins', val: 50, text: "50 Altın Para Kazandın! 🪙" },
+                    { type: 'coins', val: 120, text: "120 Büyük Altın Ödülü! 💰" },
+                    { type: 'flower', name: 'Gül', count: 3, text: "3 Adet Gül Hediyesi! 🌹" },
+                    { type: 'flower', name: 'Orkide', count: 1, text: "Nadir 1 Adet Orkide! 🌸" },
+                    { type: 'xp', val: 50, text: "50 Ekstra XP Puanı! ✨" }
+                ];
+                const won = rewards[Math.floor(Math.random() * rewards.length)];
+
+                if (won.type === 'coins') db.garden.coins += won.val;
+                else if (won.type === 'xp') addXp(won.val);
+                else if (won.type === 'flower') db.garden.inventory[won.name] = (db.garden.inventory[won.name] || 0) + won.count;
+
+                saveData();
+                renderGarden();
+                document.getElementById('wheelResultText').innerText = won.text;
+            }, 3000);
         }
 
         function unlockPlot(id) {
@@ -721,15 +875,13 @@
         function generateNewCustomer() {
             const flowers = Object.keys(flowerTypes);
             const randomFlower = flowers[Math.floor(Math.random() * flowers.length)];
-            const isVip = Math.random() < 0.25;
+            const rawCust = customerPool[Math.floor(Math.random() * customerPool.length)];
+            const isVip = rawCust.isVip;
             const count = isVip ? Math.floor(Math.random() * 3) + 3 : Math.floor(Math.random() * 2) + 1;
             const multiplier = isVip ? 3.5 : 1;
             const reward = Math.round(flowerTypes[randomFlower].reward * count * multiplier);
             
-            const names = isVip ? ["Müge Hanım (VIP)", "Belediye Başkanı (VIP)", "Zengin Esnaf (VIP)"] : ["Ahmet Amca", "Ayşe Teyze", "Mehmet Bey", "Zeynep Öğrenci", "Fatma Nine"];
-            const name = names[Math.floor(Math.random() * names.length)];
-
-            db.garden.customer = { name, want: randomFlower, count, reward, isVip };
+            db.garden.customer = { name: rawCust.name, want: randomFlower, count, reward, isVip };
         }
 
         function addXp(amount) {
@@ -742,34 +894,7 @@
             }
         }
 
-        function spinWheel() {
-            const today = new Date().toDateString();
-            if (db.garden.lastSpinDate === today) {
-                alert("Bugünlük çark hakkını kullandın! Yarın tekrar gel. 🎡");
-                return;
-            }
-
-            db.garden.lastSpinDate = today;
-            
-            const rewards = [
-                { type: 'coins', val: 50, text: "50 Altın Para!" },
-                { type: 'coins', val: 120, text: "120 Büyük Altın Ödülü!" },
-                { type: 'flower', name: 'Gül', count: 3, text: "3 Adet Gül Hediyesi!" },
-                { type: 'flower', name: 'Orkide', count: 1, text: "Nadir 1 Adet Orkide!" },
-                { type: 'xp', val: 50, text: "50 Ekstra XP Puanı!" }
-            ];
-            
-            const won = rewards[Math.floor(Math.random() * rewards.length)];
-            if (won.type === 'coins') db.garden.coins += won.val;
-            else if (won.type === 'xp') addXp(won.val);
-            else if (won.type === 'flower') db.garden.inventory[won.name] = (db.garden.inventory[won.name] || 0) + won.count;
-
-            saveData();
-            renderGarden();
-            alert(`🎡 Çark Çevrildi!\n\nÇıkan Ödül: ${won.text} 🎉`);
-        }
-
-        // Otomatik Geri Sayım Döngüsü (Her saniye tarlaları güncelle)
+        // Otomatik Geri Sayım Döngüsü
         setInterval(() => {
             if (currentTab === 'garden') {
                 renderGarden();
