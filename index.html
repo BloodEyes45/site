@@ -15,6 +15,31 @@
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK'ları -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDQR3SoBD0fygIJT3PRudDQ-2XjuphOHKE",
+            authDomain: "semaasistan-9dca3.firebaseapp.com",
+            databaseURL: "https://semaasistan-9dca3-default-rtdb.firebaseio.com",
+            projectId: "semaasistan-9dca3",
+            storageBucket: "semaasistan-9dca3.firebasestorage.app",
+            messagingSenderId: "132361761020",
+            appId: "1:132361761020:web:f41854b563182ca44ce779",
+            measurementId: "G-E8NYQYPCNR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Global Çizim Değişkenleri
+        window.fbDB = { db, ref, set, onValue, remove };
+        window.initWhiteboardListeners();
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -26,6 +51,7 @@
         .animate-fade-in {
             animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+        canvas { touch-action: none; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-28 transition-colors duration-300">
@@ -74,32 +100,6 @@
                 <h3 class="text-xs font-bold uppercase tracking-wider opacity-60">Bugünün Özeti</h3>
                 <div id="todaySummaryList" class="space-y-2"></div>
             </div>
-
-            <!-- Akordeon Hesaplama Aracı -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
-                <button onclick="toggleAccordion('calcAccordion')" class="w-full flex justify-between items-center text-xs font-bold text-pink-500">
-                    <span class="flex items-center gap-2"><i class="fa-solid fa-calculator"></i> Not & Geçme Hesaplayıcı</span>
-                    <i id="calcIcon" class="fa-solid fa-chevron-down text-[10px] transition-transform"></i>
-                </button>
-                <div id="calcAccordion" class="hidden mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3">
-                    <div>
-                        <label class="block text-[10px] font-medium opacity-60 mb-1">VİZE NOTU</label>
-                        <input type="number" id="vizeNot" placeholder="Örn: 70" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs focus:outline-none focus:border-pink-500">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-[10px] font-medium opacity-60 mb-1">VİZE ETKİSİ (%)</label>
-                            <input type="number" id="vizeOran" value="40" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-medium opacity-60 mb-1">GEÇME NOTU</label>
-                            <input type="number" id="gecmeNotu" value="50" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs">
-                        </div>
-                    </div>
-                    <button onclick="calculatePassingScore()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-medium py-2 rounded-xl text-xs transition">Finalden Kaç Almalıyım?</button>
-                    <div id="calcResult" class="text-center pt-1 text-xs font-bold text-pink-500"></div>
-                </div>
-            </div>
         </section>
 
         <!-- 2. DERS PROGRAMI SEKMESİ -->
@@ -147,7 +147,7 @@
             <div id="todosList" class="space-y-3"></div>
         </section>
 
-        <!-- 6. HARCAMA & BÜTÇE TAKİBİ (HAFTALIK ÖĞRENCİ CÜZDANI & KATEGORİ İNCELEME) -->
+        <!-- 6. HARCAMA & BÜTÇE TAKİBİ -->
         <section id="tab-budget" class="space-y-4 hidden animate-fade-in">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold flex items-center gap-1.5 text-pink-500"><i class="fa-solid fa-wallet"></i> Haftalık Bütçe & Cüzdan</h2>
@@ -156,7 +156,6 @@
                 </button>
             </div>
 
-            <!-- Bütçe Özet Kartları -->
             <div class="grid grid-cols-3 gap-2">
                 <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 text-center shadow-sm">
                     <span class="text-[10px] opacity-60 uppercase font-semibold">Net Bütçe</span>
@@ -172,7 +171,6 @@
                 </div>
             </div>
 
-            <!-- Bütçe Belirleme Alanı -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2">
                 <label class="block text-[10px] font-bold uppercase tracking-wider opacity-60">Bu Haftaki Ana Bütçen</label>
                 <div class="flex gap-2">
@@ -181,7 +179,6 @@
                 </div>
             </div>
 
-            <!-- İşlemleri Filtreleme (Kategori & Tür İnceleme) -->
             <div class="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar" id="budgetFilterTabs">
                 <button onclick="setBudgetFilter('Tümü')" class="px-3 py-1 rounded-xl text-[10px] font-bold bg-pink-600 text-white transition whitespace-nowrap">Tümü</button>
                 <button onclick="setBudgetFilter('Gelir')" class="px-3 py-1 rounded-xl text-[10px] font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition whitespace-nowrap">Gelirler</button>
@@ -193,7 +190,6 @@
                 <button onclick="setBudgetFilter('Alışveriş')" class="px-3 py-1 rounded-xl text-[10px] font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition whitespace-nowrap">🛍️ Alışveriş</button>
             </div>
 
-            <!-- İşlem Geçmişi -->
             <div class="space-y-2">
                 <div class="flex justify-between items-center">
                     <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Bu Haftanın İşlemleri</h3>
@@ -202,10 +198,39 @@
                 <div id="budgetTxList" class="space-y-2"></div>
             </div>
 
-            <!-- Geçmiş Haftalar Arşivi -->
             <div class="space-y-2 pt-2">
                 <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Geçmiş Haftalar Arşivi</h3>
                 <div id="budgetArchiveList" class="space-y-2"></div>
+            </div>
+        </section>
+
+        <!-- 7. CANLI ORTAK ÇİZİM SEKMESİ (WHITEBOARD) -->
+        <section id="tab-draw" class="space-y-4 hidden animate-fade-in">
+            <div class="flex justify-between items-center">
+                <h2 class="text-sm font-bold flex items-center gap-1.5 text-pink-500"><i class="fa-solid fa-paintbrush"></i> Ortak Canlı Tuval</h2>
+                <button onclick="clearCanvasFirebase()" class="bg-red-500/20 hover:bg-red-500/30 text-red-500 border border-red-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Temizle
+                </button>
+            </div>
+
+            <!-- Çizim Araçları -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-sm flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <button onclick="setDrawColor('#ec4899')" class="w-6 h-6 rounded-full bg-pink-500 border-2 border-white shadow"></button>
+                    <button onclick="setDrawColor('#8b5cf6')" class="w-6 h-6 rounded-full bg-purple-500 border-2 border-white shadow"></button>
+                    <button onclick="setDrawColor('#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white shadow"></button>
+                    <button onclick="setDrawColor('#10b981')" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white shadow"></button>
+                    <button onclick="setDrawColor('#0f172a')" class="w-6 h-6 rounded-full bg-slate-900 dark:bg-white border-2 border-slate-300 shadow"></button>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="opacity-60">Kalınlık:</span>
+                    <input type="range" id="brushSize" min="2" max="15" value="4" class="w-20 accent-pink-600">
+                </div>
+            </div>
+
+            <!-- Tuval Alanı -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 shadow-sm overflow-hidden flex justify-center">
+                <canvas id="whiteboardCanvas" width="350" height="420" class="bg-slate-50 dark:bg-slate-950 rounded-xl cursor-crosshair border border-slate-200 dark:border-slate-800"></canvas>
             </div>
         </section>
 
@@ -232,6 +257,9 @@
             <button onclick="switchTab('budget')" id="nav-budget" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
                 <i class="fa-solid fa-wallet text-sm"></i><span class="text-[9px] font-medium">Cüzdan</span>
             </button>
+            <button onclick="switchTab('draw')" id="nav-draw" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+                <i class="fa-solid fa-paintbrush text-sm"></i><span class="text-[9px] font-medium">Çizim</span>
+            </button>
         </div>
     </nav>
 
@@ -246,7 +274,7 @@
         </div>
     </div>
 
-    <!-- JavaScript Mantığı -->
+    <!-- JavaScript Mantığı ve Çizim Motoru -->
     <script>
         const days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
         let dateToday = new Date().getDay();
@@ -258,16 +286,8 @@
         let currentBudgetFilter = 'Tümü';
 
         const categoryIcons = {
-            "Yemek": "fa-utensils",
-            "İçecek": "fa-mug-hot",
-            "Ulaşım": "fa-bus",
-            "Kırtasiye": "fa-book",
-            "Alışveriş": "fa-bag-shopping",
-            "Harçlık": "fa-hand-holding-dollar",
-            "Burs": "fa-graduation-cap",
-            "İş / Ek Gelir": "fa-briefcase",
-            "Diğer Gelir": "fa-coins",
-            "Diğer": "fa-tag"
+            "Yemek": "fa-utensils", "İçecek": "fa-mug-hot", "Ulaşım": "fa-bus", "Kırtasiye": "fa-book", "Alışveriş": "fa-bag-shopping",
+            "Harçlık": "fa-hand-holding-dollar", "Burs": "fa-graduation-cap", "İş / Ek Gelir": "fa-briefcase", "Diğer Gelir": "fa-coins", "Diğer": "fa-tag"
         };
 
         const defaultLessons = {
@@ -288,81 +308,39 @@
             "Perşembe": [], "Cuma": [], "Cumartesi": [], "Pazar": []
         };
 
-        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v17')) || {
+        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v18')) || {
             lessons: defaultLessons,
-            habits: [
-                { id: 1, name: "Su İç (2 Litre)", completed: false },
-                { id: 2, name: "Günlük Tekrar Yap", completed: false }
-            ],
-            notes: [],
-            todos: [],
-            budget: {
-                weeklyLimit: 1000,
-                lastResetWeek: getWeekNumber(new Date()),
-                transactions: [],
-                archive: []
-            }
+            habits: [{ id: 1, name: "Su İç (2 Litre)", completed: false }, { id: 2, name: "Günlük Tekrar Yap", completed: false }],
+            notes: [], todos: [],
+            budget: { weeklyLimit: 1000, lastResetWeek: getWeekNumber(new Date()), transactions: [], archive: [] }
         };
 
         function getWeekNumber(d) {
             d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
             d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
             var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-            var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
-            return `${d.getUTCFullYear()}-W${weekNo}`;
-        }
-
-        function checkWeeklyReset() {
-            const currentWeek = getWeekNumber(new Date());
-            if (db.budget.lastResetWeek !== currentWeek) {
-                if (db.budget.transactions.length > 0) {
-                    let totalInc = 0, totalExp = 0;
-                    db.budget.transactions.forEach(t => {
-                        if (t.type === 'Gelir') totalInc += Number(t.amount);
-                        else totalExp += Number(t.amount);
-                    });
-                    db.budget.archive.unshift({
-                        week: db.budget.lastResetWeek,
-                        limit: db.budget.weeklyLimit,
-                        income: totalInc,
-                        expense: totalExp,
-                        net: (db.budget.weeklyLimit + totalInc) - totalExp
-                    });
-                }
-                db.budget.transactions = [];
-                db.budget.lastResetWeek = currentWeek;
-                saveData();
-            }
+            return `${d.getUTCFullYear()}-W${Math.ceil((((d - yearStart) / 86400000) + 1)/7)}`;
         }
 
         function saveData() {
-            localStorage.setItem('sema_asistan_db_v17', JSON.stringify(db));
+            localStorage.setItem('sema_asistan_db_v18', JSON.stringify(dbLocal));
         }
 
         function toggleTheme() {
             const html = document.documentElement;
             const icon = document.getElementById('themeIcon');
             if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                html.classList.add('light');
+                html.classList.remove('dark'); html.classList.add('light');
                 icon.className = "fa-solid fa-moon text-xs";
             } else {
-                html.classList.remove('light');
-                html.classList.add('dark');
+                html.classList.remove('light'); html.classList.add('dark');
                 icon.className = "fa-solid fa-sun text-xs";
             }
         }
 
-        function toggleAccordion(id) {
-            const el = document.getElementById(id);
-            const icon = document.getElementById('calcIcon');
-            el.classList.toggle('hidden');
-            icon.style.transform = el.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
-        }
-
         function switchTab(tab) {
             currentTab = tab;
-            ['home', 'schedule', 'habits', 'notes', 'todos', 'budget'].forEach(t => {
+            ['home', 'schedule', 'habits', 'notes', 'todos', 'budget', 'draw'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
                 document.getElementById(`nav-${t}`).className = "flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition";
             });
@@ -372,64 +350,45 @@
         }
 
         function renderCurrentView() {
-            checkWeeklyReset();
             if (currentTab === 'home') { renderHome(); fetchWeatherAndCity(); updateCountdown(); }
             if (currentTab === 'schedule') { renderDays(); renderLessons(); }
             if (currentTab === 'habits') renderHabits();
             if (currentTab === 'notes') renderNotes();
             if (currentTab === 'todos') renderTodos();
             if (currentTab === 'budget') renderBudget();
+            if (currentTab === 'draw') initWhiteboard();
         }
 
         function updateCountdown() {
             const now = new Date();
             const todayName = days[currentDayIndex];
-            const todayLessons = db.lessons[todayName] || [];
-            
+            const todayLessons = dbLocal.lessons[todayName] || [];
             const curMinutes = now.getHours() * 60 + now.getMinutes();
-            let nextLesson = null;
-            let currentLesson = null;
+            let nextLesson = null, currentLesson = null;
 
             todayLessons.forEach(l => {
                 const [sH, sM] = l.start.split(':').map(Number);
                 const [eH, eM] = l.end.split(':').map(Number);
-                const sMin = sH * 60 + sM;
-                const eMin = eH * 60 + eM;
-
-                if (curMinutes >= sMin && curMinutes <= eMin) {
-                    currentLesson = l;
-                } else if (sMin > curMinutes && (!nextLesson || sMin < (parseInt(nextLesson.start.split(':')[0])*60 + parseInt(nextLesson.start.split(':')[1])))) {
-                    nextLesson = l;
-                }
+                const sMin = sH * 60 + sM, eMin = eH * 60 + eM;
+                if (curMinutes >= sMin && curMinutes <= eMin) currentLesson = l;
+                else if (sMin > curMinutes && (!nextLesson || sMin < (parseInt(nextLesson.start.split(':')[0])*60 + parseInt(nextLesson.start.split(':')[1])))) nextLesson = l;
             });
 
             const textEl = document.getElementById('countdownText');
-            if (currentLesson) {
-                textEl.innerHTML = `Şu an derste: <strong class="text-pink-500">${currentLesson.name}</strong> (${currentLesson.room || ''})`;
-            } else if (nextLesson) {
+            if (currentLesson) textEl.innerHTML = `Şu an derste: <strong class="text-pink-500">${currentLesson.name}</strong> (${currentLesson.room || ''})`;
+            else if (nextLesson) {
                 const [sH, sM] = nextLesson.start.split(':').map(Number);
                 const diff = (sH * 60 + sM) - curMinutes;
-                const saat = Math.floor(diff / 60);
-                const dakika = diff % 60;
-                let zamanStr = saat > 0 ? `${saat} saat ${dakika} dk` : `${dakika} dakika`;
-                textEl.innerHTML = `Sıradaki Ders: <strong class="text-pink-500">${nextLesson.name}</strong> (${zamanStr} kaldı)`;
-            } else {
-                textEl.innerHTML = `Bugün başka ders kalmadı! Dinlenme vakti ✨`;
-            }
+                textEl.innerHTML = `Sıradaki Ders: <strong class="text-pink-500">${nextLesson.name}</strong> (${Math.floor(diff/60) > 0 ? Math.floor(diff/60) + ' saat ' : ''}${diff%60} dk kaldı)`;
+            } else textEl.innerHTML = `Bugün başka ders kalmadı! Dinlenme vakti ✨`;
         }
 
         async function fetchWeatherAndCity() {
             try {
-                let lat = 39.1903, lon = 27.6156;
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(async pos => {
-                        await getWeatherData(pos.coords.latitude, pos.coords.longitude);
-                    }, async () => await getWeatherData(lat, lon));
-                } else { await getWeatherData(lat, lon); }
-            } catch (e) {
-                document.getElementById('weatherTemp').innerText = "22°C";
-                document.getElementById('weatherCity').innerText = "Soma, Manisa";
-            }
+                navigator.geolocation.getCurrentPosition(async pos => {
+                    getWeatherData(pos.coords.latitude, pos.coords.longitude);
+                }, () => getWeatherData(39.1903, 27.6156));
+            } catch (e) { getWeatherData(39.1903, 27.6156); }
         }
 
         async function getWeatherData(lat, lon) {
@@ -438,448 +397,213 @@
                 const data = await res.json();
                 document.getElementById('weatherTemp').innerText = `${Math.round(data.current_weather.temperature)}°C`;
                 document.getElementById('weatherCity').innerText = "Soma, Manisa";
-            } catch (e) {
-                document.getElementById('weatherTemp').innerText = "20°C";
-                document.getElementById('weatherCity').innerText = "Soma, Manisa";
-            }
+            } catch (e) { document.getElementById('weatherTemp').innerText = "20°C"; }
         }
 
         function renderHome() {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('welcomeDate').innerText = new Date().toLocaleDateString('tr-TR', options);
-            
+            document.getElementById('welcomeDate').innerText = new Date().toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             const container = document.getElementById('todaySummaryList');
-            const todayName = days[currentDayIndex];
-            const todayLessons = db.lessons[todayName] || [];
-            
-            let html = '';
-            if (todayLessons.length === 0) {
-                html += `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center text-xs opacity-60">Bugün planlanmış ders bulunmuyor. Harika gün! 🎉</div>`;
-            } else {
-                todayLessons.forEach(item => {
-                    html += `
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
-                            <div>
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-500 border border-pink-500/20">${item.start} - ${item.end}</span>
-                                <h4 class="text-sm font-bold mt-1">${item.name}</h4>
-                            </div>
-                            ${item.room ? `<span class="text-[10px] opacity-60"><i class="fa-solid fa-location-dot mr-1"></i>${item.room}</span>` : ''}
-                        </div>`;
-                });
-            }
-            container.innerHTML = html;
+            const list = dbLocal.lessons[days[currentDayIndex]] || [];
+            container.innerHTML = list.length === 0 ? `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center text-xs opacity-60">Bugün ders bulunmuyor. 🎉</div>` :
+                list.map(i => `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm"><div><span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-500">${i.start} - ${i.end}</span><h4 class="text-sm font-bold mt-1">${i.name}</h4></div>${i.room?`<span class="text-[10px] opacity-60">${i.room}</span>`:''}</div>`).join('');
         }
 
         function renderDays() {
-            const container = document.getElementById('dayTabs');
-            container.innerHTML = '';
-            days.forEach(day => {
-                const isActive = day === selectedDay;
-                container.innerHTML += `
-                    <button onclick="selectDay('${day}')" class="px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition ${isActive ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/30' : 'bg-white dark:bg-slate-900 opacity-70 border border-slate-200 dark:border-slate-800'}">
-                        ${day}
-                    </button>`;
-            });
+            document.getElementById('dayTabs').innerHTML = days.map(d => `<button onclick="selectDay('${d}')" class="px-3.5 py-1.5 rounded-xl text-xs font-medium transition ${d===selectedDay?'bg-pink-600 text-white shadow':'bg-white dark:bg-slate-900 opacity-70 border'}">${d}</button>`).join('');
         }
-
-        function selectDay(day) { selectedDay = day; renderDays(); renderLessons(); }
+        function selectDay(d) { selectedDay = d; renderDays(); renderLessons(); }
 
         function renderLessons() {
             const container = document.getElementById('lessonsList');
-            const list = db.lessons[selectedDay] || [];
-            if (list.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 opacity-50 text-xs"><i class="fa-regular fa-calendar-xmark text-3xl mb-2"></i><p>Bu gün ders yok.</p></div>`;
-                return;
-            }
-            list.sort((a, b) => a.start.localeCompare(b.start));
-            container.innerHTML = '';
-            list.forEach(item => {
-                const abs = item.absence || 0;
-                let cardBorder = 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800';
-                let badgeColor = 'text-pink-500';
-                let warningText = '';
-
-                if (abs === 3) {
-                    cardBorder = 'border-amber-500/50 bg-amber-500/5';
-                    badgeColor = 'text-amber-500 font-bold';
-                    warningText = '<span class="text-[9px] text-amber-500 font-bold ml-1">(Dikkat: 3!) ⚠️</span>';
-                } else if (abs === 4) {
-                    cardBorder = 'border-orange-500/50 bg-orange-500/5';
-                    badgeColor = 'text-orange-500 font-bold';
-                    warningText = '<span class="text-[9px] text-orange-500 font-bold ml-1">(Son Sınır: 4!) 🚨</span>';
-                } else if (abs >= 5) {
-                    cardBorder = 'border-red-500/50 bg-red-500/5';
-                    badgeColor = 'text-red-500 font-bold';
-                    warningText = '<span class="text-[9px] text-red-500 font-bold ml-1">(Sınır Aşıldı!) ❌</span>';
-                }
-
-                container.innerHTML += `
-                    <div class="${cardBorder} border rounded-2xl p-3.5 shadow-sm space-y-2 transition-colors">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-500 border border-pink-500/20">${item.start} - ${item.end}</span>
-                                <h3 class="text-sm font-bold mt-1">${item.name}</h3>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <button onclick="openModal('lesson', ${item.id})" class="opacity-60 hover:text-pink-500 p-2"><i class="fa-solid fa-pen text-xs"></i></button>
-                                <button onclick="deleteItem('lessons', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-slate-800 text-[11px]">
-                            <span class="opacity-80">
-                                <i class="fa-solid fa-user-xmark mr-1"></i>Devamsızlık: <strong class="${badgeColor}">${abs} / 5</strong>
-                                ${warningText}
-                            </span>
-                            <div class="flex gap-1">
-                                <button onclick="updateAbsence(${item.id}, -1)" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">-</button>
-                                <button onclick="updateAbsence(${item.id}, 1)" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">+</button>
-                            </div>
-                        </div>
-                    </div>`;
-            });
+            const list = dbLocal.lessons[selectedDay] || [];
+            container.innerHTML = list.length === 0 ? `<div class="text-center py-10 opacity-50 text-xs">Bu gün ders yok.</div>` :
+                list.map(i => `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 shadow-sm space-y-2"><div class="flex justify-between items-center"><div><span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-500">${i.start} - ${i.end}</span><h3 class="text-sm font-bold mt-1">${i.name}</h3></div><button onclick="deleteItem('lessons', ${i.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button></div><div class="flex justify-between items-center pt-2 border-t text-[11px]"><span class="opacity-80">Devamsızlık: <strong>${i.absence||0} / 5</strong></span><div class="flex gap-1"><button onclick="updateAbsence(${i.id}, -1)" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border">-</button><button onclick="updateAbsence(${i.id}, 1)" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 border">+</button></div></div></div>`).join('');
         }
-
-        function updateAbsence(id, val) {
-            const item = db.lessons[selectedDay].find(x => x.id === id);
-            if (item) {
-                item.absence = Math.max(0, (item.absence || 0) + val);
-                saveData();
-                renderLessons();
-            }
-        }
+        function updateAbsence(id, val) { const it = dbLocal.lessons[selectedDay].find(x => x.id === id); if(it){ it.absence = Math.max(0, (it.absence||0)+val); saveData(); renderLessons(); } }
 
         function renderHabits() {
-            const container = document.getElementById('habitsList');
-            if (db.habits.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 opacity-50 text-xs">Rutin bulunmuyor.</div>`;
-                return;
-            }
-            container.innerHTML = '';
-            db.habits.forEach(item => {
-                container.innerHTML += `
-                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="toggleHabit(${item.id})" class="w-4 h-4 accent-pink-600 rounded">
-                            <span class="text-sm font-bold ${item.completed ? 'line-through opacity-40' : ''}">${item.name}</span>
-                        </div>
-                        <button onclick="deleteItem('habits', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
-                    </div>`;
-            });
+            document.getElementById('habitsList').innerHTML = dbLocal.habits.map(h => `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm"><div class="flex items-center gap-3"><input type="checkbox" ${h.completed?'checked':''} onclick="toggleHabit(${h.id})" class="w-4 h-4 accent-pink-600 rounded"><span class="text-sm font-bold ${h.completed?'line-through opacity-40':''}">${h.name}</span></div><button onclick="deleteItem('habits', ${h.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button></div>`).join('');
         }
+        function toggleHabit(id) { const h = dbLocal.habits.find(x => x.id === id); if(h){ h.completed = !h.completed; saveData(); renderHabits(); } }
 
         function renderNotes() {
-            const container = document.getElementById('notesList');
-            if (db.notes.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 opacity-50 text-xs"><p>Not bulunmuyor.</p></div>`;
-                return;
-            }
-            container.innerHTML = '';
-            db.notes.forEach(item => {
-                container.innerHTML += `
-                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-1">
-                        <div class="flex justify-between items-start">
-                            <h3 class="text-sm font-bold">${item.title}</h3>
-                            <button onclick="deleteItem('notes', ${item.id})" class="opacity-50 hover:text-red-500"><i class="fa-solid fa-trash-can text-xs"></i></button>
-                        </div>
-                        <p class="text-xs opacity-80 whitespace-pre-line">${item.content}</p>
-                    </div>`;
-            });
+            document.getElementById('notesList').innerHTML = dbLocal.notes.map(n => `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-1"><div class="flex justify-between items-start"><h3 class="text-sm font-bold">${n.title}</h3><button onclick="deleteItem('notes', ${n.id})" class="opacity-50 hover:text-red-500"><i class="fa-solid fa-trash-can text-xs"></i></button></div><p class="text-xs opacity-80 whitespace-pre-line">${n.content}</p></div>`).join('');
         }
 
         function renderTodos() {
-            const container = document.getElementById('todosList');
-            if (db.todos.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 opacity-50 text-xs"><p>Görev bulunmuyor.</p></div>`;
-                return;
-            }
-            container.innerHTML = '';
-            db.todos.forEach(item => {
-                let badgeColor = 'bg-blue-500/10 text-blue-500 border-blue-500/20';
-                if (item.priority === 'Sınav') badgeColor = 'bg-red-500/10 text-red-500 border-red-500/20';
-                else if (item.priority === 'Ödev') badgeColor = 'bg-purple-500/10 text-purple-500 border-purple-500/20';
-
-                container.innerHTML += `
-                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="toggleTodo(${item.id})" class="w-4 h-4 accent-pink-600 rounded">
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-md border ${badgeColor}">${item.priority || 'Görev'}</span>
-                                    <h3 class="text-sm font-bold ${item.completed ? 'line-through opacity-40' : ''}">${item.title}</h3>
-                                </div>
-                                <span class="text-[10px] opacity-65">Son Tarih: ${item.date || 'Belirtilmedi'}</span>
-                            </div>
-                        </div>
-                        <button onclick="deleteItem('todos', ${item.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
-                    </div>`;
-            });
+            document.getElementById('todosList').innerHTML = dbLocal.todos.map(t => `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm"><div class="flex items-center gap-3"><input type="checkbox" ${t.completed?'checked':''} onclick="toggleTodo(${t.id})" class="w-4 h-4 accent-pink-600 rounded"><div><div class="flex items-center gap-2"><span class="text-[9px] font-bold px-2 py-0.5 rounded-md border">${t.priority}</span><h3 class="text-sm font-bold ${t.completed?'line-through opacity-40':''}">${t.title}</h3></div><span class="text-[10px] opacity-65">${t.date||''}</span></div></div><button onclick="deleteItem('todos', ${t.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button></div>`).join('');
         }
-
-        // --- BÜTÇE VE CÜZDAN MANTIĞI ---
-        function setBudgetFilter(filter) {
-            currentBudgetFilter = filter;
-            const buttons = document.querySelectorAll('#budgetFilterTabs button');
-            buttons.forEach(btn => {
-                if (btn.innerText.includes(filter) || (filter === 'Tümü' && btn.innerText === 'Tümü')) {
-                    btn.className = "px-3 py-1 rounded-xl text-[10px] font-bold bg-pink-600 text-white transition whitespace-nowrap shadow-sm";
-                } else {
-                    btn.className = "px-3 py-1 rounded-xl text-[10px] font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition whitespace-nowrap";
-                }
-            });
-            renderBudget();
-        }
+        function toggleTodo(id) { const t = dbLocal.todos.find(x => x.id === id); if(t){ t.completed = !t.completed; saveData(); renderTodos(); } }
 
         function renderBudget() {
-            document.getElementById('weeklyBudgetInput').value = db.budget.weeklyLimit || 1000;
+            document.getElementById('weeklyBudgetInput').value = dbLocal.budget.weeklyLimit || 1000;
+            let inc = 0, exp = 0;
+            dbLocal.budget.transactions.forEach(t => { if(t.type==='Gelir') inc += Number(t.amount); else exp += Number(t.amount); });
+            document.getElementById('summaryBudget').innerText = `${(dbLocal.budget.weeklyLimit + inc) - exp} ₺`;
+            document.getElementById('summaryIncome').innerText = `${inc} ₺`;
+            document.getElementById('summaryExpense').innerText = `${exp} ₺`;
 
-            let totalIncome = 0;
-            let totalExpense = 0;
+            let tx = dbLocal.budget.transactions;
+            if(currentBudgetFilter==='Gelir') tx = tx.filter(t=>t.type==='Gelir');
+            else if(currentBudgetFilter==='Gider') tx = tx.filter(t=>t.type==='Gider');
+            else if(currentBudgetFilter!=='Tümü') tx = tx.filter(t=>t.category===currentBudgetFilter);
 
-            db.budget.transactions.forEach(t => {
-                if (t.type === 'Gelir') totalIncome += Number(t.amount);
-                else totalExpense += Number(t.amount);
+            document.getElementById('budgetTxList').innerHTML = tx.length === 0 ? `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center opacity-50 text-xs">İşlem bulunmuyor.</div>` :
+                tx.slice().reverse().map(i => `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl ${i.type==='Gelir'?'bg-emerald-500/10 text-emerald-500':'bg-pink-500/10 text-pink-500'} flex items-center justify-center text-xs"><i class="fa-solid ${categoryIcons[i.category]||'fa-tag'}"></i></div><div><div class="flex items-center gap-2"><span class="text-[9px] font-bold px-2 py-0.5 rounded-md ${i.type==='Gelir'?'bg-emerald-500/10 text-emerald-500':'bg-pink-500/10 text-pink-500'}">${i.category}</span><span class="text-[10px] opacity-60">${i.dateTime}</span></div><h4 class="text-sm font-bold mt-1">${i.desc}</h4></div></div><div class="flex items-center gap-3"><span class="text-sm font-extrabold ${i.type==='Gelir'?'text-emerald-500':''}">${i.type==='Gelir'?'+':'-'}${i.amount} ₺</span><button onclick="deleteBudgetTx(${i.id})" class="opacity-50 hover:text-red-500 p-1"><i class="fa-solid fa-trash-can text-xs"></i></button></div></div>`).join('');
+            
+            document.getElementById('budgetArchiveList').innerHTML = (dbLocal.budget.archive||[]).length === 0 ? `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center opacity-50 text-xs">Arşiv yok.</div>` :
+                dbLocal.budget.archive.map(a => `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm text-xs"><div><strong class="text-pink-500">Hafta: ${a.week}</strong><div class="opacity-70 mt-0.5">Gelir: +${a.income} ₺ | Gider: -${a.expense} ₺</div></div><div class="text-right"><span class="text-[10px] opacity-60">Kalan</span><div class="font-bold text-sm">${a.net} ₺</div></div></div>`).join('');
+        }
+        function setWeeklyBudget() { const v = parseFloat(document.getElementById('weeklyBudgetInput').value); if(!isNaN(v)){ dbLocal.budget.weeklyLimit = v; saveData(); renderBudget(); alert("Güncellendi! 💰"); } }
+        function deleteBudgetTx(id) { dbLocal.budget.transactions = dbLocal.budget.transactions.filter(x=>x.id!==id); saveData(); renderBudget(); }
+        function setBudgetFilter(f) { currentBudgetFilter = f; renderBudget(); }
+
+        // --- ORTAK CANLI ÇİZİM MOTORU (WHITEBOARD) ---
+        let canvas, ctx, isDrawing = false, drawColor = '#ec4899', isRemoteDraw = false;
+
+        function initWhiteboard() {
+            canvas = document.getElementById('whiteboardCanvas');
+            if(!canvas) return;
+            ctx = canvas.getContext('2d');
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            canvas.onmousedown = startDraw;
+            canvas.onmousemove = draw;
+            canvas.onmouseup = stopDraw;
+            canvas.onmouseleave = stopDraw;
+
+            canvas.ontouchstart = (e) => { startDraw(e.touches[0]); e.preventDefault(); };
+            canvas.ontouchmove = (e) => { draw(e.touches[0]); e.preventDefault(); };
+            canvas.ontouchend = stopDraw;
+        }
+
+        function setDrawColor(col) { drawColor = col; }
+
+        function startDraw(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+        }
+
+        function draw(e) {
+            if(!isDrawing || isRemoteDraw) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const size = document.getElementById('brushSize').value;
+
+            drawLineLocally(lastX, lastY, x, y, drawColor, size);
+
+            // Firebase'e gönder
+            if(window.fbDB) {
+                const { db, ref, set } = window.fbDB;
+                const lineId = 'line_' + Date.now() + '_' + Math.random().toString(36.2);
+                set(ref(db, 'whiteboard/lines/' + lineId), { x1: lastX, y1: lastY, x2: x, y2: y, color: drawColor, size: size });
+            }
+            lastX = x; lastY = y;
+        }
+
+        function stopDraw() { isDrawing = false; }
+
+        function drawLineLocally(x1, y1, x2, y2, color, size) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = size;
+            ctx.stroke();
+            ctx.closePath();
+        }
+
+        window.initWhiteboardListeners = function() {
+            if(!window.fbDB) return;
+            const { db, ref, onValue } = window.fbDB;
+
+            // Çizgileri Dinle
+            onValue(ref(db, 'whiteboard/lines'), (snapshot) => {
+                const data = snapshot.val();
+                if(ctx && canvas) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    if(data) {
+                        Object.values(data).forEach(l => {
+                            isRemoteDraw = true;
+                            drawLineLocally(l.x1, l.y1, l.x2, l.y2, l.color, l.size);
+                            isRemoteDraw = false;
+                        });
+                    }
+                }
             });
 
-            const netBudget = (db.budget.weeklyLimit + totalIncome) - totalExpense;
+            // Temizleme Komutunu Dinle
+            onValue(ref(db, 'whiteboard/clear'), (snapshot) => {
+                if(snapshot.val() && ctx && canvas) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            });
+        };
 
-            document.getElementById('summaryBudget').innerText = `${netBudget} ₺`;
-            document.getElementById('summaryIncome').innerText = `${totalIncome} ₺`;
-            document.getElementById('summaryExpense').innerText = `${totalExpense} ₺`;
-
-            // Filtrelenmiş işlemler
-            let filteredTx = db.budget.transactions;
-            if (currentBudgetFilter === 'Gelir') {
-                filteredTx = filteredTx.filter(t => t.type === 'Gelir');
-            } else if (currentBudgetFilter === 'Gider') {
-                filteredTx = filteredTx.filter(t => t.type === 'Gider');
-            } else if (currentBudgetFilter !== 'Tümü') {
-                filteredTx = filteredTx.filter(t => t.category === currentBudgetFilter);
-            }
-
-            const container = document.getElementById('budgetTxList');
-            if (filteredTx.length === 0) {
-                container.innerHTML = `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center opacity-50 text-xs">Bu kritere uygun işlem bulunmuyor.</div>`;
-            } else {
-                container.innerHTML = '';
-                filteredTx.slice().reverse().forEach(item => {
-                    const isGelir = item.type === 'Gelir';
-                    const iconName = categoryIcons[item.category] || 'fa-tag';
-                    container.innerHTML += `
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-xl ${isGelir ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-pink-500/10 text-pink-500 border border-pink-500/20'} flex items-center justify-center text-xs">
-                                    <i class="fa-solid ${iconName}"></i>
-                                </div>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-[9px] font-bold px-2 py-0.5 rounded-md ${isGelir ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-pink-500/10 text-pink-500 border border-pink-500/20'}">${item.category}</span>
-                                        <span class="text-[10px] opacity-60">${item.dateTime}</span>
-                                    </div>
-                                    <h4 class="text-sm font-bold mt-1">${item.desc}</h4>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm font-extrabold ${isGelir ? 'text-emerald-500' : 'text-slate-900 dark:text-slate-100'}">${isGelir ? '+' : '-'}${item.amount} ₺</span>
-                                <button onclick="deleteBudgetTx(${item.id})" class="opacity-50 hover:text-red-500 p-1"><i class="fa-solid fa-trash-can text-xs"></i></button>
-                            </div>
-                        </div>`;
-                });
-            }
-
-            // Arşiv listesi
-            const archiveContainer = document.getElementById('budgetArchiveList');
-            if (!db.budget.archive || db.budget.archive.length === 0) {
-                archiveContainer.innerHTML = `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center opacity-50 text-xs">Geçmiş hafta arşivi bulunmuyor.</div>`;
-            } else {
-                archiveContainer.innerHTML = '';
-                db.budget.archive.forEach(arc => {
-                    archiveContainer.innerHTML += `
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm text-xs">
-                            <div>
-                                <strong class="text-pink-500">Hafta: ${arc.week}</strong>
-                                <div class="opacity-70 mt-0.5">Gelir: +${arc.income} ₺ | Gider: -${arc.expense} ₺</div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-[10px] opacity-60">Kalan Bütçe</span>
-                                <div class="font-bold text-sm">${arc.net} ₺</div>
-                            </div>
-                        </div>`;
-                });
+        function clearCanvasFirebase() {
+            if(window.fbDB) {
+                const { db, ref, set } = window.fbDB;
+                set(ref(db, 'whiteboard/lines'), null);
+                set(ref(db, 'whiteboard/clear'), true);
+                setTimeout(() => set(ref(db, 'whiteboard/clear'), false), 500);
             }
         }
 
-        function setWeeklyBudget() {
-            const val = parseFloat(document.getElementById('weeklyBudgetInput').value);
-            if (!isNaN(val)) {
-                db.budget.weeklyLimit = val;
-                saveData();
-                renderBudget();
-                alert("Haftalık bütçe güncellendi! 💰");
-            }
-        }
-
-        function deleteBudgetTx(id) {
-            db.budget.transactions = db.budget.transactions.filter(x => x.id !== id);
-            saveData();
-            renderBudget();
-        }
-
-        // --- GENEL MODAL VE FORM YÖNETİMİ ---
-        function openModal(type, id = null) {
+        // --- MODAL YÖNETİMİ ---
+        function openModal(type) {
             activeModalType = type;
-            editingLessonId = id;
             document.getElementById('globalModal').classList.remove('hidden');
             const form = document.getElementById('dynamicForm');
-            
-            if (type === 'lesson') {
-                let lesson = null;
-                if (id) {
-                    lesson = db.lessons[selectedDay].find(x => x.id === id);
-                }
-                document.getElementById('modalTitle').innerText = id ? 'Dersi Düzenle' : 'Yeni Ders Ekle';
-                form.innerHTML = `
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">GÜN</label><select id="fDay" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs">${days.map(d=>`<option ${d===selectedDay?'selected':''}>${d}</option>`).join('')}</select></div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERS ADI</label><input type="text" id="fName" value="${lesson ? lesson.name : ''}" required placeholder="Matematik" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLANGIÇ</label><input type="time" id="fStart" value="${lesson ? lesson.start : ''}" required class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
-                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">BİTİŞ</label><input type="time" id="fEnd" value="${lesson ? lesson.end : ''}" required class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
-                    </div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">DERSLİK</label><input type="text" id="fRoom" value="${lesson ? (lesson.room || '') : ''}" placeholder="Derslik 7" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
-                    <button type="submit" class="w-full bg-pink-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
-            } else if (type === 'habit') {
-                document.getElementById('modalTitle').innerText = 'Yeni Rutin Ekle';
-                form.innerHTML = `
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">RUTİN ADI</label><input type="text" id="hName" required placeholder="Erken Uyu" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
-                    <button type="submit" class="w-full bg-pink-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
-            } else if (type === 'note') {
-                document.getElementById('modalTitle').innerText = 'Yeni Not Ekle';
-                form.innerHTML = `
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLIK</label><input type="text" id="nTitle" required placeholder="Başlık" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">İÇERİK</label><textarea id="nContent" rows="3" required placeholder="İçerik..." class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></textarea></div>
-                    <button type="submit" class="w-full bg-pink-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
-            } else if (type === 'todo') {
-                document.getElementById('modalTitle').innerText = 'Görev veya Sınav Ekle';
-                form.innerHTML = `
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">TÜR / ÖNCELİK</label><select id="tPriority" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"><option>Sınav</option><option>Ödev</option><option>Genel Görev</option></select></div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">BAŞLIK</label><input type="text" id="tTitle" required placeholder="Vize Sınavı veya Ödev" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">SON TARİH</label><input type="date" id="tDate" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
-                    <button type="submit" class="w-full bg-pink-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">Kaydet</button>`;
-            } else if (type === 'budgetTx') {
-                document.getElementById('modalTitle').innerText = 'Yeni İşlem Ekle';
-                form.innerHTML = `
-                    <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">TÜR</label><select id="bType" onchange="updateCategoryOptions()" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"><option value="Gider">Gider</option><option value="Gelir">Gelir</option></select></div>
-                        <div><label class="block text-[10px] font-medium opacity-60 mb-1">KATEGORİ</label><select id="bCat" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></select></div>
-                    </div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">TUTAR (₺)</label><input type="number" id="bAmount" required placeholder="Örn: 75" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
-                    <div><label class="block text-[10px] font-medium opacity-60 mb-1">AÇIKLAMA</label><input type="text" id="bDesc" required placeholder="Örn: Anatomi fotokopisi" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs"></div>
-                    <button type="submit" class="w-full bg-pink-600 text-white font-medium py-2 rounded-xl text-xs transition mt-2">İşlemi Kaydet</button>`;
-                updateCategoryOptions();
+            if(type === 'lesson') {
+                document.getElementById('modalTitle').innerText = 'Yeni Ders Ekle';
+                form.innerHTML = `<div><label class="block text-[10px] opacity-60 mb-1">GÜN</label><select id="fDay" class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs">${days.map(d=>`<option ${d===selectedDay?'selected':''}>${d}</option>`).join('')}</select></div><div><label class="block text-[10px] opacity-60 mb-1">DERS ADI</label><input type="text" id="fName" required class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></div><div class="grid grid-cols-2 gap-2"><div><label class="block text-[10px] opacity-60 mb-1">BAŞLANGIÇ</label><input type="time" id="fStart" required class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></div><div><label class="block text-[10px] opacity-60 mb-1">BİTİŞ</label><input type="time" id="fEnd" required class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></div></div><div><label class="block text-[10px] opacity-60 mb-1">DERSLİK</label><input type="text" id="fRoom" class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></div><button type="submit" class="w-full bg-pink-600 text-white py-2 rounded-xl text-xs mt-2">Kaydet</button>`;
+            } else if(type === 'habit') {
+                document.getElementById('modalTitle').innerText = 'Yeni Rutin';
+                form.innerHTML = `<div><label class="block text-[10px] opacity-60 mb-1">RUTİN</label><input type="text" id="hName" required class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></div><button type="submit" class="w-full bg-pink-600 text-white py-2 rounded-xl text-xs mt-2">Kaydet</button>`;
+            } else if(type === 'note') {
+                document.getElementById('modalTitle').innerText = 'Yeni Not';
+                form.innerHTML = `<div><label class="block text-[10px] opacity-60 mb-1">BAŞLIK</label><input type="text" id="nTitle" required class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></div><div><label class="block text-[10px] opacity-60 mb-1">İÇERİK</label><textarea id="nContent" rows="3" required class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></textarea></div><button type="submit" class="w-full bg-pink-600 text-white py-2 rounded-xl text-xs mt-2">Kaydet</button>`;
+            } else if(type === 'todo') {
+                document.getElementById('modalTitle').innerText = 'Yeni Görev';
+                form.innerHTML = `<div><label class="block text-[10px] opacity-60 mb-1">TÜR</label><select id="tPriority" class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"><option>Sınav</option><option>Ödev</option><option>Genel Görev</option></select></div><div><label class="block text-[10px] opacity-60 mb-1">BAŞLIK</label><input type="text" id="tTitle" required class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></div><div><label class="block text-[10px] opacity-60 mb-1">TARİH</label><input type="date" id="tDate" class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></div><button type="submit" class="w-full bg-pink-600 text-white py-2 rounded-xl text-xs mt-2">Kaydet</button>`;
+            } else if(type === 'budgetTx') {
+                document.getElementById('modalTitle').innerText = 'İşlem Ekle';
+                form.innerHTML = `<div class="grid grid-cols-2 gap-2"><div><label class="block text-[10px] opacity-60 mb-1">TÜR</label><select id="bType" onchange="updateCat()" class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"><option value="Gider">Gider</option><option value="Gelir">Gelir</option></select></div><div><label class="block text-[10px] opacity-60 mb-1">KATEGORİ</label><select id="bCat" class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></select></div></div><div><label class="block text-[10px] opacity-60 mb-1">TUTAR</label><input type="number" id="bAmount" required class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></div><div><label class="block text-[10px] opacity-60 mb-1">AÇIKLAMA</label><input type="text" id="bDesc" required class="w-full bg-slate-100 dark:bg-slate-800 border rounded-xl p-2 text-xs"></div><button type="submit" class="w-full bg-pink-600 text-white py-2 rounded-xl text-xs mt-2">Kaydet</button>`;
+                updateCat();
             }
         }
-
-        function updateCategoryOptions() {
-            const type = document.getElementById('bType').value;
-            const catSelect = document.getElementById('bCat');
-            catSelect.innerHTML = '';
-            if (type === 'Gelir') {
-                ['Harçlık', 'Burs', 'İş / Ek Gelir', 'Diğer Gelir'].forEach(c => {
-                    catSelect.innerHTML += `<option value="${c}">${c}</option>`;
-                });
-            } else {
-                ['Yemek', 'İçecek', 'Ulaşım', 'Kırtasiye', 'Alışveriş', 'Diğer'].forEach(c => {
-                    catSelect.innerHTML += `<option value="${c}">${c}</option>`;
-                });
-            }
+        function updateCat() {
+            const t = document.getElementById('bType').value, s = document.getElementById('bCat');
+            s.innerHTML = '';
+            (t==='Gelir'?['Harçlık','Burs','İş / Ek Gelir','Diğer Gelir']:['Yemek','İçecek','Ulaşım','Kırtasiye','Alışveriş','Diğer']).forEach(c => s.innerHTML += `<option value="${c}">${c}</option>`);
         }
-
         function closeModal() { document.getElementById('globalModal').classList.add('hidden'); }
 
         function handleFormSubmit(e) {
             e.preventDefault();
-            if (activeModalType === 'lesson') {
-                const day = document.getElementById('fDay').value;
-                const name = document.getElementById('fName').value;
-                const start = document.getElementById('fStart').value;
-                const end = document.getElementById('fEnd').value;
-                const room = document.getElementById('fRoom').value;
-
-                if (editingLessonId) {
-                    const item = db.lessons[selectedDay].find(x => x.id === editingLessonId);
-                    if (item) {
-                        item.name = name;
-                        item.start = start;
-                        item.end = end;
-                        item.room = room;
-                        if (selectedDay !== day) {
-                            db.lessons[selectedDay] = db.lessons[selectedDay].filter(x => x.id !== editingLessonId);
-                            if (!db.lessons[day]) db.lessons[day] = [];
-                            db.lessons[day].push(item);
-                        }
-                    }
-                } else {
-                    if (!db.lessons[day]) db.lessons[day] = [];
-                    db.lessons[day].push({ id: Date.now(), name, start, end, room, absence: 0 });
-                }
-                selectedDay = day;
-            } else if (activeModalType === 'habit') {
-                db.habits.push({ id: Date.now(), name: document.getElementById('hName').value, completed: false });
-            } else if (activeModalType === 'note') {
-                db.notes.push({ id: Date.now(), title: document.getElementById('nTitle').value, content: document.getElementById('nContent').value });
-            } else if (activeModalType === 'todo') {
-                db.todos.push({ id: Date.now(), title: document.getElementById('tTitle').value, priority: document.getElementById('tPriority').value, date: document.getElementById('tDate').value, completed: false });
-            } else if (activeModalType === 'budgetTx') {
-                const type = document.getElementById('bType').value;
-                const category = document.getElementById('bCat').value;
-                const amount = parseFloat(document.getElementById('bAmount').value);
-                const desc = document.getElementById('bDesc').value;
-                
+            if(activeModalType==='lesson') {
+                const d = document.getElementById('fDay').value;
+                if(!dbLocal.lessons[d]) dbLocal.lessons[d] = [];
+                dbLocal.lessons[d].push({ id: Date.now(), name: document.getElementById('fName').value, start: document.getElementById('fStart').value, end: document.getElementById('fEnd').value, room: document.getElementById('fRoom').value, absence: 0 });
+                selectedDay = d;
+            } else if(activeModalType==='habit') dbLocal.habits.push({ id: Date.now(), name: document.getElementById('hName').value, completed: false });
+            else if(activeModalType==='note') dbLocal.notes.push({ id: Date.now(), title: document.getElementById('nTitle').value, content: document.getElementById('nContent').value });
+            else if(activeModalType==='todo') dbLocal.todos.push({ id: Date.now(), title: document.getElementById('tTitle').value, priority: document.getElementById('tPriority').value, date: document.getElementById('tDate').value, completed: false });
+            else if(activeModalType==='budgetTx') {
                 const now = new Date();
-                const dateStr = now.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' });
-                const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-                const dateTimeStr = `${dateStr}, ${timeStr}`;
-
-                if (!isNaN(amount)) {
-                    db.budget.transactions.push({ id: Date.now(), type, category, amount, desc, dateTime: dateTimeStr });
-                }
+                dbLocal.budget.transactions.push({ id: Date.now(), type: document.getElementById('bType').value, category: document.getElementById('bCat').value, amount: parseFloat(document.getElementById('bAmount').value), desc: document.getElementById('bDesc').value, dateTime: `${now.toLocaleDateString('tr-TR',{month:'short',day:'numeric'})}, ${now.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}` });
             }
             saveData(); closeModal(); renderCurrentView();
         }
 
-        function deleteItem(type, id) {
-            if (type === 'lessons') db.lessons[selectedDay] = db.lessons[selectedDay].filter(x => x.id !== id);
-            else db[type] = db[type].filter(x => x.id !== id);
+        function deleteItem(t, id) {
+            if(t==='lessons') dbLocal.lessons[selectedDay] = dbLocal.lessons[selectedDay].filter(x=>x.id!==id);
+            else dbLocal[t] = dbLocal[t].filter(x=>x.id!==id);
             saveData(); renderCurrentView();
-        }
-
-        function toggleHabit(id) {
-            const item = db.habits.find(x => x.id === id);
-            if (item) { item.completed = !item.completed; saveData(); renderHabits(); }
-        }
-
-        function toggleTodo(id) {
-            const item = db.todos.find(x => x.id === id);
-            if (item) { item.completed = !item.completed; saveData(); renderTodos(); }
-        }
-
-        function calculatePassingScore() {
-            const vize = parseFloat(document.getElementById('vizeNot').value);
-            const oran = parseFloat(document.getElementById('vizeOran').value) / 100;
-            const hedef = parseFloat(document.getElementById('gecmeNotu').value);
-            const res = document.getElementById('calcResult');
-
-            if (isNaN(vize)) { res.innerText = "Lütfen vize notunu girin."; return; }
-
-            const finalOrani = 1 - oran;
-            const gerekenFinal = (hedef - (vize * oran)) / finalOrani;
-
-            if (gerekenFinal <= 0) {
-                res.innerHTML = `Tebrikler! Vizeden aldığın puanla zaten dersi geçiyorsun. 🎉`;
-            } else if (gerekenFinal > 100) {
-                res.innerHTML = `Maalesef bu vizeyle bu hedefi finalde 100 alarak bile yakalamak zor.`;
-            } else {
-                res.innerHTML = `Geçmek için finalden en az: <strong class="text-pink-500 text-sm">${gerekenFinal.toFixed(1)}</strong> alman gerekiyor!`;
-            }
         }
 
         renderCurrentView();
