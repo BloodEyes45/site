@@ -48,11 +48,11 @@
                         <h2 class="text-lg font-bold mb-1">Hoş Geldin Sema! 👋</h2>
                         <p id="welcomeDate" class="text-xs text-pink-100 opacity-90">Yükleniyor...</p>
                     </div>
-                    <!-- Hava Durumu Kartı -->
-                    <div id="weatherWidget" class="bg-white/15 backdrop-blur-md border border-white/20 rounded-2xl p-3 text-center min-w-[90px]">
+                    <!-- Dinamik Şehir ve Hava Durumu Widget'ı -->
+                    <div id="weatherWidget" class="bg-white/15 backdrop-blur-md border border-white/20 rounded-2xl p-3 text-center min-w-[100px]">
                         <i id="weatherIcon" class="fa-solid fa-cloud-sun text-xl mb-1"></i>
                         <div id="weatherTemp" class="text-sm font-bold">--°C</div>
-                        <div id="weatherDesc" class="text-[10px] opacity-90">Hava</div>
+                        <div id="weatherCity" class="text-[10px] font-semibold opacity-90">Soma, Manisa</div>
                     </div>
                 </div>
             </div>
@@ -66,6 +66,32 @@
             <div class="space-y-3">
                 <h3 class="text-xs font-bold uppercase tracking-wider opacity-60">Bugünün Özeti</h3>
                 <div id="todaySummaryList" class="space-y-2"></div>
+            </div>
+
+            <!-- Akordeon Hesaplama Aracı (Ana Sayfaya Taşındı) -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                <button onclick="toggleAccordion('calcAccordion')" class="w-full flex justify-between items-center text-xs font-bold text-pink-500">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-calculator"></i> Not & Geçme Hesaplayıcı</span>
+                    <i id="calcIcon" class="fa-solid fa-chevron-down text-[10px] transition-transform"></i>
+                </button>
+                <div id="calcAccordion" class="hidden mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3">
+                    <div>
+                        <label class="block text-[10px] font-medium opacity-60 mb-1">VİZE NOTU</label>
+                        <input type="number" id="vizeNot" placeholder="Örn: 70" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs focus:outline-none focus:border-pink-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-medium opacity-60 mb-1">VİZE ETKİSİ (%)</label>
+                            <input type="number" id="vizeOran" value="40" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-medium opacity-60 mb-1">GEÇME NOTU</label>
+                            <input type="number" id="gecmeNotu" value="50" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-xs">
+                        </div>
+                    </div>
+                    <button onclick="calculatePassingScore()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-medium py-2 rounded-xl text-xs transition">Finalden Kaç Almalıyım?</button>
+                    <div id="calcResult" class="text-center pt-1 text-xs font-bold text-pink-500"></div>
+                </div>
             </div>
         </section>
 
@@ -114,32 +140,49 @@
             <div id="todosList" class="space-y-3"></div>
         </section>
 
-        <!-- 6. ORTALAMA HESAPLAMA SEKMESİ -->
-        <section id="tab-calc" class="space-y-4 hidden">
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-md space-y-3">
-                <h2 class="text-sm font-bold">Akıllı Geçme Notu & AGNO Hesapla</h2>
-                <div>
-                    <label class="block text-[10px] font-medium opacity-60 mb-1">VİZE NOTU</label>
-                    <input type="number" id="vizeNot" placeholder="Örn: 70" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-xs focus:outline-none focus:border-pink-500">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
+        <!-- 6. BAHÇE VE ÇİÇEKÇİ DÜKKANI (YENİ MİNİ OYUN) -->
+        <section id="tab-garden" class="space-y-4 hidden">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-3">
+                <div class="flex justify-between items-center">
                     <div>
-                        <label class="block text-[10px] font-medium opacity-60 mb-1">VİZE ETKİSİ (%)</label>
-                        <input type="number" id="vizeOran" value="40" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-xs">
+                        <h2 class="text-sm font-bold flex items-center gap-1.5 text-pink-500"><i class="fa-solid fa-seedling"></i> Sema'nın Çiçek Bahçesi</h2>
+                        <p class="text-[10px] opacity-60">Çiçek yetiştir, misafirlere buket sat, altın kazan!</p>
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-medium opacity-60 mb-1">GEÇME NOTU (Ağırlıklı)</label>
-                        <input type="number" id="gecmeNotu" value="50" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-xs">
+                    <div class="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-coins"></i> <span id="gardenCoins">150</span> Altın
                     </div>
                 </div>
-                <button onclick="calculatePassingScore()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-medium py-2.5 rounded-xl text-xs transition shadow-lg shadow-pink-600/30">Finalden Kaç Almalıyım?</button>
-                <div id="calcResult" class="text-center pt-2 text-xs font-bold text-pink-400 space-y-1"></div>
+
+                <!-- Günlük Çark Butonu -->
+                <button onclick="spinWheel()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-medium py-2 rounded-xl text-xs shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-dharmachakra"></i> Günlük Şans Çarkını Çevir! 🎡
+                </button>
+
+                <!-- Tarlalar / Saksılar -->
+                <div class="space-y-2 pt-2">
+                    <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Bahçe Parselleri</h3>
+                    <div id="gardenPlots" class="grid grid-cols-2 gap-2"></div>
+                </div>
+
+                <!-- Müşteri Tezgahı -->
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                    <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60">Çiçekçi Dükkanı & Müşteriler</h3>
+                    <div id="customerStand" class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                        Yükleniyor...
+                    </div>
+                </div>
+
+                <!-- Envanter -->
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <h3 class="text-[11px] font-bold uppercase tracking-wider opacity-60 mb-1">Çiçek Deposu (Envanter)</h3>
+                    <div id="flowerInventory" class="flex gap-2 text-xs"></div>
+                </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Alt Navigasyon Çubuğu -->
+    <!-- Alt Navigasyon Çubuğu (Hesapla Yerine Bahçe Eklendi) -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 py-2 px-1 z-40">
         <div class="max-w-md mx-auto flex justify-around">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-pink-500 transition">
@@ -157,8 +200,8 @@
             <button onclick="switchTab('todos')" id="nav-todos" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
                 <i class="fa-solid fa-list-check text-sm"></i><span class="text-[9px] font-medium">Görev</span>
             </button>
-            <button onclick="switchTab('calc')" id="nav-calc" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
-                <i class="fa-solid fa-calculator text-sm"></i><span class="text-[9px] font-medium">Hesapla</span>
+            <button onclick="switchTab('garden')" id="nav-garden" class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition">
+                <i class="fa-solid fa-seedling text-sm"></i><span class="text-[9px] font-medium">Bahçe</span>
             </button>
         </div>
     </nav>
@@ -202,18 +245,29 @@
             "Perşembe": [], "Cuma": [], "Cumartesi": [], "Pazar": []
         };
 
-        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v8')) || {
+        let db = JSON.parse(localStorage.getItem('sema_asistan_db_v9')) || {
             lessons: defaultLessons,
             habits: [
                 { id: 1, name: "Su İç (2 Litre)", completed: false },
                 { id: 2, name: "Günlük Tekrar Yap", completed: false }
             ],
             notes: [],
-            todos: []
+            todos: [],
+            garden: {
+                coins: 100,
+                plots: [
+                    { id: 1, state: 'empty', flower: null, plantedTime: 0, duration: 15 }, // 15 saniye test süresi
+                    { id: 2, state: 'empty', flower: null, plantedTime: 0, duration: 15 },
+                    { id: 3, state: 'locked', flower: null, plantedTime: 0, duration: 15 },
+                    { id: 4, state: 'locked', flower: null, plantedTime: 0, duration: 15 }
+                ],
+                inventory: { Papatya: 2, Gül: 1 },
+                customer: { name: "Ahmet Amca", want: "Papatya", count: 2, reward: 40 }
+            }
         };
 
         function saveData() {
-            localStorage.setItem('sema_asistan_db_v8', JSON.stringify(db));
+            localStorage.setItem('sema_asistan_db_v9', JSON.stringify(db));
         }
 
         function toggleTheme() {
@@ -230,9 +284,16 @@
             }
         }
 
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById('calcIcon');
+            el.classList.toggle('hidden');
+            icon.style.transform = el.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
         function switchTab(tab) {
             currentTab = tab;
-            ['home', 'schedule', 'habits', 'notes', 'todos', 'calc'].forEach(t => {
+            ['home', 'schedule', 'habits', 'notes', 'todos', 'garden'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
                 document.getElementById(`nav-${t}`).className = "flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition";
             });
@@ -242,11 +303,12 @@
         }
 
         function renderCurrentView() {
-            if (currentTab === 'home') { renderHome(); fetchWeather(); updateCountdown(); }
+            if (currentTab === 'home') { renderHome(); fetchWeatherAndCity(); updateCountdown(); }
             if (currentTab === 'schedule') { renderDays(); renderLessons(); }
             if (currentTab === 'habits') renderHabits();
             if (currentTab === 'notes') renderNotes();
             if (currentTab === 'todos') renderTodos();
+            if (currentTab === 'garden') renderGarden();
         }
 
         function updateCountdown() {
@@ -286,17 +348,17 @@
             }
         }
 
-        async function fetchWeather() {
+        async function fetchWeatherAndCity() {
             try {
-                let lat = 39.1903, lon = 27.6156;
+                let lat = 39.1903, lon = 27.6156; // Soma / Manisa varsayılan
                 if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        getWeatherData(pos.coords.latitude, pos.coords.longitude);
-                    }, () => getWeatherData(lat, lon));
-                } else { getWeatherData(lat, lon); }
+                    navigator.geolocation.getCurrentPosition(async pos => {
+                        await getWeatherData(pos.coords.latitude, pos.coords.longitude);
+                    }, async () => await getWeatherData(lat, lon));
+                } else { await getWeatherData(lat, lon); }
             } catch (e) {
                 document.getElementById('weatherTemp').innerText = "22°C";
-                document.getElementById('weatherDesc').innerText = "Açık";
+                document.getElementById('weatherCity').innerText = "Soma, Manisa";
             }
         }
 
@@ -305,10 +367,11 @@
                 const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
                 const data = await res.json();
                 document.getElementById('weatherTemp').innerText = `${Math.round(data.current_weather.temperature)}°C`;
-                document.getElementById('weatherDesc').innerText = "Güneşli";
+                // Şehir tahmini veya konuma göre sabit
+                document.getElementById('weatherCity').innerText = lat === 39.1903 ? "Soma, Manisa" : "Konumunuz";
             } catch (e) {
                 document.getElementById('weatherTemp').innerText = "20°C";
-                document.getElementById('weatherDesc').innerText = "Normal";
+                document.getElementById('weatherCity').innerText = "Soma, Manisa";
             }
         }
 
@@ -363,8 +426,6 @@
             container.innerHTML = '';
             list.forEach(item => {
                 const abs = item.absence || 0;
-                
-                // Kademeli Renk ve Uyarı Skalası
                 let cardBorder = 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800';
                 let badgeColor = 'text-pink-500';
                 let warningText = '';
@@ -485,6 +546,129 @@
             });
         }
 
+        // --- BAHÇE & ÇİÇEKÇİ OYUN MANTIĞI ---
+        function renderGarden() {
+            document.getElementById('gardenCoins').innerText = db.garden.coins;
+            
+            // Parseller
+            const plotsContainer = document.getElementById('gardenPlots');
+            plotsContainer.innerHTML = '';
+            db.garden.plots.forEach(plot => {
+                if (plot.state === 'locked') {
+                    plotsContainer.innerHTML += `
+                        <div class="bg-slate-100 dark:bg-slate-800/40 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[90px]">
+                            <i class="fa-solid fa-lock text-slate-400 text-sm mb-1"></i>
+                            <span class="text-[10px] opacity-60 mb-1">Kilitli Parsel</span>
+                            <button onclick="unlockPlot(${plot.id})" class="bg-pink-600 text-white text-[9px] px-2 py-0.5 rounded-lg font-medium">50 Altınla Aç</button>
+                        </div>`;
+                } else if (plot.state === 'empty') {
+                    plotsContainer.innerHTML += `
+                        <div class="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[90px]">
+                            <i class="fa-solid fa-seedling text-emerald-500 text-base mb-1"></i>
+                            <span class="text-[10px] opacity-60 mb-1">Boş Toprak</span>
+                            <button onclick="plantFlower(${plot.id})" class="bg-emerald-600 text-white text-[9px] px-2 py-0.5 rounded-lg font-medium">Papatya Ek (10 Altın)</button>
+                        </div>`;
+                    } else if (plot.state === 'growing') {
+                    plotsContainer.innerHTML += `
+                        <div class="bg-amber-500/5 border border-amber-500/30 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[90px]">
+                            <i class="fa-solid fa-spa text-amber-500 text-base mb-1 animate-pulse"></i>
+                            <span class="text-[10px] font-bold text-amber-500">Büyüyor... ⏳</span>
+                        </div>`;
+                } else if (plot.state === 'ready') {
+                    plotsContainer.innerHTML += `
+                        <div class="bg-pink-500/10 border border-pink-500/40 rounded-2xl p-3 text-center flex flex-col items-center justify-center min-h-[90px]">
+                            <i class="fa-solid fa-fan text-pink-500 text-base mb-1"></i>
+                            <span class="text-[10px] font-bold text-pink-500 mb-1">Hasada Hazır! ✨</span>
+                            <button onclick="harvestFlower(${plot.id})" class="bg-pink-600 text-white text-[9px] px-2.5 py-0.5 rounded-lg font-bold shadow">Hasat Et</button>
+                        </div>`;
+                }
+            });
+
+            // Müşteri Tezgahı
+            const cust = db.garden.customer;
+            const standContainer = document.getElementById('customerStand');
+            standContainer.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <div>
+                        <strong class="text-pink-500">${cust.name}</strong> dükkana geldi! <br>
+                        <span class="opacity-80">İstediği: <strong>${cust.count} Adet ${cust.want}</strong></span>
+                    </div>
+                    <button onclick="sellBouquet()" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-xl font-bold text-xs shadow">Buket Ver (+${cust.reward} Altın)</button>
+                </div>`;
+
+            // Envanter
+            const invContainer = document.getElementById('flowerInventory');
+            invContainer.innerHTML = '';
+            for (let [flower, count] of Object.entries(db.garden.inventory)) {
+                invContainer.innerHTML += `<div class="bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">🌸 ${flower}: <strong>${count}</strong></div>`;
+            }
+        }
+
+        function unlockPlot(id) {
+            if (db.garden.coins >= 50) {
+                db.garden.coins -= 50;
+                const plot = db.garden.plots.find(p => p.id === id);
+                plot.state = 'empty';
+                saveData();
+                renderGarden();
+            } else {
+                alert("Yeterli altın yok!");
+            }
+        }
+
+        function plantFlower(id) {
+            if (db.garden.coins >= 10) {
+                db.garden.coins -= 10;
+                const plot = db.garden.plots.find(p => p.id === id);
+                plot.state = 'growing';
+                plot.flower = 'Papatya';
+                saveData();
+                renderGarden();
+
+                // 5 saniye sonra büyüsün
+                setTimeout(() => {
+                    plot.state = 'ready';
+                    saveData();
+                    if (currentTab === 'garden') renderGarden();
+                }, 5000);
+            } else {
+                alert("Tohum ekmek için 10 altın lazımdır!");
+            }
+        }
+
+        function harvestFlower(id) {
+            const plot = db.garden.plots.find(p => p.id === id);
+            const flower = plot.flower || 'Papatya';
+            db.garden.inventory[flower] = (db.garden.inventory[flower] || 0) + 1;
+            plot.state = 'empty';
+            plot.flower = null;
+            saveData();
+            renderGarden();
+        }
+
+        function sellBouquet() {
+            const cust = db.garden.customer;
+            if ((db.garden.inventory[cust.want] || 0) >= cust.count) {
+                db.garden.inventory[cust.want] -= cust.count;
+                db.garden.coins += cust.reward;
+                // Yeni müşteri getir
+                db.garden.customer = { name: "Ayşe Teyze", want: "Gül", count: 1, reward: 30 };
+                saveData();
+                renderGarden();
+            } else {
+                alert(`Depoda yeterli ${cust.want} yok! Önce çiçek yetiştirip hasat etmelisin.`);
+            }
+        }
+
+        function spinWheel() {
+            const rewardCoins = 50;
+            db.garden.coins += rewardCoins;
+            saveData();
+            renderGarden();
+            alert(`🎡 Çark çevrildi! Hediyen: +${rewardCoins} Altın Kazandın! 🎉`);
+        }
+
+        // --- GENEL MODAL VE FORM YÖNETİMİ ---
         function openModal(type, id = null) {
             activeModalType = type;
             editingLessonId = id;
