@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SemaAsistan</title>
     
-    <!-- Sevimli Kalp İkonu -->
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/128/6723/6723246.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,7 +15,6 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase SDK'ları -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
@@ -32,11 +30,12 @@
             measurementId: "G-E8NYQYPCNR"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        window.fbDB = { db, ref, set, onValue };
-        if(window.initWhiteboardListeners) window.initWhiteboardListeners();
+        try {
+            const app = initializeApp(firebaseConfig);
+            const db = getDatabase(app);
+            window.fbDB = { db, ref, set, onValue };
+            if(window.initWhiteboardListeners) window.initWhiteboardListeners();
+        } catch(e) {}
     </script>
 
     <style>
@@ -47,9 +46,7 @@
             from { opacity: 0; transform: translateY(6px) scale(0.99); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .animate-fade-in {
-            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+        .animate-fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         canvas { touch-action: none; }
         .bg-grid-pattern {
             background-image: linear-gradient(to right, rgba(236, 72, 153, 0.08) 1px, transparent 1px),
@@ -79,7 +76,6 @@
 </head>
 <body class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-28 transition-colors duration-300">
 
-    <!-- Üst Başlık -->
     <header class="glass-panel border-b border-slate-200/80 dark:border-slate-800/80 sticky top-0 z-40 px-4 py-3 shadow-sm">
         <div class="max-w-md mx-auto flex justify-between items-center">
             <h1 class="text-base font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent flex items-center gap-2">
@@ -93,10 +89,8 @@
         </div>
     </header>
 
-    <!-- İçerik Alanı -->
     <main class="max-w-md mx-auto px-4 mt-4 space-y-4">
         
-        <!-- 1. ÖZET / ANA SAYFA SEKMESİ -->
         <section id="tab-home" class="space-y-4 animate-fade-in">
             <div class="grid grid-cols-1 gap-3">
                 <div class="bg-gradient-to-br from-pink-600 via-purple-600 to-indigo-700 rounded-2xl p-5 text-white shadow-xl shadow-pink-600/20 flex justify-between items-center">
@@ -106,19 +100,17 @@
                     </div>
                     <div id="weatherWidget" class="bg-white/15 backdrop-blur-md border border-white/20 rounded-2xl p-3 text-center min-w-[100px]">
                         <i id="weatherIcon" class="fa-solid fa-cloud-sun text-xl mb-1"></i>
-                        <div id="weatherTemp" class="text-sm font-bold">--°C</div>
-                        <div id="weatherCity" class="text-[10px] font-semibold opacity-90">Konum Alınıyor...</div>
+                        <div id="weatherTemp" class="text-sm font-bold">20°C</div>
+                        <div id="weatherCity" class="text-[10px] font-semibold opacity-90">Soma, Manisa</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Ders Durumu -->
             <div id="countdownCard" class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm text-center">
                 <h4 class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Ders Durumu</h4>
                 <div id="countdownText" class="text-sm font-bold text-pink-500">Hesaplanıyor...</div>
             </div>
 
-            <!-- Namaz Özeti & Kaza Uyarı Kartı -->
             <div id="homePrayerCard" class="glass-panel border border-emerald-500/30 rounded-2xl p-4 shadow-sm space-y-2">
                 <div class="flex justify-between items-center">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-500 flex items-center gap-1.5">
@@ -126,7 +118,7 @@
                     </h4>
                     <span id="homePrayerCount" class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-500">0/6 Kılındı</span>
                 </div>
-                <p id="homePrayerSummaryText" class="text-xs opacity-80">Bugünkü vakitler yükleniyor...</p>
+                <p id="homePrayerSummaryText" class="text-xs opacity-80">Vakitler yüklendi.</p>
             </div>
 
             <div class="space-y-3">
@@ -135,7 +127,6 @@
             </div>
         </section>
 
-        <!-- 2. DERS PROGRAMI SEKMESİ -->
         <section id="tab-schedule" class="space-y-4 hidden animate-fade-in">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold">Ders Programı & Devamsızlık</h2>
@@ -147,21 +138,18 @@
             <div id="lessonsList" class="space-y-3"></div>
         </section>
 
-        <!-- 3. OTOMATİK NAMAZ TAKİP VE KAZA SİSTEMİ SEKMESİ -->
         <section id="tab-prayer" class="space-y-4 hidden animate-fade-in">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold flex items-center gap-1.5 text-emerald-500">
                     <i class="fa-solid fa-kaaba"></i> Namaz Takip & Kaza Havuzu
                 </h2>
                 <div id="locationBadge" class="text-[10px] font-semibold opacity-75 bg-emerald-500/10 text-emerald-500 px-2.5 py-1 rounded-xl border border-emerald-500/20">
-                    📍 Konum Yükleniyor...
+                    📍 Soma, Manisa
                 </div>
             </div>
 
-            <!-- Vakit Kartları -->
             <div class="space-y-2.5" id="prayerTimesList"></div>
 
-            <!-- Kaza Bildirim / Yönetim Alanı (Kalıcı Kaza Havuzu) -->
             <div class="glass-panel border border-amber-500/30 rounded-2xl p-4 shadow-sm space-y-3">
                 <div class="flex justify-between items-center">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
@@ -169,12 +157,11 @@
                     </h3>
                     <span id="totalKazaBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-amber-500/20 text-amber-500">0 Borç</span>
                 </div>
-                <p class="text-xs opacity-80">Vakti geçip kılınmayan namazlar otomatik buraya eklenir ve sen kazadan düşene kadar kalır ✨</p>
+                <p class="text-xs opacity-80">Vakti geçip kılınmayan namazlar otomatik buraya eklenir ✨</p>
                 <div id="kazaListContainer" class="space-y-2 pt-1"></div>
             </div>
         </section>
 
-        <!-- 4. ULTRA UPGRADE ORTAK CANLI ÇİZİM STÜDYOSU -->
         <section id="tab-draw" class="space-y-3 hidden animate-fade-in">
             <div class="flex justify-between items-center px-1">
                 <div class="flex items-center gap-2">
@@ -196,10 +183,9 @@
                 </div>
             </div>
 
-            <!-- Araç Çubuğu 1: Çizim Araçları ve Şekiller -->
             <div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 shadow-md flex flex-wrap gap-1 items-center justify-between text-xs">
                 <div class="flex gap-1 flex-wrap">
-                    <button onclick="setTool('pen')" id="tool-pen" class="px-2.5 py-1.5 rounded-xl font-bold bg-pink-600 text-white transition-all shadow-sm active:scale-95" title="Serbest Kalem"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="setTool('pen')" id="tool-pen" class="px-2.5 py-1.5 rounded-xl font-bold bg-pink-600 text-white transition-all shadow-md active:scale-95" title="Serbest Kalem"><i class="fa-solid fa-pen"></i></button>
                     <button onclick="setTool('highlighter')" id="tool-highlighter" class="px-2.5 py-1.5 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition-all active:scale-95" title="Fosforlu Kalem"><i class="fa-solid fa-highlighter"></i></button>
                     <button onclick="setTool('line')" id="tool-line" class="px-2.5 py-1.5 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition-all active:scale-95" title="Düz Çizgi"><i class="fa-solid fa-slash"></i></button>
                     <button onclick="setTool('arrow')" id="tool-arrow" class="px-2.5 py-1.5 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition-all active:scale-95" title="Ok İşareti"><i class="fa-solid fa-arrow-right"></i></button>
@@ -208,11 +194,10 @@
                     <button onclick="setTool('eraser')" id="tool-eraser" class="px-2.5 py-1.5 rounded-xl font-bold bg-slate-200 dark:bg-slate-800 opacity-70 transition-all active:scale-95" title="Silgi"><i class="fa-solid fa-eraser"></i></button>
                 </div>
                 <div class="flex gap-1">
-                    <button onclick="undoCanvas()" class="px-2.5 py-1.5 rounded-xl bg-slate-200/60 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 active:scale-95 transition-all shadow-sm" title="Son İşlemi Geri Al"><i class="fa-solid fa-rotate-left"></i></button>
+                    <button onclick="undoCanvas()" class="px-2.5 py-1.5 rounded-xl bg-slate-200/60 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 active:scale-95 transition-all shadow-sm" title="Geri Al"><i class="fa-solid fa-rotate-left"></i></button>
                 </div>
             </div>
 
-            <!-- Araç Çubuğu 2: Renkler, Son Kullanılanlar & Kalınlık Önizlemesi -->
             <div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-md space-y-2.5">
                 <div class="flex items-center justify-between flex-wrap gap-1.5">
                     <div class="flex items-center gap-1.5 flex-wrap">
@@ -246,7 +231,6 @@
                 </div>
             </div>
 
-            <!-- Arka Plan Seçimi -->
             <div class="flex justify-between items-center px-1 text-xs opacity-80">
                 <span class="font-medium">Tuval Stili:</span>
                 <div class="flex gap-3">
@@ -255,7 +239,6 @@
                 </div>
             </div>
 
-            <!-- Tuval Alanı -->
             <div id="canvasContainer" class="relative glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-2 shadow-xl overflow-hidden flex justify-center transition-colors duration-300">
                 <canvas id="whiteboardCanvas" width="350" height="460" class="bg-slate-50 dark:bg-slate-900 rounded-xl cursor-crosshair border border-slate-200/80 dark:border-slate-800/80 shadow-inner"></canvas>
             </div>
@@ -263,7 +246,6 @@
 
     </main>
 
-    <!-- Alt Navigasyon Çubuğu -->
     <nav class="fixed bottom-0 left-0 right-0 glass-panel border-t border-slate-200/80 dark:border-slate-800/80 py-2.5 px-1 z-40 shadow-lg">
         <div class="max-w-md mx-auto flex justify-around">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-pink-500 transition-all">
@@ -281,7 +263,6 @@
         </div>
     </nav>
 
-    <!-- Modal Pencere -->
     <div id="globalModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="glass-panel border border-slate-200 dark:border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl text-slate-900 dark:text-slate-100">
             <div class="flex justify-between items-center mb-4">
@@ -292,7 +273,6 @@
         </div>
     </div>
 
-    <!-- JavaScript Uygulama Motoru -->
     <script>
         const days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
         let dateToday = new Date().getDay();
@@ -320,14 +300,14 @@
         };
 
         let todayStr = new Date().toISOString().split('T')[0];
-        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v26')) || {
+        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v27')) || {
             lessons: defaultLessons,
             prayers: { [todayStr]: { imsak: false, gunes: false, ogle: false, ikindi: false, akşam: false, yatsı: false } },
             kazaList: [],
             lastCheckedDate: todayStr
         };
 
-        function saveData() { localStorage.setItem('sema_asistan_db_v26', JSON.stringify(dbLocal)); }
+        function saveData() { localStorage.setItem('sema_asistan_db_v27', JSON.stringify(dbLocal)); }
 
         function toggleTheme() {
             const html = document.documentElement;
@@ -349,19 +329,20 @@
                 if(el) el.classList.add('hidden');
                 if(nav) nav.className = "flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition-all";
             });
-            document.getElementById(`tab-${tab}`).classList.remove('hidden');
-            document.getElementById(`nav-${tab}`).className = "flex flex-col items-center gap-1 text-pink-500 transition-all";
+            const activeTabEl = document.getElementById(`tab-${tab}`);
+            const activeNavEl = document.getElementById(`nav-${tab}`);
+            if(activeTabEl) activeTabEl.classList.remove('hidden');
+            if(activeNavEl) activeNavEl.className = "flex flex-col items-center gap-1 text-pink-500 transition-all";
             renderCurrentView();
         }
 
         function renderCurrentView() {
-            if (currentTab === 'home') { renderHome(); initLocationAndPrayerTimes(); updateCountdown(); }
+            if (currentTab === 'home') { renderHome(); updateCountdown(); renderHomePrayerWidget(); }
             if (currentTab === 'schedule') { renderDays(); renderLessons(); }
-            if (currentTab === 'prayer') { initLocationAndPrayerTimes(); }
+            if (currentTab === 'prayer') { renderPrayerTimesTab(); }
             if (currentTab === 'draw') { initWhiteboard(); }
         }
 
-        // --- DERS SAYAÇ MANTIĞI ---
         function updateCountdown() {
             const now = new Date();
             const todayName = days[currentDayIndex];
@@ -383,6 +364,7 @@
             });
 
             const textEl = document.getElementById('countdownText');
+            if(!textEl) return;
             if (activeLessonWithBuffer && curMinutes <= activeLessonWithBuffer.start.split(':').map(Number)[0]*60 + activeLessonWithBuffer.start.split(':').map(Number)[1] + 10) {
                 textEl.innerHTML = `Şu an derste: <strong class="text-pink-500">${activeLessonWithBuffer.name}</strong> (${activeLessonWithBuffer.room || ''})`;
             } else if (nextLesson) {
@@ -394,53 +376,38 @@
             }
         }
 
-        async function fetchWeatherAndCity(lat, lon, cityName) {
-            try {
-                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-                const data = await res.json();
-                document.getElementById('weatherTemp').innerText = `${Math.round(data.current_weather.temperature)}°C`;
-                document.getElementById('weatherCity').innerText = cityName;
-            } catch (e) { document.getElementById('weatherTemp').innerText = "20°C"; }
-        }
-
-        function renderHome() {
-            document.getElementById('welcomeDate').innerText = new Date().toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            const container = document.getElementById('todaySummaryList');
-            const list = dbLocal.lessons[days[currentDayIndex]] || [];
-            container.innerHTML = list.length === 0 ? `<div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center text-xs opacity-60">Bugün ders bulunmuyor. 🎉</div>` :
-                list.map(i => `<div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm"><div><span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-500">${i.start} - ${i.end}</span><h4 class="text-sm font-bold mt-1">${i.name}</h4></div>${i.room?`<span class="text-[10px] opacity-60">${i.room}</span>`:''}</div>`).join('');
-        }
-
-        // --- GPS KONUM VE OTOMATİK KAZA KONTROL SİSTEMİ ---
         const prayerNames = { imsak: "İmsak", gunes: "Güneş", ogle: "Öğle", ikindi: "İkindi", akşam: "Akşam", yatsı: "Yatsı" };
         let cachedPrayerTimes = { imsak: "05:15", gunes: "06:40", ogle: "13:10", ikindi: "16:30", akşam: "19:00", yatsı: "20:20" };
-        let currentCityName = "Soma, Manisa";
 
         function initLocationAndPrayerTimes() {
+            const fallbackLat = 39.1903;
+            const fallbackLon = 27.6156;
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(async pos => {
                     const lat = pos.coords.latitude;
                     const lon = pos.coords.longitude;
-                    // Şehir ismini tersine çevirme (Reverse Geocoding)
-                    try {
-                        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`);
-                        const geoData = await geoRes.json();
-                        if(geoData && geoData.address) {
-                            currentCityName = geoData.address.town || geoData.address.city || geoData.address.province || "Konum";
-                        }
-                    } catch(e) {}
-                    document.getElementById('locationBadge').innerText = `📍 ${currentCityName}`;
-                    await fetchPrayerTimesApi(lat, lon);
-                    fetchWeatherAndCity(lat, lon, currentCityName);
-                }, async () => {
-                    // Konum izni verilmezse varsayılan Soma, Manisa (39.1903, 27.6156)
-                    document.getElementById('locationBadge').innerText = `📍 Soma, Manisa`;
-                    await fetchPrayerTimesApi(39.1903, 27.6156);
-                    fetchWeatherAndCity(39.1903, 27.6156, "Soma, Manisa");
-                });
+                    fetchPrayerTimesApi(lat, lon);
+                    fetchWeatherAndCity(lat, lon, "Konum");
+                }, () => {
+                    fetchPrayerTimesApi(fallbackLat, fallbackLon);
+                    fetchWeatherAndCity(fallbackLat, fallbackLon, "Soma, Manisa");
+                }, { timeout: 5000 });
             } else {
-                fetchPrayerTimesApi(39.1903, 27.6156);
+                fetchPrayerTimesApi(fallbackLat, fallbackLon);
+                fetchWeatherAndCity(fallbackLat, fallbackLon, "Soma, Manisa");
             }
+        }
+
+        async function fetchWeatherAndCity(lat, lon, cityName) {
+            try {
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                const data = await res.json();
+                const tempEl = document.getElementById('weatherTemp');
+                const cityEl = document.getElementById('weatherCity');
+                if(tempEl) tempEl.innerText = `${Math.round(data.current_weather.temperature)}°C`;
+                if(cityEl) cityEl.innerText = cityName;
+            } catch (e) {}
         }
 
         async function fetchPrayerTimesApi(lat, lon) {
@@ -462,26 +429,21 @@
             } catch(e) {}
 
             checkAndProcessAutomaticKaza();
-            renderPrayerTimesTab();
+            if(currentTab === 'prayer') renderPrayerTimesTab();
             renderHomePrayerWidget();
         }
 
-        // Gün sıfırlama ve 10 dakika sonra otomatik kaza atama mantığı
         function checkAndProcessAutomaticKaza() {
             const nowStr = new Date().toISOString().split('T')[0];
-            
-            // Eğer yeni bir güne geçildiyse günlük verileri sıfırla
             if(dbLocal.lastCheckedDate !== nowStr) {
                 dbLocal.prayers[nowStr] = { imsak: false, gunes: false, ogle: false, ikindi: false, akşam: false, yatsı: false };
                 dbLocal.lastCheckedDate = nowStr;
                 saveData();
             }
-
             if(!dbLocal.prayers[todayStr]) {
                 dbLocal.prayers[todayStr] = { imsak: false, gunes: false, ogle: false, ikindi: false, akşam: false, yatsı: false };
             }
 
-            // Otomatik saat kontrolü (10 dakika kuralı)
             const now = new Date();
             const curMin = now.getHours() * 60 + now.getMinutes();
             const keys = ['imsak', 'gunes', 'ogle', 'ikindi', 'akşam', 'yatsı'];
@@ -489,16 +451,14 @@
             for(let i = 0; i < keys.length - 1; i++) {
                 const currentKey = keys[i];
                 const nextKey = keys[i+1];
-                if(currentKey === 'gunes') continue; // Güneş namazı kılınmaz, kaza olmaz
+                if(currentKey === 'gunes') continue;
 
-                const nextTimeStr = cachedPrayerTimes[nextKey]; // Örn: "13:10"
+                const nextTimeStr = cachedPrayerTimes[nextKey];
                 if(nextTimeStr) {
                     const [nH, nM] = nextTimeStr.split(':').map(Number);
                     const nextMin = nH * 60 + nM;
 
-                    // Sonraki vakit olduktan 10 dk geçtiyse ve bu vakit işaretlenmediyse otomatik kaza yap
                     if(curMin > nextMin + 10 && !dbLocal.prayers[todayStr][currentKey]) {
-                        // Bu kaza daha önce eklenmiş mi kontrol et (mükerrer eklenmesin)
                         const kazaTitle = prayerNames[currentKey] + " Kazası";
                         const alreadyAdded = dbLocal.kazaList.some(k => k.name === kazaTitle && k.dateKey === todayStr);
                         if(!alreadyAdded) {
@@ -514,6 +474,16 @@
                     }
                 }
             }
+        }
+
+        function renderHome() {
+            const dateEl = document.getElementById('welcomeDate');
+            if(dateEl) dateEl.innerText = new Date().toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const container = document.getElementById('todaySummaryList');
+            if(!container) return;
+            const list = dbLocal.lessons[days[currentDayIndex]] || [];
+            container.innerHTML = list.length === 0 ? `<div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center text-xs opacity-60">Bugün ders bulunmuyor. 🎉</div>` :
+                list.map(i => `<div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm"><div><span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-500">${i.start} - ${i.end}</span><h4 class="text-sm font-bold mt-1">${i.name}</h4></div>${i.room?`<span class="text-[10px] opacity-60">${i.room}</span>`:''}</div>`).join('');
         }
 
         function renderPrayerTimesTab() {
@@ -565,8 +535,8 @@
             const kazaCount = (dbLocal.kazaList || []).length;
             if(summaryEl) {
                 summaryEl.innerText = kazaCount > 0 
-                    ? `Bugün ${completedCount} vakit kıldın. Toplam ${kazaCount} adet kaza borcun bulunuyor. Kolay gelsin! ✨` 
-                    : `Harika! Bugünün namazlarını düzenli takip ediyorsun, hiç kaza borcun yok. Maşallah! 🌸`;
+                    ? `Bugün ${completedCount} vakit kıldın. Toplam ${kazaCount} adet kaza borcun bulunuyor. ✨` 
+                    : `Harika! Bugünün namazlarını düzenli takip ediyorsun, hiç kaza borcun yok. 🌸`;
             }
         }
 
@@ -604,19 +574,20 @@
         }
 
         function renderDays() {
-            document.getElementById('dayTabs').innerHTML = days.map(d => `<button onclick="selectDay('${d}')" class="px-3.5 py-1.5 rounded-xl text-xs font-medium transition ${d===selectedDay?'bg-pink-600 text-white shadow':'glass-panel opacity-70 border'}">${d}</button>`).join('');
+            const dayTabs = document.getElementById('dayTabs');
+            if(dayTabs) dayTabs.innerHTML = days.map(d => `<button onclick="selectDay('${d}')" class="px-3.5 py-1.5 rounded-xl text-xs font-medium transition ${d===selectedDay?'bg-pink-600 text-white shadow':'glass-panel opacity-70 border'}">${d}</button>`).join('');
         }
         function selectDay(d) { selectedDay = d; renderDays(); renderLessons(); }
 
         function renderLessons() {
             const container = document.getElementById('lessonsList');
+            if(!container) return;
             const list = dbLocal.lessons[selectedDay] || [];
             container.innerHTML = list.length === 0 ? `<div class="text-center py-10 opacity-50 text-xs">Bu gün ders yok.</div>` :
                 list.map(i => `<div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 shadow-sm space-y-2"><div class="flex justify-between items-center"><div><span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-500">${i.start} - ${i.end}</span><h3 class="text-sm font-bold mt-1">${i.name}</h3></div><button onclick="deleteItem('lessons', ${i.id})" class="opacity-50 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button></div><div class="flex justify-between items-center pt-2 border-t border-slate-200/60 dark:border-slate-800/60 text-[11px]"><span class="opacity-80">Devamsızlık: <strong>${i.absence||0} / 5</strong></span><div class="flex gap-1"><button onclick="updateAbsence(${i.id}, -1)" class="w-6 h-6 rounded-lg bg-slate-200/60 dark:bg-slate-800 border">-</button><button onclick="updateAbsence(${i.id}, 1)" class="w-6 h-6 rounded-lg bg-slate-200/60 dark:bg-slate-800 border">+</button></div></div></div>`).join('');
         }
         function updateAbsence(id, val) { const it = dbLocal.lessons[selectedDay].find(x => x.id === id); if(it){ it.absence = Math.max(0, (it.absence||0)+val); saveData(); renderLessons(); } }
 
-        // --- ÇİZİM STÜDYOSU MOTORU ---
         let canvas, ctx, isDrawing = false, drawColor = '#ec4899', currentTool = 'pen', startX = 0, startY = 0;
         let snapshotData = null;
         let recentColors = ['#ec4899', '#8b5cf6', '#3b82f6', '#10b981', '#eab308'];
@@ -900,7 +871,6 @@
             link.click();
         }
 
-        // --- MODAL YÖNETİMİ ---
         function openModal(type) {
             activeModalType = type;
             document.getElementById('globalModal').classList.remove('hidden');
@@ -917,7 +887,7 @@
             if(activeModalType==='lesson') {
                 const d = document.getElementById('fDay').value;
                 if(!dbLocal.lessons[d]) dbLocal.lessons[d] = [];
-                dbLocal.lessons[d].push({ id: Date.now(), name: document.getElementById('fName').value, start: document.getElementById('fStart'], end: document.getElementById('fEnd').value, room: document.getElementById('fRoom').value, absence: 0 });
+                dbLocal.lessons[d].push({ id: Date.now(), name: document.getElementById('fName').value, start: document.getElementById('fStart').value, end: document.getElementById('fEnd').value, room: document.getElementById('fRoom').value, absence: 0 });
                 selectedDay = d;
             }
             saveData(); closeModal(); renderCurrentView();
@@ -928,6 +898,8 @@
             saveData(); renderCurrentView();
         }
 
+        // Başlangıç tetikleyicisi
+        initLocationAndPrayerTimes();
         renderCurrentView();
     </script>
 </body>
