@@ -79,7 +79,6 @@
 </head>
 <body class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-28 transition-colors duration-300">
 
-    <!-- Üst Başlık -->
     <header class="glass-panel border-b border-slate-200/80 dark:border-slate-800/80 sticky top-0 z-40 px-4 py-3 shadow-sm">
         <div class="max-w-md mx-auto flex justify-between items-center">
             <h1 class="text-base font-extrabold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent flex items-center gap-2">
@@ -93,10 +92,8 @@
         </div>
     </header>
 
-    <!-- İçerik Alanı -->
     <main class="max-w-md mx-auto px-4 mt-4 space-y-4">
         
-        <!-- 1. ÖZET / ANA SAYFA SEKMESİ -->
         <section id="tab-home" class="space-y-4 animate-fade-in">
             <div class="grid grid-cols-1 gap-3">
                 <div class="bg-gradient-to-br from-pink-600 via-purple-600 to-indigo-700 rounded-3xl p-5 text-white shadow-xl glow-effect flex justify-between items-center relative overflow-hidden">
@@ -116,13 +113,11 @@
                 </div>
             </div>
 
-            <!-- Ders Durumu -->
             <div id="countdownCard" class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm text-center">
                 <h4 class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Ders Durumu</h4>
                 <div id="countdownText" class="text-sm font-bold text-pink-500">Hesaplanıyor...</div>
             </div>
 
-            <!-- Namaz Özeti & Kaza Uyarı Kartı -->
             <div id="homePrayerCard" class="glass-panel border border-emerald-500/30 rounded-2xl p-4 shadow-sm space-y-2">
                 <div class="flex justify-between items-center">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-500 flex items-center gap-1.5">
@@ -139,7 +134,6 @@
             </div>
         </section>
 
-        <!-- 2. DERS PROGRAMI SEKMESİ -->
         <section id="tab-schedule" class="space-y-4 hidden animate-fade-in">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold">Ders Programı & Devamsızlık</h2>
@@ -151,18 +145,17 @@
             <div id="lessonsList" class="space-y-3"></div>
         </section>
 
-        <!-- 3. OTOMATİK NAMAZ TAKİP VE KAZA SİSTEMİ SEKMESİ -->
         <section id="tab-prayer" class="space-y-4 hidden animate-fade-in">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold flex items-center gap-1.5 text-emerald-500">
                     <i class="fa-solid fa-kaaba"></i> Namaz Takip & Kaza Havuzu
                 </h2>
+                <!-- Konumun GPS mi yoksa Varsayılan mı olduğunu burada net görebilirsin -->
                 <div id="locationBadge" class="text-[10px] font-semibold opacity-75 bg-emerald-500/10 text-emerald-500 px-2.5 py-1 rounded-xl border border-emerald-500/20">
-                    📍 Soma, Manisa
+                    📍 Konum Algılanıyor...
                 </div>
             </div>
 
-            <!-- Güneş Doğuş ve Batış Bilgi Şeridi (Yenilendi) -->
             <div class="glass-panel border border-emerald-500/20 rounded-2xl p-3 flex justify-around items-center text-center shadow-sm">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-sun text-amber-500 text-base"></i>
@@ -181,10 +174,8 @@
                 </div>
             </div>
 
-            <!-- Sadece 5 Vakit Namaz Kartları -->
             <div class="space-y-2.5" id="prayerTimesList"></div>
 
-            <!-- Kaza Havuzu -->
             <div class="glass-panel border border-amber-500/30 rounded-2xl p-4 shadow-sm space-y-3">
                 <div class="flex justify-between items-center">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
@@ -197,7 +188,6 @@
             </div>
         </section>
 
-        <!-- 4. ULTRA UPGRADE ORTAK CANLI ÇİZİM STÜDYOSU -->
         <section id="tab-draw" class="space-y-3 hidden animate-fade-in">
             <div class="flex justify-between items-center px-1">
                 <div class="flex items-center gap-2">
@@ -219,7 +209,6 @@
                 </div>
             </div>
 
-            <!-- Araç Çubuğu 1 -->
             <div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 shadow-md flex flex-wrap gap-1 items-center justify-between text-xs">
                 <div class="flex gap-1 flex-wrap">
                     <button onclick="setTool('pen')" id="tool-pen" class="px-2.5 py-1.5 rounded-xl font-bold bg-pink-600 text-white transition-all shadow-md active:scale-95" title="Serbest Kalem"><i class="fa-solid fa-pen"></i></button>
@@ -235,7 +224,6 @@
                 </div>
             </div>
 
-            <!-- Araç Çubuğu 2 -->
             <div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-md space-y-2.5">
                 <div class="flex items-center justify-between flex-wrap gap-1.5">
                     <div class="flex items-center gap-1.5 flex-wrap">
@@ -269,7 +257,6 @@
                 </div>
             </div>
 
-            <!-- Arka Plan Seçimi -->
             <div class="flex justify-between items-center px-1 text-xs opacity-80">
                 <span class="font-medium">Tuval Stili:</span>
                 <div class="flex gap-3">
@@ -278,7 +265,6 @@
                 </div>
             </div>
 
-            <!-- Tuval Alanı -->
             <div id="canvasContainer" class="relative glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-2 shadow-xl overflow-hidden flex justify-center transition-colors duration-300">
                 <canvas id="whiteboardCanvas" width="350" height="460" class="bg-slate-50 dark:bg-slate-900 rounded-xl cursor-crosshair border border-slate-200/80 dark:border-slate-800/80 shadow-inner"></canvas>
             </div>
@@ -286,7 +272,6 @@
 
     </main>
 
-    <!-- Alt Navigasyon Çubuğu -->
     <nav class="fixed bottom-0 left-0 right-0 glass-panel border-t border-slate-200/80 dark:border-slate-800/80 py-2.5 px-1 z-40 shadow-lg">
         <div class="max-w-md mx-auto flex justify-around">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-pink-500 transition-all">
@@ -304,7 +289,6 @@
         </div>
     </nav>
 
-    <!-- Modal Pencere -->
     <div id="globalModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="glass-panel border border-slate-200 dark:border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl text-slate-900 dark:text-slate-100">
             <div class="flex justify-between items-center mb-4">
@@ -315,7 +299,6 @@
         </div>
     </div>
 
-    <!-- JavaScript Uygulama Motoru -->
     <script>
         const days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
         let dateToday = new Date().getDay();
@@ -343,14 +326,14 @@
         };
 
         let todayStr = new Date().toISOString().split('T')[0];
-        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v28')) || {
+        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v29')) || {
             lessons: defaultLessons,
             prayers: { [todayStr]: { imsak: false, ogle: false, ikindi: false, akşam: false, yatsı: false } },
             kazaList: [],
             lastCheckedDate: todayStr
         };
 
-        function saveData() { localStorage.setItem('sema_asistan_db_v28', JSON.stringify(dbLocal)); }
+        function saveData() { localStorage.setItem('sema_asistan_db_v29', JSON.stringify(dbLocal)); }
 
         function toggleTheme() {
             const html = document.documentElement;
@@ -430,13 +413,34 @@
                 navigator.geolocation.getCurrentPosition(async pos => {
                     const lat = pos.coords.latitude;
                     const lon = pos.coords.longitude;
+                    
+                    // Şehir ismini bulmaya çalış
+                    let detectedCity = "Konumunuz";
+                    try {
+                        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`);
+                        const geoData = await geoRes.json();
+                        if(geoData && geoData.address) {
+                            detectedCity = geoData.address.town || geoData.address.city || geoData.address.province || "Konumunuz";
+                        }
+                    } catch(e) {}
+
+                    const badge = document.getElementById('locationBadge');
+                    if(badge) badge.innerText = `📍 ${detectedCity} (GPS)`;
+
                     fetchPrayerTimesApi(lat, lon);
-                    fetchWeatherAndCity(lat, lon, "Konum");
+                    fetchWeatherAndCity(lat, lon, detectedCity);
                 }, () => {
+                    // İzin verilmezse varsayılan Soma, Manisa
+                    const badge = document.getElementById('locationBadge');
+                    if(badge) badge.innerText = `📍 Soma, Manisa (Varsayılan)`;
+
                     fetchPrayerTimesApi(fallbackLat, fallbackLon);
                     fetchWeatherAndCity(fallbackLat, fallbackLon, "Soma, Manisa");
                 }, { timeout: 5000 });
             } else {
+                const badge = document.getElementById('locationBadge');
+                if(badge) badge.innerText = `📍 Soma, Manisa (Varsayılan)`;
+
                 fetchPrayerTimesApi(fallbackLat, fallbackLon);
                 fetchWeatherAndCity(fallbackLat, fallbackLon, "Soma, Manisa");
             }
@@ -477,7 +481,6 @@
             renderHomePrayerWidget();
         }
 
-        // Anlık hangi vakitte olduğumuzu bulup ana sayfada gösterme
         function updateCurrentPrayerDisplay() {
             const now = new Date();
             const curMin = now.getHours() * 60 + now.getMinutes();
@@ -562,7 +565,6 @@
             if(!container) return;
             const todayObj = dbLocal.prayers[todayStr] || {};
 
-            // Güneş doğuş ve batış saatlerini üst şeride yaz
             const riseEl = document.getElementById('sunRiseTime');
             const setEl = document.getElementById('sunSetTime');
             if(riseEl) riseEl.innerText = cachedPrayerTimes.sunrise || "--:--";
@@ -965,7 +967,7 @@
             if(activeModalType==='lesson') {
                 const d = document.getElementById('fDay').value;
                 if(!dbLocal.lessons[d]) dbLocal.lessons[d] = [];
-                dbLocal.lessons[d].push({ id: Date.now(), name: document.getElementById('fName').value, start: document.getElementById('fStart').value, end: document.getElementById('fEnd').value, room: document.getElementById('fRoom').value, absence: 0 });
+                dbLocal.lessons[d].push({ id: Date.now(), name: document.getElementById('fName').value, start: document.getElementById('fStart'].value, end: document.getElementById('fEnd').value, room: document.getElementById('fRoom').value, absence: 0 });
                 selectedDay = d;
             }
             saveData(); closeModal(); renderCurrentView();
