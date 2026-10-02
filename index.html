@@ -150,9 +150,8 @@
                 <h2 class="text-sm font-bold flex items-center gap-1.5 text-emerald-500">
                     <i class="fa-solid fa-kaaba"></i> Namaz Takip & Kaza Havuzu
                 </h2>
-                <!-- Konumun GPS mi yoksa Varsayılan mı olduğunu burada net görebilirsin -->
                 <div id="locationBadge" class="text-[10px] font-semibold opacity-75 bg-emerald-500/10 text-emerald-500 px-2.5 py-1 rounded-xl border border-emerald-500/20">
-                    📍 Konum Algılanıyor...
+                    📍 Soma, Manisa
                 </div>
             </div>
 
@@ -326,14 +325,14 @@
         };
 
         let todayStr = new Date().toISOString().split('T')[0];
-        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v29')) || {
+        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v30')) || {
             lessons: defaultLessons,
             prayers: { [todayStr]: { imsak: false, ogle: false, ikindi: false, akşam: false, yatsı: false } },
             kazaList: [],
             lastCheckedDate: todayStr
         };
 
-        function saveData() { localStorage.setItem('sema_asistan_db_v29', JSON.stringify(dbLocal)); }
+        function saveData() { localStorage.setItem('sema_asistan_db_v30', JSON.stringify(dbLocal)); }
 
         function toggleTheme() {
             const html = document.documentElement;
@@ -409,12 +408,16 @@
             const fallbackLat = 39.1903;
             const fallbackLon = 27.6156;
 
+            // Hemen varsayılan verilerle arayüzü doldur (Donmayı önler)
+            fetchPrayerTimesApi(fallbackLat, fallbackLon);
+            fetchWeatherAndCity(fallbackLat, fallbackLon, "Soma, Manisa");
+
+            // Arka planda GPS konumunu almayı dene
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(async pos => {
                     const lat = pos.coords.latitude;
                     const lon = pos.coords.longitude;
                     
-                    // Şehir ismini bulmaya çalış
                     let detectedCity = "Konumunuz";
                     try {
                         const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`);
@@ -429,20 +432,7 @@
 
                     fetchPrayerTimesApi(lat, lon);
                     fetchWeatherAndCity(lat, lon, detectedCity);
-                }, () => {
-                    // İzin verilmezse varsayılan Soma, Manisa
-                    const badge = document.getElementById('locationBadge');
-                    if(badge) badge.innerText = `📍 Soma, Manisa (Varsayılan)`;
-
-                    fetchPrayerTimesApi(fallbackLat, fallbackLon);
-                    fetchWeatherAndCity(fallbackLat, fallbackLon, "Soma, Manisa");
-                }, { timeout: 5000 });
-            } else {
-                const badge = document.getElementById('locationBadge');
-                if(badge) badge.innerText = `📍 Soma, Manisa (Varsayılan)`;
-
-                fetchPrayerTimesApi(fallbackLat, fallbackLon);
-                fetchWeatherAndCity(fallbackLat, fallbackLon, "Soma, Manisa");
+                }, () => {}, { timeout: 4000 });
             }
         }
 
@@ -967,7 +957,7 @@
             if(activeModalType==='lesson') {
                 const d = document.getElementById('fDay').value;
                 if(!dbLocal.lessons[d]) dbLocal.lessons[d] = [];
-                dbLocal.lessons[d].push({ id: Date.now(), name: document.getElementById('fName').value, start: document.getElementById('fStart'].value, end: document.getElementById('fEnd').value, room: document.getElementById('fRoom').value, absence: 0 });
+                dbLocal.lessons[d].push({ id: Date.now(), name: document.getElementById('fName').value, start: document.getElementById('fStart').value, end: document.getElementById('fEnd').value, room: document.getElementById('fRoom').value, absence: 0 });
                 selectedDay = d;
             }
             saveData(); closeModal(); renderCurrentView();
