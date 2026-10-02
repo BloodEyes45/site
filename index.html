@@ -39,11 +39,11 @@
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px) scale(0.99); }
+            from { opacity: 0; transform: translateY(8px) scale(0.99); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .animate-fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -72,13 +72,17 @@
         .dark .glass-panel {
             background: rgba(15, 23, 42, 0.85);
         }
+        .glow-effect {
+            box-shadow: 0 0 25px rgba(236, 72, 153, 0.15);
+        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-28 transition-colors duration-300">
 
+    <!-- Üst Başlık -->
     <header class="glass-panel border-b border-slate-200/80 dark:border-slate-800/80 sticky top-0 z-40 px-4 py-3 shadow-sm">
         <div class="max-w-md mx-auto flex justify-between items-center">
-            <h1 class="text-base font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent flex items-center gap-2">
+            <h1 class="text-base font-extrabold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent flex items-center gap-2">
                 <i class="fa-solid fa-heart text-pink-500 animate-pulse"></i>SemaAsistan
             </h1>
             <div class="flex items-center gap-2">
@@ -89,16 +93,22 @@
         </div>
     </header>
 
+    <!-- İçerik Alanı -->
     <main class="max-w-md mx-auto px-4 mt-4 space-y-4">
         
+        <!-- 1. ÖZET / ANA SAYFA SEKMESİ -->
         <section id="tab-home" class="space-y-4 animate-fade-in">
             <div class="grid grid-cols-1 gap-3">
-                <div class="bg-gradient-to-br from-pink-600 via-purple-600 to-indigo-700 rounded-2xl p-5 text-white shadow-xl shadow-pink-600/20 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-lg font-bold mb-1">Hoş Geldin Sema! 👋</h2>
-                        <p id="welcomeDate" class="text-xs text-pink-100 opacity-90">Yükleniyor...</p>
+                <div class="bg-gradient-to-br from-pink-600 via-purple-600 to-indigo-700 rounded-3xl p-5 text-white shadow-xl glow-effect flex justify-between items-center relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="space-y-1">
+                        <h2 class="text-lg font-extrabold tracking-tight">Hoş Geldin Sema! 👋</h2>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <p id="welcomeDate" class="text-xs text-pink-100 opacity-90 font-medium">Yükleniyor...</p>
+                            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold backdrop-blur-md" id="currentPrayerBadge">Vakit hesaplanıyor</span>
+                        </div>
                     </div>
-                    <div id="weatherWidget" class="bg-white/15 backdrop-blur-md border border-white/20 rounded-2xl p-3 text-center min-w-[100px]">
+                    <div id="weatherWidget" class="bg-white/15 backdrop-blur-md border border-white/20 rounded-2xl p-3 text-center min-w-[100px] shadow-inner">
                         <i id="weatherIcon" class="fa-solid fa-cloud-sun text-xl mb-1"></i>
                         <div id="weatherTemp" class="text-sm font-bold">20°C</div>
                         <div id="weatherCity" class="text-[10px] font-semibold opacity-90">Soma, Manisa</div>
@@ -106,19 +116,21 @@
                 </div>
             </div>
 
+            <!-- Ders Durumu -->
             <div id="countdownCard" class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm text-center">
                 <h4 class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Ders Durumu</h4>
                 <div id="countdownText" class="text-sm font-bold text-pink-500">Hesaplanıyor...</div>
             </div>
 
+            <!-- Namaz Özeti & Kaza Uyarı Kartı -->
             <div id="homePrayerCard" class="glass-panel border border-emerald-500/30 rounded-2xl p-4 shadow-sm space-y-2">
                 <div class="flex justify-between items-center">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-500 flex items-center gap-1.5">
                         <i class="fa-solid fa-mosque"></i> Günün Namaz Durumu
                     </h4>
-                    <span id="homePrayerCount" class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-500">0/6 Kılındı</span>
+                    <span id="homePrayerCount" class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-500">0/5 Kılındı</span>
                 </div>
-                <p id="homePrayerSummaryText" class="text-xs opacity-80">Vakitler yüklendi.</p>
+                <p id="homePrayerSummaryText" class="text-xs opacity-80 font-medium">Vakitler yüklendi.</p>
             </div>
 
             <div class="space-y-3">
@@ -127,6 +139,7 @@
             </div>
         </section>
 
+        <!-- 2. DERS PROGRAMI SEKMESİ -->
         <section id="tab-schedule" class="space-y-4 hidden animate-fade-in">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold">Ders Programı & Devamsızlık</h2>
@@ -138,6 +151,7 @@
             <div id="lessonsList" class="space-y-3"></div>
         </section>
 
+        <!-- 3. OTOMATİK NAMAZ TAKİP VE KAZA SİSTEMİ SEKMESİ -->
         <section id="tab-prayer" class="space-y-4 hidden animate-fade-in">
             <div class="flex justify-between items-center">
                 <h2 class="text-sm font-bold flex items-center gap-1.5 text-emerald-500">
@@ -148,8 +162,29 @@
                 </div>
             </div>
 
+            <!-- Güneş Doğuş ve Batış Bilgi Şeridi (Yenilendi) -->
+            <div class="glass-panel border border-emerald-500/20 rounded-2xl p-3 flex justify-around items-center text-center shadow-sm">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-sun text-amber-500 text-base"></i>
+                    <div class="text-left">
+                        <div class="text-[10px] opacity-65 font-semibold">Güneş Doğuş (İşrak)</div>
+                        <div id="sunRiseTime" class="text-xs font-bold">--:--</div>
+                    </div>
+                </div>
+                <div class="h-6 w-[1px] bg-slate-300 dark:bg-slate-700"></div>
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-moon text-indigo-400 text-base"></i>
+                    <div class="text-left">
+                        <div class="text-[10px] opacity-65 font-semibold">Güneş Batış (Akşam)</div>
+                        <div id="sunSetTime" class="text-xs font-bold">--:--</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sadece 5 Vakit Namaz Kartları -->
             <div class="space-y-2.5" id="prayerTimesList"></div>
 
+            <!-- Kaza Havuzu -->
             <div class="glass-panel border border-amber-500/30 rounded-2xl p-4 shadow-sm space-y-3">
                 <div class="flex justify-between items-center">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
@@ -157,11 +192,12 @@
                     </h3>
                     <span id="totalKazaBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-amber-500/20 text-amber-500">0 Borç</span>
                 </div>
-                <p class="text-xs opacity-80">Vakti geçip kılınmayan namazlar otomatik buraya eklenir ✨</p>
+                <p class="text-xs opacity-80 font-medium">Vakti geçip kılınmayan namazlar otomatik buraya eklenir ✨</p>
                 <div id="kazaListContainer" class="space-y-2 pt-1"></div>
             </div>
         </section>
 
+        <!-- 4. ULTRA UPGRADE ORTAK CANLI ÇİZİM STÜDYOSU -->
         <section id="tab-draw" class="space-y-3 hidden animate-fade-in">
             <div class="flex justify-between items-center px-1">
                 <div class="flex items-center gap-2">
@@ -183,6 +219,7 @@
                 </div>
             </div>
 
+            <!-- Araç Çubuğu 1 -->
             <div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 shadow-md flex flex-wrap gap-1 items-center justify-between text-xs">
                 <div class="flex gap-1 flex-wrap">
                     <button onclick="setTool('pen')" id="tool-pen" class="px-2.5 py-1.5 rounded-xl font-bold bg-pink-600 text-white transition-all shadow-md active:scale-95" title="Serbest Kalem"><i class="fa-solid fa-pen"></i></button>
@@ -198,6 +235,7 @@
                 </div>
             </div>
 
+            <!-- Araç Çubuğu 2 -->
             <div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-md space-y-2.5">
                 <div class="flex items-center justify-between flex-wrap gap-1.5">
                     <div class="flex items-center gap-1.5 flex-wrap">
@@ -231,6 +269,7 @@
                 </div>
             </div>
 
+            <!-- Arka Plan Seçimi -->
             <div class="flex justify-between items-center px-1 text-xs opacity-80">
                 <span class="font-medium">Tuval Stili:</span>
                 <div class="flex gap-3">
@@ -239,6 +278,7 @@
                 </div>
             </div>
 
+            <!-- Tuval Alanı -->
             <div id="canvasContainer" class="relative glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-2 shadow-xl overflow-hidden flex justify-center transition-colors duration-300">
                 <canvas id="whiteboardCanvas" width="350" height="460" class="bg-slate-50 dark:bg-slate-900 rounded-xl cursor-crosshair border border-slate-200/80 dark:border-slate-800/80 shadow-inner"></canvas>
             </div>
@@ -246,6 +286,7 @@
 
     </main>
 
+    <!-- Alt Navigasyon Çubuğu -->
     <nav class="fixed bottom-0 left-0 right-0 glass-panel border-t border-slate-200/80 dark:border-slate-800/80 py-2.5 px-1 z-40 shadow-lg">
         <div class="max-w-md mx-auto flex justify-around">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-pink-500 transition-all">
@@ -263,6 +304,7 @@
         </div>
     </nav>
 
+    <!-- Modal Pencere -->
     <div id="globalModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="glass-panel border border-slate-200 dark:border-slate-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl text-slate-900 dark:text-slate-100">
             <div class="flex justify-between items-center mb-4">
@@ -273,6 +315,7 @@
         </div>
     </div>
 
+    <!-- JavaScript Uygulama Motoru -->
     <script>
         const days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
         let dateToday = new Date().getDay();
@@ -300,14 +343,14 @@
         };
 
         let todayStr = new Date().toISOString().split('T')[0];
-        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v27')) || {
+        let dbLocal = JSON.parse(localStorage.getItem('sema_asistan_db_v28')) || {
             lessons: defaultLessons,
-            prayers: { [todayStr]: { imsak: false, gunes: false, ogle: false, ikindi: false, akşam: false, yatsı: false } },
+            prayers: { [todayStr]: { imsak: false, ogle: false, ikindi: false, akşam: false, yatsı: false } },
             kazaList: [],
             lastCheckedDate: todayStr
         };
 
-        function saveData() { localStorage.setItem('sema_asistan_db_v27', JSON.stringify(dbLocal)); }
+        function saveData() { localStorage.setItem('sema_asistan_db_v28', JSON.stringify(dbLocal)); }
 
         function toggleTheme() {
             const html = document.documentElement;
@@ -376,8 +419,8 @@
             }
         }
 
-        const prayerNames = { imsak: "İmsak", gunes: "Güneş", ogle: "Öğle", ikindi: "İkindi", akşam: "Akşam", yatsı: "Yatsı" };
-        let cachedPrayerTimes = { imsak: "05:15", gunes: "06:40", ogle: "13:10", ikindi: "16:30", akşam: "19:00", yatsı: "20:20" };
+        const prayerNames = { imsak: "İmsak", ogle: "Öğle", ikindi: "İkindi", akşam: "Akşam", yatsı: "Yatsı" };
+        let cachedPrayerTimes = { imsak: "05:15", sunrise: "06:40", ogle: "13:10", ikindi: "16:30", sunset: "19:00", yatsı: "20:20" };
 
         function initLocationAndPrayerTimes() {
             const fallbackLat = 39.1903;
@@ -419,41 +462,69 @@
                     const t = data.data.timings;
                     cachedPrayerTimes = {
                         imsak: t.Fajr,
-                        gunes: t.Sunrise,
+                        sunrise: t.Sunrise,
                         ogle: t.Dhuhr,
                         ikindi: t.Asr,
-                        akşam: t.Maghrib,
+                        sunset: t.Maghrib,
                         yatsı: t.Isha
                     };
                 }
             } catch(e) {}
 
             checkAndProcessAutomaticKaza();
+            updateCurrentPrayerDisplay();
             if(currentTab === 'prayer') renderPrayerTimesTab();
             renderHomePrayerWidget();
+        }
+
+        // Anlık hangi vakitte olduğumuzu bulup ana sayfada gösterme
+        function updateCurrentPrayerDisplay() {
+            const now = new Date();
+            const curMin = now.getHours() * 60 + now.getMinutes();
+
+            const timeToMin = (timeStr) => {
+                if(!timeStr) return 0;
+                const [h, m] = timeStr.split(':').map(Number);
+                return h * 60 + m;
+            };
+
+            const imsakMin = timeToMin(cachedPrayerTimes.imsak);
+            const ogleMin = timeToMin(cachedPrayerTimes.ogle);
+            const ikindiMin = timeToMin(cachedPrayerTimes.ikindi);
+            const akşamMin = timeToMin(cachedPrayerTimes.sunset);
+            const yatsıMin = timeToMin(cachedPrayerTimes.yatsı);
+
+            let currentName = "Yatsı / Gece";
+            if (curMin >= imsakMin && curMin < ogleMin) currentName = "İmsak Vakti";
+            else if (curMin >= ogleMin && curMin < ikindiMin) currentName = "Öğle Vakti";
+            else if (curMin >= ikindiMin && curMin < akşamMin) currentName = "İkindi Vakti";
+            else if (curMin >= akşamMin && curMin < yatsıMin) currentName = "Akşam Vakti";
+            else if (curMin >= yatsıMin || curMin < imsakMin) currentName = "Yatsı Vakti";
+
+            const badge = document.getElementById('currentPrayerBadge');
+            if(badge) badge.innerText = currentName;
         }
 
         function checkAndProcessAutomaticKaza() {
             const nowStr = new Date().toISOString().split('T')[0];
             if(dbLocal.lastCheckedDate !== nowStr) {
-                dbLocal.prayers[nowStr] = { imsak: false, gunes: false, ogle: false, ikindi: false, akşam: false, yatsı: false };
+                dbLocal.prayers[nowStr] = { imsak: false, ogle: false, ikindi: false, akşam: false, yatsı: false };
                 dbLocal.lastCheckedDate = nowStr;
                 saveData();
             }
             if(!dbLocal.prayers[todayStr]) {
-                dbLocal.prayers[todayStr] = { imsak: false, gunes: false, ogle: false, ikindi: false, akşam: false, yatsı: false };
+                dbLocal.prayers[todayStr] = { imsak: false, ogle: false, ikindi: false, akşam: false, yatsı: false };
             }
 
             const now = new Date();
             const curMin = now.getHours() * 60 + now.getMinutes();
-            const keys = ['imsak', 'gunes', 'ogle', 'ikindi', 'akşam', 'yatsı'];
+            const keys = ['imsak', 'ogle', 'ikindi', 'akşam', 'yatsı'];
 
             for(let i = 0; i < keys.length - 1; i++) {
                 const currentKey = keys[i];
                 const nextKey = keys[i+1];
-                if(currentKey === 'gunes') continue;
-
-                const nextTimeStr = cachedPrayerTimes[nextKey];
+                const nextTimeStr = cachedPrayerTimes[nextKey === 'ogle' ? 'ogle' : nextKey === 'ikindi' ? 'ikindi' : nextKey === 'akşam' ? 'sunset' : 'yatsı'];
+                
                 if(nextTimeStr) {
                     const [nH, nM] = nextTimeStr.split(':').map(Number);
                     const nextMin = nH * 60 + nM;
@@ -491,8 +562,15 @@
             if(!container) return;
             const todayObj = dbLocal.prayers[todayStr] || {};
 
+            // Güneş doğuş ve batış saatlerini üst şeride yaz
+            const riseEl = document.getElementById('sunRiseTime');
+            const setEl = document.getElementById('sunSetTime');
+            if(riseEl) riseEl.innerText = cachedPrayerTimes.sunrise || "--:--";
+            if(setEl) setEl.innerText = cachedPrayerTimes.sunset || "--:--";
+
             container.innerHTML = Object.keys(prayerNames).map(key => {
                 const isCompleted = todayObj[key];
+                const timeMap = { imsak: cachedPrayerTimes.imsak, ogle: cachedPrayerTimes.ogle, ikindi: cachedPrayerTimes.ikindi, akşam: cachedPrayerTimes.sunset, yatsı: cachedPrayerTimes.yatsı };
                 return `
                     <div class="glass-panel border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
                         <div class="flex items-center gap-3">
@@ -501,7 +579,7 @@
                             </div>
                             <div>
                                 <h3 class="text-sm font-bold">${prayerNames[key]}</h3>
-                                <span class="text-[10px] opacity-65">Vakit: ${cachedPrayerTimes[key]}</span>
+                                <span class="text-[10px] opacity-65 font-medium">Vakit: ${timeMap[key] || '--:--'}</span>
                             </div>
                         </div>
                         <button onclick="togglePrayerToday('${key}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 ${isCompleted ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'}">
@@ -530,7 +608,7 @@
             
             const countEl = document.getElementById('homePrayerCount');
             const summaryEl = document.getElementById('homePrayerSummaryText');
-            if(countEl) countEl.innerText = `${completedCount}/6 Kılındı`;
+            if(countEl) countEl.innerText = `${completedCount}/5 Kılındı`;
             
             const kazaCount = (dbLocal.kazaList || []).length;
             if(summaryEl) {
@@ -898,7 +976,6 @@
             saveData(); renderCurrentView();
         }
 
-        // Başlangıç tetikleyicisi
         initLocationAndPrayerTimes();
         renderCurrentView();
     </script>
