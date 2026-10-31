@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "spaces": {
+      "semaasistan": {
+        ".read": true,
+        ".write": true
+      }
+    }
+  }
+}

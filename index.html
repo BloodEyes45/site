@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="tr" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="Sema için günlük ders programı, hava durumu ve ortak bahçe." />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f5f1e9" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Sema" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>Sema — Günün Ritmi</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true">
+      <div class="ambient__blob ambient__blob--peach"></div>
+      <div class="ambient__blob ambient__blob--iris"></div>
+      <div class="ambient__blob ambient__blob--mint"></div>
+      <div class="ambient__wash"></div>
+      <div class="ambient__grain"></div>
+    </div>
+
+    <div class="app-shell" id="appShell">
+      <div class="offline-pill" id="offlinePill" hidden>
+        <span class="offline-pill__dot"></span>
+        Çevrimdışısın · kayıtlı veriler
+      </div>
+
+      <main class="app-main" id="appMain">
+        <section class="view" id="view-today" data-view="today" aria-label="Bugün"></section>
+        <section class="view" id="view-schedule" data-view="schedule" aria-label="Dersler" hidden></section>
+        <section class="view" id="view-us" data-view="us" aria-label="Biz" hidden></section>
+      </main>
+
+      <nav class="tabbar glass" id="tabbar" aria-label="Ana menü"></nav>
+    </div>
+
+    <div id="overlayRoot"></div>
+    <div class="toast-stack" id="toastRoot" aria-live="polite"></div>
+
+    <div class="boot" id="boot">
+      <div class="boot__orb">
+        <span class="boot__ring"></span>
+        <span class="boot__monogram">S</span>
+      </div>
+      <p class="boot__name">Sema</p>
+      <p class="boot__hint">Günün ritmi hazırlanıyor</p>
+    </div>
+
+    <noscript>
+      <div class="noscript">Bu uygulamayı kullanmak için JavaScript'i etkinleştir.</div>
+    </noscript>
+
+    <script type="module" src="./assets/js/app.js"></script>
+  </body>
+</html>
