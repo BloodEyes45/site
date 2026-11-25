@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Sema — Günün Ritmi",
   "short_name": "Sema",
-  "description": "Sema için günlük ders programı, hava durumu ve ortak bahçe.",
+  "description": "Sema için günlük ders programı, hava durumu, notlar ve ortak alan.",
   "lang": "tr-TR",
   "dir": "ltr",
   "start_url": "./?source=pwa",
@@ -44,6 +44,12 @@
       "name": "Dersler",
       "short_name": "Dersler",
       "url": "./#dersler",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Notlar",
+      "short_name": "Notlar",
+      "url": "./#notlar",
       "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192" }]
     },
     {

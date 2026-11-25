@@ -4,6 +4,7 @@ const TILE_SIZE = 256;
 const MIN_ZOOM = 3;
 const MAX_ZOOM = 18;
 const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const FALLBACK_TILE_URL = 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
 
 const DEG = Math.PI / 180;
 
@@ -53,6 +54,11 @@ export class TileMap {
     this.pointers = new Map();
     this.drag = null;
     this.pinch = null;
+    this.tiles = new Map();
+    this.tileUrl = options.tileUrl || TILE_URL;
+    this.fallbackUrl = options.fallbackUrl || FALLBACK_TILE_URL;
+    this.usedFallback = false;
+    this.tileErrors = 0;
 
     this.el.classList.add('tile-map');
     this.el.innerHTML = `
@@ -60,7 +66,7 @@ export class TileMap {
         <div class="tile-map__layer"></div>
       </div>
       ${this.showPin ? '<div class="tile-map__pin" aria-hidden="true"><span></span></div>' : ''}
-      <div class="tile-map__attribution">© OpenStreetMap katkıcıları</div>
+      <div class="tile-map__attribution">© OpenStreetMap · CARTO</div>
     `;
     this.layer = this.el.querySelector('.tile-map__layer');
     this.canvas = this.el.querySelector('.tile-map__canvas');
@@ -249,10 +255,48 @@ export class TileMap {
     this.render();
   }
 
+  urlFor(x, y) {
+    const template = this.usedFallback ? this.fallbackUrl : this.tileUrl;
+    return template.replace('{z}', this.zoom).replace('{x}', x).replace('{y}', y);
+  }
+
+  handleTileError(img) {
+    if (this.destroyed) return;
+    this.tileErrors += 1;
+    img.classList.add('is-error');
+    if (!img.dataset.retried) {
+      img.dataset.retried = '1';
+      const source = img.src;
+      setTimeout(() => {
+        if (this.destroyed || !img.isConnected) return;
+        img.classList.remove('is-error');
+        img.src = `${source}${source.includes('?') ? '&' : '?'}retry=1`;
+      }, 1400);
+      return;
+    }
+    if (!this.usedFallback && this.fallbackUrl && this.tileErrors >= 3) {
+      this.usedFallback = true;
+      this.tiles.clear();
+      this.layer.replaceChildren();
+      this.render();
+      return;
+    }
+    this.el.classList.add('has-tile-error');
+  }
+
   setMarker(lat, lon) {
     if (!Number.isFinite(Number(lat)) || !Number.isFinite(Number(lon))) return;
     this.marker = { lat: Number(lat), lon: Number(lon) };
-    this.render();
+    if (!this.markerElement) return;
+    const width = this.el.clientWidth;
+    const height = this.el.clientHeight;
+    if (!width || !height) return;
+    const center = project(this.lat, this.lon, this.zoom);
+    const left = center.x - width / 2;
+    const top = center.y - height / 2;
+    const marker = project(this.marker.lat, this.marker.lon, this.zoom);
+    this.markerScreen = { x: marker.x - left, y: marker.y - top };
+    this.positionMarker();
   }
 
   positionMarker(offsetX = 0, offsetY = 0) {
@@ -293,28 +337,44 @@ export class TileMap {
     const startY = Math.max(0, Math.floor(top / TILE_SIZE) - 1);
     const endY = Math.min(count - 1, Math.floor((top + height) / TILE_SIZE) + 1);
 
-    const fragment = document.createDocumentFragment();
+    if (!this.tiles) this.tiles = new Map();
+    const wanted = new Map();
     for (let x = startX; x <= endX; x += 1) {
       for (let y = startY; y <= endY; y += 1) {
         const wrappedX = ((x % count) + count) % count;
-        const img = document.createElement('img');
-        img.className = 'tile-map__tile';
-        img.alt = '';
-        img.draggable = false;
-        img.decoding = 'async';
-        img.loading = 'eager';
-        img.src = tileUrl(zoom, wrappedX, y);
+        const key = `${zoom}/${wrappedX}/${y}`;
+        let img = this.tiles.get(key);
+        if (!img) {
+          img = document.createElement('img');
+          img.className = 'tile-map__tile';
+          img.alt = '';
+          img.draggable = false;
+          img.decoding = 'async';
+          img.loading = 'eager';
+          img.dataset.key = key;
+          img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
+          img.addEventListener('error', () => this.handleTileError(img));
+          img.src = this.urlFor(wrappedX, y);
+          this.tiles.set(key, img);
+        }
         img.style.transform = `translate3d(${x * TILE_SIZE - left}px, ${y * TILE_SIZE - top}px, 0)`;
-        img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
-        img.addEventListener('error', () => {
-          img.classList.add('is-error');
-          this.el.classList.add('has-tile-error');
-        }, { once: true });
-        fragment.appendChild(img);
+        wanted.set(key, img);
       }
     }
 
-    this.layer.replaceChildren(fragment);
+    // Artık görünmeyen karoları kaldır; kalanları yeniden indirme.
+    for (const [key, img] of this.tiles) {
+      if (!wanted.has(key)) {
+        img.remove();
+        this.tiles.delete(key);
+      }
+    }
+
+    const fragment = document.createDocumentFragment();
+    wanted.forEach((img) => {
+      if (!img.isConnected) fragment.appendChild(img);
+    });
+    if (fragment.childNodes.length) this.layer.appendChild(fragment);
 
     if (this.marker && this.markerElement) {
       const marker = project(this.marker.lat, this.marker.lon, zoom);
@@ -328,6 +388,7 @@ export class TileMap {
 
   destroy() {
     this.destroyed = true;
+    this.tiles?.clear();
     this.resizeObserver?.disconnect();
     this.el.removeEventListener('pointerdown', this.onPointerDown);
     this.el.removeEventListener('pointermove', this.onPointerMove);

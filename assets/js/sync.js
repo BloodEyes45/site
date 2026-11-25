@@ -65,6 +65,26 @@ export async function fetchSpace() {
   };
 }
 
+export async function readNode(path) {
+  return requestJson(`${spaceUrl()}/${path}.json`);
+}
+
+export async function writeNode(path, value) {
+  const url = `${spaceUrl()}/${path}.json`;
+  if (value === null) {
+    await requestJson(url, { method: 'DELETE' });
+    return true;
+  }
+  await requestJson(url, { method: 'PUT', body: JSON.stringify(value) });
+  return true;
+}
+
+export async function patchNode(path, value) {
+  const url = `${spaceUrl()}/${path}.json`;
+  await requestJson(url, { method: 'PATCH', body: JSON.stringify(value) });
+  return true;
+}
+
 export async function writeEvent(event) {
   const url = `${spaceUrl()}/events/${encodeURIComponent(event.id)}.json`;
   await requestJson(url, { method: 'PUT', body: JSON.stringify(event) });

@@ -1,0 +1,12 @@
+{
+  "name": "sema-push-worker",
+  "private": true,
+  "type": "module",
+  "description": "GitHub Actions üzerinden ders hatırlatıcı bildirimlerini gönderir.",
+  "scripts": {
+    "start": "node cron.mjs"
+  },
+  "dependencies": {
+    "web-push": "^3.6.7"
+  }
+}

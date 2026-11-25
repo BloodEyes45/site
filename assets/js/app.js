@@ -1,9 +1,4 @@
-import {
-  DAYS,
-  COURSE_COLORS,
-  NOTE_MOODS,
-  GARDEN_STAGES,
-} from './data.js';
+import { DAYS, COURSE_COLORS, NOTE_MOODS } from './data.js';
 import {
   loadState,
   saveState,
@@ -13,7 +8,6 @@ import {
   minutesFromTime,
 } from './state.js';
 import {
-  addDays,
   dateKey,
   dayNumber,
   formatClock,
@@ -56,14 +50,48 @@ import {
   prettySyncError,
   writeEvent,
   writePresence,
-  writePulse,
 } from './sync.js';
+import {
+  initNotes,
+  notesLoaded,
+  notesPageHtml,
+  notesSetFilter,
+  notesSetSearch,
+  openNoteEditor,
+  refreshNotesList,
+} from './notes.js';
+import {
+  LEAD_OPTIONS,
+  disablePush,
+  enablePush,
+  pushPermission,
+  pushSupported,
+  reminderSettings,
+  sendTestNotification,
+  setReminderSettings,
+  startReminderRuntime,
+  syncSchedule,
+  updatePushDevice,
+} from './reminders.js';
+import {
+  buyFish,
+  cleanAquarium,
+  ensureAquarium,
+  feedAquarium,
+  refreshAquarium,
+  renderAquariumInto,
+  setAquariumTheme,
+  startAquariumPolling,
+  stopAquariumPolling,
+} from './aquarium.js';
+import { openReleaseSheet, releasePending } from './release.js';
 
-const APP_VERSION = '1.1.4';
+const APP_VERSION = '1.5.0';
 const WEATHER_TTL = 15 * 60 * 1000;
 const TABS = [
   { id: 'today', label: 'Bugün', icon: 'today' },
   { id: 'schedule', label: 'Dersler', icon: 'calendar' },
+  { id: 'notes', label: 'Notlar', icon: 'notes' },
   { id: 'us', label: 'Biz', icon: 'heart' },
 ];
 const THEME_META = { light: '#f5f1e9', dark: '#0b0b11' };
@@ -82,6 +110,7 @@ let systemThemeQuery = null;
 let locationWatchId = null;
 let locationPromptTimer = null;
 let reverseLookupPending = false;
+let notesInitStarted = false;
 
 const ui = {
   scheduleDay: dayNumber(),
@@ -97,6 +126,7 @@ const ui = {
   locationState: 'idle',
   locationError: '',
   mapFollow: true,
+  usSignature: '',
 };
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -126,6 +156,16 @@ weatherTimer = setInterval(() => {
 registerServiceWorker();
 updateOnlineStatus();
 
+initNotes();
+startReminderRuntime({ getState: () => state, onDue: showReminderBanner });
+if (cloudEnabled()) {
+  syncSchedule(state);
+  updatePushDevice(state);
+}
+setTimeout(() => {
+  if (releasePending()) openReleaseSheet(openSheet);
+}, 1200);
+
 /* -------------------------------------------------------------------------- */
 /*  state helpers                                                             */
 /* -------------------------------------------------------------------------- */
@@ -133,6 +173,7 @@ updateOnlineStatus();
 function tabFromHash() {
   const hash = location.hash.replace('#', '');
   if (hash === 'dersler' || hash === 'schedule') return 'schedule';
+  if (hash === 'notlar' || hash === 'notes') return 'notes';
   if (hash === 'biz' || hash === 'us') return 'us';
   return 'today';
 }
@@ -189,7 +230,9 @@ function formatTemp(value) {
 }
 
 function hasLocation() {
-  return Number.isFinite(state.location.lat) && Number.isFinite(state.location.lon);
+  const { lat, lon } = state.location;
+  // 0,0 eski sürümlerden kalan boş varsayılandır; gerçek konum sayılmaz.
+  return Number.isFinite(lat) && Number.isFinite(lon) && !(lat === 0 && lon === 0);
 }
 
 function locationLabel() {
@@ -272,9 +315,6 @@ function applySkyState() {
   $$('.hero').forEach((element) => {
     element.dataset.sky = sky;
   });
-  $$('.terrarium').forEach((element) => {
-    element.dataset.sky = sky;
-  });
 }
 
 function initials(name) {
@@ -292,7 +332,6 @@ function deriveCouple(now = new Date()) {
   const deleted = new Set(
     events.filter((event) => event.type === 'note-delete').map((event) => event.targetId),
   );
-  const waterEvents = events.filter((event) => event.type === 'water');
   const notes = events
     .filter(
       (event) =>
@@ -322,33 +361,6 @@ function deriveCouple(now = new Date()) {
       ? presenceName
       : state.profile.partnerName || 'Aşkım';
 
-  const waterToday = waterEvents.filter((event) => event.date === today);
-  const myWaterToday = waterToday.filter((event) => event.uid === uid).length;
-  const partnerWaterToday = partnerUid
-    ? waterToday.filter((event) => event.uid === partnerUid).length
-    : 0;
-
-  const totalWater = waterEvents.length;
-  let stageIndex = 0;
-  GARDEN_STAGES.forEach((stage, index) => {
-    if (totalWater >= stage.at) stageIndex = index;
-  });
-  const stage = GARDEN_STAGES[stageIndex];
-  const nextStage = GARDEN_STAGES[stageIndex + 1] || null;
-  const stageSpan = nextStage ? nextStage.at - stage.at : 1;
-  const stageProgress = nextStage
-    ? clamp(((totalWater - stage.at) / stageSpan) * 100, 0, 100)
-    : 100;
-
-  const waterDays = [...new Set(waterEvents.map((event) => event.date))].sort().reverse();
-  let streak = 0;
-  let cursor = new Date(now);
-  if (!waterDays.includes(dateKey(cursor))) cursor = addDays(cursor, -1);
-  while (waterDays.includes(dateKey(cursor))) {
-    streak += 1;
-    cursor = addDays(cursor, -1);
-  }
-
   const latestNote = notes[0] || null;
   const pulses = state.couple.pulses || {};
 
@@ -359,20 +371,9 @@ function deriveCouple(now = new Date()) {
     partnerOnline,
     partnerPresence,
     events,
-    waterEvents,
-    totalWater,
-    myWaterToday,
-    partnerWaterToday,
-    canWater: myWaterToday < 3,
-    stageIndex,
-    stage,
-    nextStage,
-    stageProgress,
     notes,
-    streak,
     latestNote,
     pulses,
-    today,
   };
 }
 
@@ -383,6 +384,7 @@ function deriveCouple(now = new Date()) {
 function renderAll() {
   renderToday();
   renderSchedule();
+  renderNotesPage();
   renderUs();
   renderTabbar();
 }
@@ -424,11 +426,18 @@ function showTab(tabId, { updateHash = true } = {}) {
       else mountMiniMap();
     });
   }
-  if (tabId === 'us' && cloudEnabled()) syncNow();
+  if (tabId === 'notes') renderNotesPage();
+  if (tabId === 'us' && cloudEnabled()) {
+    syncNow();
+    ensureAquarium().then(() => renderAquariumInto(state)).catch(() => {});
+    startAquariumPolling(state, () => renderAquariumInto(state));
+  }
+  if (tabId !== 'us') stopAquariumPolling();
 
   if (changed) window.scrollTo({ top: 0, behavior: 'instant' });
   if (updateHash) {
-    const hash = tabId === 'today' ? 'bugun' : tabId === 'schedule' ? 'dersler' : 'biz';
+    const hash =
+      tabId === 'today' ? 'bugun' : tabId === 'schedule' ? 'dersler' : tabId === 'notes' ? 'notlar' : 'biz';
     history.replaceState(null, '', `#${hash}`);
   }
   state.ui.lastTab = tabId;
@@ -477,6 +486,9 @@ function renderToday() {
         </div>
         <div class="home-top__right">
           <time class="home-clock" data-clock>${formatClock(now)}</time>
+          <button class="round-btn" data-action="open-reminders" aria-label="Ders hatırlatıcıları">
+            ${icon('bell')}
+          </button>
           <button class="round-btn" data-action="toggle-theme" aria-label="Temayı değiştir">
             ${icon(resolvedTheme() === 'dark' ? 'sun' : 'moon')}
           </button>
@@ -500,7 +512,7 @@ function renderToday() {
             <h1 class="hero__title">${greetingText},<br /><span class="hero__name ${nameClass}">${escapeHtml(state.profile.name)}</span></h1>
             <p class="hero__summary">${summaryText}</p>
           </div>
-          ${orb}
+          <div class="hero__orb-slot" id="weatherOrbSlot">${orb}</div>
         </div>
         <div class="hero__bottom">
           <button class="location-chip ${located ? '' : 'location-chip--action'}" data-action="${located ? 'open-map' : 'request-location'}" aria-label="${located ? 'Canlı konumu haritada gör' : 'Konum izni ver'}">
@@ -511,7 +523,7 @@ function renderToday() {
             </span>
             ${icon(located ? 'chevronRight' : 'arrowRight')}
           </button>
-          <div class="hero__mood" style="--hint-color:${isDay ? 'var(--accent-3)' : 'var(--accent-2)'}">
+          <div class="hero__mood" data-weather-mood style="--hint-color:${isDay ? 'var(--accent-3)' : 'var(--accent-2)'}">
             ${icon(located ? (isDay ? 'sun' : 'moon') : 'locate')}
             <span>${escapeHtml(located ? weatherMood(current) : 'Canlı konumun hazırlanıyor')}</span>
           </div>
@@ -772,26 +784,62 @@ function renderUsPreview() {
   const note = couple.latestNote;
   const copy = note
     ? `${note.uid === state.couple.uid ? 'Sen' : couple.partnerName}: ${note.text}`
-    : couple.totalWater
-      ? 'Bahçeniz büyüyor. Birlikte bir not bırakın.'
-      : 'İlk damlayı birlikte bırakın, bahçeniz filizlensin.';
+    : 'Birlikte küçük notlar bırakın; eşin bir sonraki açılışında görsün.';
   return `
     <button class="us-preview" data-tab="us" aria-labelledby="us-preview-title">
       <span class="us-preview__art">${icon('heartFilled')}</span>
       <span class="us-preview__copy">
-        <span class="eyebrow" id="us-preview-title">Bizim bahçemiz</span>
-        <span class="us-preview__title">${escapeHtml(couple.stage.label)}</span>
+        <span class="eyebrow" id="us-preview-title">Biz</span>
+        <span class="us-preview__title">Küçük notlar</span>
         <span class="us-preview__desc">${escapeHtml(copy)}</span>
       </span>
       <span class="us-preview__arrow">${icon('arrowUpRight')}</span>
     </button>`;
 }
 
+/* -------------------------------------------------------------------------- */
+/*  render: notes                                                             */
+/* -------------------------------------------------------------------------- */
+
+function renderNotesPage() {
+  const view = $('#view-notes');
+  if (!view) return;
+  if (!notesLoaded()) {
+    view.innerHTML = `
+      <div class="notes-page">
+        <header class="page-head">
+          <div><p class="eyebrow">Kişisel defter</p><h1>Notlar</h1><p class="page-head__sub">Defter açılıyor…</p></div>
+        </header>
+        <div class="notes-loading"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+      </div>`;
+    if (!notesInitStarted) {
+      notesInitStarted = true;
+      initNotes()
+        .catch(() => {})
+        .finally(() => {
+          if (activeTab === 'notes') renderNotesPage();
+        });
+    }
+    return;
+  }
+  view.innerHTML = notesPageHtml();
+}
+
 function mountMiniMap() {
   const element = $('#miniMap');
-  if (!element || !hasLocation()) return;
+  if (!element || !hasLocation() || !element.isConnected) return;
+  if (miniMap && miniMap.el === element) {
+    miniMap.invalidate();
+    return;
+  }
+  if (miniMap) {
+    miniMap.destroy();
+    miniMap = null;
+  }
   requestAnimationFrame(() => {
-    if (!$('#miniMap') || activeTab !== 'today') return;
+    const current = $('#miniMap');
+    // Render bu arada değiştiyse kopmuş elementi haritalamaya çalışma.
+    if (!current || current !== element || !element.isConnected) return;
     miniMap = createMap(element, {
       lat: state.location.lat,
       lon: state.location.lon,
@@ -800,6 +848,7 @@ function mountMiniMap() {
       showPin: true,
       theme: resolvedTheme(),
     });
+    miniMap.invalidate();
   });
 }
 
@@ -909,6 +958,12 @@ function renderUs() {
 
   const couple = deriveCouple();
   const cloud = cloudEnabled();
+  const signature = `${state.couple.events.length}|${state.couple.events.at(-1)?.id || ''}|${couple.latestNote?.id || ''}|${couple.partnerOnline}|${couple.partnerPresence?.ts || 0}|${ui.cloudState}`;
+  if (ui.usSignature === signature && view.innerHTML.trim()) {
+    renderAquariumInto(state);
+    return;
+  }
+  ui.usSignature = signature;
   const needsPermission = /izin|izni|permission/i.test(ui.cloudError || '');
   const syncLabel = !cloud
     ? 'Yerel'
@@ -943,13 +998,13 @@ function renderUs() {
         cloud && ui.cloudState !== 'connected'
           ? `<p class="cloud-note">${icon('cloud')} ${
               needsPermission
-                ? 'Firebase Realtime Database izni gerekiyor; o açılana kadar notlar ve bahçe bu cihazda saklanıyor.'
-                : 'Bulut bağlantısı kurulamadı; notlar ve bahçe şimdilik bu cihazda saklanıyor.'
+                ? 'Firebase Realtime Database izni gerekiyor; o açılana kadar notlar bu cihazda saklanıyor.'
+                : 'Bulut bağlantısı kurulamadı; notlar şimdilik bu cihazda saklanıyor.'
             }</p>`
           : ''
       }
 
-      ${renderGarden(couple, cloud)}
+      <div id="aquariumSlot"></div>
 
       <section class="notes-section" aria-labelledby="notes-title">
         <div class="section-head">
@@ -962,123 +1017,7 @@ function renderUs() {
   `;
 
   applySkyState();
-}
-
-function renderGarden(couple, cloud) {
-  const sky = skyState();
-  const stage = couple.stage;
-  const next = couple.nextStage;
-  const ownCount = couple.myWaterToday;
-  const partnerCount = couple.partnerWaterToday;
-  const canWater = couple.canWater;
-  const presenceText = cloud
-    ? couple.partnerOnline
-      ? `${couple.partnerName} şu an burada`
-      : couple.partnerPresence?.ts
-        ? `${couple.partnerName} · ${formatRelativeTime(couple.partnerPresence.ts)} görüldü`
-        : `${couple.partnerName} henüz bağlanmadı`
-    : 'Sadece bu cihazda';
-
-  return `
-    <section class="garden-card" aria-labelledby="garden-title">
-      <div class="terrarium" data-stage="${couple.stageIndex}" data-sky="${sky}" id="terrarium">
-        <span class="terrarium__tint"></span>
-        <span class="terrarium__stars"></span>
-        <span class="terrarium__sun"></span>
-        <span class="terrarium__moon"></span>
-        <span class="terrarium__cloud"></span>
-        <span class="terrarium__rain"></span>
-        <span class="terrarium__snow"></span>
-        <span class="terrarium__fog"></span>
-        <span class="terrarium__flash"></span>
-        <span class="terrarium__dome"></span>
-        <span class="terrarium__soil"></span>
-        ${plantSvg()}
-        <span class="terrarium__ground"></span>
-        <span class="terrarium__drop terrarium__drop--1"></span>
-        <span class="terrarium__drop terrarium__drop--2"></span>
-        <span class="terrarium__drop terrarium__drop--3"></span>
-        <span class="terrarium__drop terrarium__drop--4"></span>
-      </div>
-      <div class="garden-content">
-        <div class="garden-title">
-          <div>
-            <p class="eyebrow">Bizim bahçemiz</p>
-            <h2 id="garden-title">${escapeHtml(stage.label)}</h2>
-          </div>
-          <span class="garden-title__drops">${icon('droplet')} ${couple.totalWater} damla</span>
-        </div>
-        <p class="garden-caption">${escapeHtml(stage.caption)}</p>
-
-        <div class="garden-meter">
-          <div class="garden-meter__bar"><span style="width:${couple.stageProgress}%"></span></div>
-          <div class="garden-meter__labels">
-            <span>${next ? `Sıradaki: ${escapeHtml(next.label)}` : 'Bahçe dolup taşıyor'}</span>
-            <span>${next ? `${Math.max(0, next.at - couple.totalWater)} damla kaldı` : `${couple.totalWater} damla`}</span>
-          </div>
-        </div>
-
-        <div class="garden-actions">
-          <button class="primary" data-action="water" ${canWater ? '' : 'disabled'}>
-            ${icon('droplet')} ${canWater ? 'Sula' : 'Yarın yine'}
-          </button>
-          <button class="secondary" data-action="send-heart">${icon('heart')} Kalp gönder</button>
-        </div>
-
-        <div class="water-counts">
-          <span>${icon('droplet')} Sen ${ownCount}/3${cloud ? ` · ${escapeHtml(couple.partnerName)} ${partnerCount}/3` : ''}</span>
-          <span class="presence-line">
-            <span class="presence-line__dot ${couple.partnerOnline ? 'is-online' : ''}"></span>
-            ${escapeHtml(presenceText)}
-          </span>
-        </div>
-      </div>
-    </section>`;
-}
-
-function plantSvg() {
-  return `
-    <svg class="plant" viewBox="70 45 110 125" aria-hidden="true">
-      <defs>
-        <linearGradient id="leafGradient" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#9bd9a9" />
-          <stop offset="0.55" stop-color="#65b985" />
-          <stop offset="1" stop-color="#3e8b66" />
-        </linearGradient>
-        <linearGradient id="flowerGradient" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#ffd1dc" />
-          <stop offset="0.55" stop-color="#ff9fb4" />
-          <stop offset="1" stop-color="#f27796" />
-        </linearGradient>
-      </defs>
-      <path class="plant__stem plant__stem--soft" d="M122 160 C112 145 120 132 106 121" />
-      <path class="plant__stem plant__stem--soft" d="M122 158 C137 146 132 132 143 120" />
-      <path class="plant__stem" d="M120 162 C116 132 120 107 120 78" />
-      <g class="plant__leaf plant__leaf--1">
-        <path d="M120 126 C98 125 82 114 78 94 C100 94 116 106 120 126Z" />
-        <path d="M83 98 C96 105 108 114 118 124" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.2" />
-      </g>
-      <g class="plant__leaf plant__leaf--2">
-        <path d="M121 109 C142 108 158 97 162 78 C140 78 124 90 121 109Z" />
-      </g>
-      <g class="plant__leaf plant__leaf--3 plant__leaf--small">
-        <path d="M121 91 C104 89 92 80 89 65 C106 65 119 75 121 91Z" />
-      </g>
-      <g class="plant__leaf plant__leaf--4 plant__leaf--small">
-        <path d="M121 84 C136 81 146 71 149 58 C132 58 121 69 121 84Z" />
-      </g>
-      <g class="plant__flower">
-        <circle class="plant__petal" cx="120" cy="57" r="12" />
-        <circle class="plant__petal" cx="132" cy="65" r="11" />
-        <circle class="plant__petal" cx="129" cy="79" r="11" />
-        <circle class="plant__petal" cx="111" cy="79" r="11" />
-        <circle class="plant__petal" cx="108" cy="65" r="11" />
-        <circle class="plant__center" cx="120" cy="70" r="6" />
-      </g>
-      <path class="plant__heart" d="M78 60c-4-4-10-1-10 4 0 5 6 9 10 12 4-3 10-7 10-12 0-5-6-8-10-4Z" />
-      <path class="plant__heart" d="M166 50c-3-3-8-1-8 3 0 4 5 7 8 9 3-2 8-5 8-9 0-4-5-6-8-3Z" />
-      <path class="plant__heart" d="M171 92c-3-3-8-1-8 3 0 4 5 7 8 9 3-2 8-5 8-9 0-4-5-6-8-3Z" />
-    </svg>`;
+  renderAquariumInto(state);
 }
 
 function renderNotes(couple) {
@@ -1169,8 +1108,8 @@ function updateOnlineStatus() {
 
 const LOCATION_OPTIONS = {
   enableHighAccuracy: true,
-  timeout: 20000,
-  maximumAge: 5000,
+  timeout: 30000,
+  maximumAge: 15000,
 };
 
 function startLiveLocation({ force = false } = {}) {
@@ -1212,6 +1151,8 @@ function startLiveLocation({ force = false } = {}) {
   }
 }
 
+let lastLocationPaint = 0;
+
 function handleLivePosition(position) {
   clearTimeout(locationPromptTimer);
   const { latitude: lat, longitude: lon, accuracy } = position.coords;
@@ -1219,6 +1160,9 @@ function handleLivePosition(position) {
   const first = !previous;
   const moved = previous ? distanceMeters(previous.lat, previous.lon, lat, lon) : Infinity;
   const now = Date.now();
+
+  // Aynı noktada titreyen GPS'i yok say: harita her saniye yeniden çizilmesin.
+  if (!first && moved < 6 && now - lastLocationPaint < 4000) return;
 
   state.location = {
     ...state.location,
@@ -1238,19 +1182,17 @@ function handleLivePosition(position) {
   ui.locationState = 'live';
   ui.locationError = '';
   persistSoon();
+  lastLocationPaint = now;
 
-  if (first || wasDenied || !$('#miniMap')) {
+  const needsStructure = first || wasDenied || !$('#miniMap');
+  if (needsStructure) {
     renderToday();
     refreshWeather({ force: true });
     reverseLocationName();
     return;
   }
 
-  updateLocationTexts();
-  if (miniMap) {
-    miniMap.setView(lat, lon, 14, false);
-    miniMap.setMarker(lat, lon);
-  }
+  updateTodayLocation();
   updateMapLivePanel();
   if (sheetMap && ui.mapFollow) sheetMap.setView(lat, lon, sheetMap.getCenter().zoom, false);
   if (sheetMap) sheetMap.setMarker(lat, lon);
@@ -1263,18 +1205,23 @@ function handleLivePosition(position) {
 function handleLocationError(error) {
   clearTimeout(locationPromptTimer);
   const denied = error?.code === 1;
-  ui.locationState = denied ? 'denied' : 'error';
-  ui.locationError = denied
+  const message = denied
     ? 'Konum izni kapalı. Tarayıcı ayarlarından bu siteye izin ver.'
     : error?.code === 3
       ? 'Konum isteği zaman aşımına uğradı. Tekrar deneyelim.'
       : 'Konum şu an alınamıyor. Biraz sonra tekrar dene.';
+  ui.locationError = message;
   if (denied && locationWatchId !== null) {
     navigator.geolocation.clearWatch(locationWatchId);
     locationWatchId = null;
   }
-  if (!hasLocation()) renderToday();
-  else updateLocationTexts();
+  if (!hasLocation()) {
+    ui.locationState = denied ? 'denied' : 'error';
+    renderToday();
+  } else {
+    // Konum bir kez alındıysa haritayı boşaltma; yalnız metni güncelle.
+    updateLocationTexts();
+  }
   updateMapLivePanel();
 }
 
@@ -1330,10 +1277,42 @@ function requestLocation() {
 /*  weather                                                                   */
 /* -------------------------------------------------------------------------- */
 
+// Hava ve konum güncellemeleri tüm Bugün ekranını yeniden kurmaz; aksi hâlde
+// mini harita her seferinde sökülüp yeniden yükleniyordu.
+function updateTodayWeather() {
+  if (activeTab !== 'today' || !hasLocation() || !$('#weatherOrbSlot')) {
+    renderToday();
+    return;
+  }
+  const slot = $('#weatherOrbSlot');
+  if (slot) slot.innerHTML = renderWeatherOrb(currentWeather(weatherData()), weatherLoading, true);
+  const mood = $('[data-weather-mood] span');
+  const current = currentWeather(weatherData());
+  if (mood) mood.textContent = current ? weatherMood(current) : 'Canlı konumun hazırlanıyor';
+  applySkyState();
+}
+
+function updateTodayLocation() {
+  if (!hasLocation() || !$('#miniMap')) {
+    renderToday();
+    return;
+  }
+  updateLocationTexts();
+  const current = currentWeather(weatherData());
+  const mood = $('[data-weather-mood] span');
+  if (mood) mood.textContent = current ? weatherMood(current) : 'Canlı konumun hazırlanıyor';
+  if (miniMap) {
+    miniMap.setView(state.location.lat, state.location.lon, miniMap.getCenter().zoom, false);
+    miniMap.setMarker(state.location.lat, state.location.lon);
+  } else {
+    mountMiniMap();
+  }
+}
+
 async function refreshWeather({ force = false, render = true } = {}) {
   if (!hasLocation()) {
     weatherError = 'Canlı konum bekleniyor.';
-    if (render) renderToday();
+    if (render) updateTodayWeather();
     return;
   }
   if (weatherLoading) return;
@@ -1347,14 +1326,14 @@ async function refreshWeather({ force = false, render = true } = {}) {
   }
   if (!navigator.onLine && weatherData()) {
     weatherError = 'Çevrimdışısın; son kaydedilen hava durumu gösteriliyor.';
-    if (render) renderToday();
+    if (render) updateTodayWeather();
     updateWeatherSheet();
     return;
   }
 
   weatherLoading = true;
   weatherError = '';
-  if (render && !weatherData()) renderToday();
+  if (render && !weatherData()) updateTodayWeather();
   updateWeatherSheet();
 
   try {
@@ -1367,11 +1346,11 @@ async function refreshWeather({ force = false, render = true } = {}) {
       data,
     };
     persist();
-    if (render) renderToday();
+    if (render) updateTodayWeather();
     applySkyState();
   } catch (error) {
     weatherError = error?.message || 'Hava durumu alınamadı.';
-    if (render && !weatherData()) renderToday();
+    if (render && !weatherData()) updateTodayWeather();
   } finally {
     weatherLoading = false;
     updateWeatherSheet();
@@ -1846,6 +1825,8 @@ function saveLesson(form) {
   persist();
   closeSheet();
   renderAll();
+  syncSchedule(state);
+  updatePushDevice(state);
   showToast(id ? 'Ders güncellendi.' : 'Ders eklendi.');
   return true;
 }
@@ -1855,6 +1836,8 @@ function deleteLesson(id) {
   persist();
   closeSheet();
   renderAll();
+  syncSchedule(state);
+  updatePushDevice(state);
   showToast('Ders silindi.');
 }
 
@@ -1927,7 +1910,7 @@ function saveNote(form) {
   appendEvent({ type: 'note', text: text.slice(0, 180), mood });
   closeSheet();
   renderUs();
-  showToast('Notun bahçeye bırakıldı.');
+  showToast('Notun bırakıldı.');
 }
 
 function deleteNote(id) {
@@ -1971,41 +1954,6 @@ function appendEvent(payload) {
       });
   }
   return event;
-}
-
-function waterGarden() {
-  const couple = deriveCouple();
-  if (!couple.canWater) {
-    showToast('Bugünlük yeterince suladın. Yarın yine birlikte büyütürsünüz.');
-    return;
-  }
-  appendEvent({ type: 'water', date: couple.today });
-  renderUs();
-  const terrarium = $('#terrarium');
-  if (terrarium) {
-    terrarium.classList.add('is-watering');
-    setTimeout(() => terrarium.classList.remove('is-watering'), 1700);
-  }
-  showToast('Bir damla daha. Bahçe büyüyor.', { iconName: 'droplet' });
-}
-
-function sendHeart() {
-  const ts = Date.now();
-  state.couple.pulses[state.couple.uid] = {
-    uid: state.couple.uid,
-    name: state.profile.name,
-    ts,
-  };
-  persist();
-  animateHearts();
-  showToast('Kalbin yola çıktı.');
-  if (cloudEnabled()) {
-    writePulse(state, ts).catch((error) => {
-      ui.cloudState = navigator.onLine ? 'error' : 'offline';
-      ui.cloudError = prettySyncError(error);
-      renderUs();
-    });
-  }
 }
 
 function animateHearts(incoming = false) {
@@ -2130,6 +2078,103 @@ function registerServiceWorker() {
 }
 
 /* -------------------------------------------------------------------------- */
+/*  reminders                                                                 */
+/* -------------------------------------------------------------------------- */
+
+let reminderHideTimer = null;
+
+function showReminderBanner(due) {
+  const lesson = due?.lesson;
+  if (!lesson) return;
+  let bar = $('#reminderBar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'reminderBar';
+    bar.className = 'reminder-bar';
+    document.body.appendChild(bar);
+  }
+  bar.innerHTML = `
+    <span class="reminder-bar__icon">${icon('bell')}</span>
+    <div class="reminder-bar__copy">
+      <strong>${escapeHtml(lesson.title)}</strong>
+      <small>${due.remaining} dk sonra${lesson.place ? ` · ${escapeHtml(lesson.place)}` : ''}</small>
+    </div>
+    <button class="reminder-bar__close" data-action="dismiss-reminder" aria-label="Uyarıyı kapat">${icon('x')}</button>`;
+  bar.classList.add('is-visible');
+  clearTimeout(reminderHideTimer);
+  reminderHideTimer = setTimeout(() => bar.classList.remove('is-visible'), 60000);
+  if (navigator.vibrate) navigator.vibrate(50);
+}
+
+function reminderSheetContent() {
+  const settings = reminderSettings(state);
+  const supported = pushSupported();
+  const permission = 'Notification' in window ? Notification.permission : 'unsupported';
+  const status =
+    permission === 'granted'
+      ? settings.push
+        ? 'Açık · telefon bildirimi'
+        : 'İzin var · yalnız uygulama içi'
+      : permission === 'denied'
+        ? 'İzin kapalı'
+        : permission === 'unsupported'
+          ? 'Bu tarayıcı desteklemiyor'
+          : 'İzin verilmedi';
+
+  return `
+    <div class="reminder-settings">
+      <div class="reminder-row">
+        <div><strong>Ders hatırlatıcısı</strong><small>Ders başlamadan önce haber ver.</small></div>
+        <button class="switch ${settings.enabled ? 'is-on' : ''}" data-action="toggle-reminders" role="switch"
+          aria-checked="${settings.enabled}" aria-label="Hatırlatıcıyı aç veya kapat"><span></span></button>
+      </div>
+
+      <div class="reminder-lead">
+        <span>Ne kadar önce?</span>
+        <div class="lead-chips">
+          ${LEAD_OPTIONS.map(
+            (lead) =>
+              `<button class="filter-chip ${settings.lead === lead ? 'is-active' : ''}" data-action="set-lead" data-lead="${lead}">${lead} dk</button>`,
+          ).join('')}
+        </div>
+      </div>
+
+      <div class="reminder-push">
+        <div class="reminder-row">
+          <div><strong>Telefon bildirimi</strong><small>${escapeHtml(status)}</small></div>
+          <button class="secondary tiny" data-action="${settings.push ? 'disable-push' : 'enable-push'}" ${supported ? '' : 'disabled'}>
+            ${settings.push ? 'Kapat' : 'Aç'}
+          </button>
+        </div>
+        <p class="reminder-hint">${
+          supported
+            ? 'Uygulama kapalıyken bildirim için Firebase zamanlayıcısı gerekir. Kurulduysa dersten önce telefonuna düşer.'
+            : 'Bu cihaz arka plan bildirimini desteklemiyor. Uygulama içi uyarı yine çalışır.'
+        }</p>
+        ${permission === 'granted' ? '<button class="text-link" data-action="test-push">Deneme bildirimi gönder</button>' : ''}
+      </div>
+
+      <p class="schedule-note">Hatırlatıcı aynı ders için günde bir kez gösterilir.</p>
+    </div>`;
+}
+
+function refreshReminderSheet() {
+  if (ui.sheetKind !== 'reminders' || !ui.sheet) return;
+  const scroll = ui.sheet.body.scrollTop;
+  ui.sheet.body.innerHTML = reminderSheetContent();
+  ui.sheet.body.scrollTop = scroll;
+}
+
+function openRemindersSheet() {
+  openSheet({
+    title: 'Hatırlatıcılar',
+    subtitle: 'Ders senden önce haber alsın.',
+    kind: 'reminders',
+    content: reminderSheetContent(),
+  });
+}
+
+/* -------------------------------------------------------------------------- */
 /*  events                                                                    */
 /* -------------------------------------------------------------------------- */
 
@@ -2164,6 +2209,10 @@ function bindGlobalEvents() {
       const count = document.querySelector('[data-char-count]');
       if (count) count.textContent = String(event.target.value.length);
     }
+    if (event.target.matches('[data-notes-search]')) {
+      notesSetSearch(event.target.value);
+      refreshNotesList();
+    }
   });
 
   document.addEventListener('change', (event) => {
@@ -2179,7 +2228,12 @@ function bindGlobalEvents() {
     if (document.visibilityState === 'visible') {
       if (cloudEnabled()) writePresence(state).catch(() => {});
       if (hasLocation() && !weatherIsFresh()) refreshWeather();
+      if (hasLocation() && locationWatchId === null) startLiveLocation();
       if (cloudEnabled()) syncNow();
+      if (cloudEnabled()) updatePushDevice(state);
+      if (activeTab === 'us' && cloudEnabled()) {
+        refreshAquarium().then(() => renderAquariumInto(state)).catch(() => {});
+      }
     }
   });
 
@@ -2189,7 +2243,7 @@ function bindGlobalEvents() {
   });
 }
 
-function handleAction(element) {
+async function handleAction(element) {
   const action = element.dataset.action;
   switch (action) {
     case 'toggle-theme': {
@@ -2238,17 +2292,91 @@ function handleAction(element) {
     case 'map-recenter':
       recenterMap();
       break;
-    case 'water':
-      waterGarden();
+    case 'aquarium-feed': {
+      const result = await feedAquarium(state);
+      renderAquariumInto(state);
+      if (!result.ok && result.error) showToast(result.error, { type: 'error' });
+      else if (result.ok) showToast('Balıklar beslendi. Bir inci kazandınız.', { iconName: 'heart' });
       break;
-    case 'send-heart':
-      sendHeart();
+    }
+    case 'aquarium-clean': {
+      const result = await cleanAquarium(state);
+      renderAquariumInto(state);
+      if (!result.ok && result.error) showToast(result.error, { type: 'error' });
+      else if (result.ok) showToast('Akvaryum temizlendi. Bir inci kazandınız.');
+      break;
+    }
+    case 'aquarium-buy': {
+      const result = await buyFish(element.dataset.species, state);
+      renderAquariumInto(state);
+      if (!result.ok && result.error) showToast(result.error, { type: 'error' });
+      else if (result.ok) showToast('Yeni bir dost akvaryuma katıldı.');
+      break;
+    }
+    case 'aquarium-theme': {
+      const result = await setAquariumTheme(element.dataset.theme);
+      renderAquariumInto(state);
+      if (!result.ok && result.error) showToast(result.error, { type: 'error' });
+      break;
+    }
+    case 'aquarium-refresh':
+      await ensureAquarium();
+      renderAquariumInto(state);
       break;
     case 'add-note':
       openNoteSheet();
       break;
     case 'delete-note':
       deleteNote(element.dataset.id);
+      break;
+    case 'open-reminders':
+      openRemindersSheet();
+      break;
+    case 'toggle-reminders':
+      setReminderSettings(state, { enabled: !reminderSettings(state).enabled });
+      persist();
+      refreshReminderSheet();
+      break;
+    case 'set-lead':
+      setReminderSettings(state, { lead: Number(element.dataset.lead) || 10 });
+      persist();
+      refreshReminderSheet();
+      updatePushDevice(state);
+      break;
+    case 'enable-push': {
+      const result = await enablePush(state);
+      persist();
+      refreshReminderSheet();
+      showToast(result.ok ? 'Telefon bildirimi açıldı.' : result.error, {
+        type: result.ok ? 'success' : 'error',
+      });
+      break;
+    }
+    case 'disable-push': {
+      await disablePush(state);
+      persist();
+      refreshReminderSheet();
+      showToast('Telefon bildirimi kapatıldı.');
+      break;
+    }
+    case 'test-push': {
+      const result = await sendTestNotification();
+      if (!result.ok) showToast(result.error, { type: 'error' });
+      break;
+    }
+    case 'dismiss-reminder': {
+      $('#reminderBar')?.classList.remove('is-visible');
+      break;
+    }
+    case 'notes-filter':
+      notesSetFilter(element.dataset.filter);
+      refreshNotesList();
+      break;
+    case 'new-note':
+      openNoteEditor(null, element.dataset.mode === 'ink' ? 'ink' : 'text');
+      break;
+    case 'open-note':
+      openNoteEditor(element.dataset.id);
       break;
     default:
       break;
@@ -2283,5 +2411,6 @@ window.SemaApp = {
   showTab,
   refreshWeather,
   showToast,
+  openSheet,
   version: APP_VERSION,
 };

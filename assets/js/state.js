@@ -12,7 +12,7 @@ export function createId(prefix = '') {
 
 export function defaultState() {
   return {
-    version: 4,
+    version: 5,
     createdAt: Date.now(),
     profile: {
       name: 'Sema',
@@ -21,6 +21,11 @@ export function defaultState() {
     settings: {
       theme: 'light',
       reduceMotion: false,
+      reminders: {
+        enabled: true,
+        lead: 10,
+        push: false,
+      },
     },
     location: {
       name: '',
@@ -53,6 +58,12 @@ export function defaultState() {
   };
 }
 
+function numberOrNull(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
 function normalizeState(raw) {
   const base = defaultState();
   if (!raw || typeof raw !== 'object') return base;
@@ -61,13 +72,17 @@ function normalizeState(raw) {
     ...base,
     ...raw,
     profile: { ...base.profile, ...(raw.profile || {}) },
-    settings: { ...base.settings, ...(raw.settings || {}) },
+    settings: {
+      ...base.settings,
+      ...(raw.settings || {}),
+      reminders: { ...base.settings.reminders, ...(raw.settings?.reminders || {}) },
+    },
     location: {
       ...base.location,
       ...(raw.location || {}),
-      lat: Number.isFinite(Number(raw.location?.lat)) ? Number(raw.location.lat) : null,
-      lon: Number.isFinite(Number(raw.location?.lon)) ? Number(raw.location.lon) : null,
-      accuracy: Number.isFinite(Number(raw.location?.accuracy)) ? Number(raw.location.accuracy) : null,
+      lat: numberOrNull(raw.location?.lat),
+      lon: numberOrNull(raw.location?.lon),
+      accuracy: numberOrNull(raw.location?.accuracy),
     },
     lessons: Array.isArray(raw.lessons) ? raw.lessons.filter(Boolean) : base.lessons,
     weather: { ...base.weather, ...(raw.weather || {}) },
@@ -81,6 +96,13 @@ function normalizeState(raw) {
     },
     ui: { ...base.ui, ...(raw.ui || {}) },
   };
+
+  if (state.location.lat === 0 && state.location.lon === 0) {
+    state.location.lat = null;
+    state.location.lon = null;
+    state.location.accuracy = null;
+    state.location.source = 'unknown';
+  }
 
   if (!state.couple.uid) state.couple.uid = createId('u_');
   if (!state.profile.name) state.profile.name = 'Sema';
@@ -117,6 +139,11 @@ export function loadState() {
       );
     if (geriatric && !geriatric.place) geriatric.place = 'Derslik 6';
     state.version = 4;
+    saveState(state);
+  }
+
+  if (Number(state.version || 0) < 5) {
+    state.version = 5;
     saveState(state);
   }
   return state;

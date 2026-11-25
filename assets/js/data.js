@@ -50,11 +50,3 @@ export const NOTE_MOODS = [
   { id: 'coffee', emoji: '☕', label: 'Kahve' },
 ];
 
-export const GARDEN_STAGES = [
-  { at: 0, label: 'İlk filiz', caption: 'Her şey küçük bir fikirle başlar.' },
-  { at: 3, label: 'Filizleniyor', caption: 'İlk damlalar toprağa değdi.' },
-  { at: 8, label: 'Büyüyor', caption: 'Birlikte güzel büyüyorsunuz.' },
-  { at: 16, label: 'Çiçek açtı', caption: 'Bahçeniz renklenmeye başladı.' },
-  { at: 28, label: 'Küçük bir bahçe', caption: 'Sevgi, sabırla büyüyen bir şey.' },
-  { at: 44, label: 'Gürül gürül', caption: 'Bu bahçe ikinizin eseri.' },
-];

@@ -1,4 +1,4 @@
-const VERSION = 'sema-v1.1.4';
+const VERSION = 'sema-v1.5.3';
 const SHELL_CACHE = `${VERSION}-shell`;
 const TILE_CACHE = `${VERSION}-tiles`;
 const TILE_LIMIT = 160;
@@ -12,6 +12,11 @@ const APP_SHELL = [
   './assets/js/data.js',
   './assets/js/firebase-config.js',
   './assets/js/icons.js',
+  './assets/js/ink.js',
+  './assets/js/aquarium.js',
+  './assets/js/notes.js',
+  './assets/js/release.js',
+  './assets/js/reminders.js',
   './assets/js/state.js',
   './assets/js/sync.js',
   './assets/js/tilemap.js',
@@ -23,13 +28,21 @@ const APP_SHELL = [
   './icons/icon-512.png',
   './icons/maskable-512.png',
   './icons/apple-touch-icon.png',
+  './assets/fonts/caveat-400-latin.woff2',
+  './assets/fonts/caveat-400-latin-ext.woff2',
+  './assets/fonts/caveat-600-latin.woff2',
+  './assets/fonts/caveat-600-latin-ext.woff2',
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(SHELL_CACHE)
-      .then((cache) => cache.addAll(APP_SHELL))
+      .then((cache) =>
+        cache.addAll(
+          APP_SHELL.map((url) => new Request(new URL(url, self.location.href), { cache: 'reload' })),
+        ),
+      )
       .then(() => self.skipWaiting())
       .catch((error) => {
         console.warn('Sema cache install failed', error);
@@ -135,6 +148,48 @@ self.addEventListener('fetch', (event) => {
   if (isTileRequest(url)) {
     event.respondWith(handleTile(request));
   }
+});
+
+self.addEventListener('push', (event) => {
+  let payload = {};
+  try {
+    payload = event.data?.json() || {};
+  } catch {
+    payload = { body: event.data?.text() || '' };
+  }
+  const title = payload.title || 'Sema';
+  const url = payload.url || './#bugun';
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: payload.body || 'Ders yaklaşıyor.',
+      icon: './icons/icon-192.png',
+      badge: './icons/icon-192.png',
+      tag: payload.tag || 'sema-reminder',
+      renotify: false,
+      data: { url },
+    }),
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || './#bugun', self.location.origin).href;
+  event.waitUntil(
+    (async () => {
+      const clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+      for (const client of clientList) {
+        if (client.url.startsWith(self.location.origin)) {
+          try {
+            await client.navigate(target);
+          } catch {
+            // Bazı tarayıcılar navigate'i desteklemez; yalnız odakla.
+          }
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(target);
+    })(),
+  );
 });
 
 self.addEventListener('message', (event) => {
