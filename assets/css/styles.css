@@ -598,8 +598,8 @@ html[data-theme="dark"] .boot {
   left: 50%;
   bottom: calc(14px + var(--safe-bottom));
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  width: min(calc(100% - 36px), 440px);
+  grid-template-columns: repeat(4, 1fr);
+  width: min(calc(100% - 24px), 470px);
   padding: 7px;
   border-radius: 28px;
   background: var(--nav-bg);
@@ -2628,665 +2628,6 @@ html[data-theme="dark"] .day-chip.is-selected {
   color: var(--danger);
 }
 
-.garden-card {
-  position: relative;
-  border-radius: 36px;
-  overflow: hidden;
-  border: 1px solid var(--stroke);
-  background: var(--glass-strong);
-  box-shadow: var(--shadow), inset 0 1px 0 var(--highlight);
-  backdrop-filter: blur(28px) saturate(170%);
-  -webkit-backdrop-filter: blur(28px) saturate(170%);
-}
-
-.terrarium {
-  position: relative;
-  height: 248px;
-  overflow: hidden;
-  background:
-    radial-gradient(80% 80% at 50% 8%, rgba(255, 255, 255, 0.6), transparent 50%),
-    linear-gradient(180deg, #dfe9ff 0%, #f1e6fb 46%, #fbe8e1 72%, #f0e2d3 100%);
-}
-
-html[data-theme="dark"] .terrarium {
-  background:
-    radial-gradient(80% 80% at 50% 8%, rgba(255, 255, 255, 0.1), transparent 50%),
-    linear-gradient(180deg, #1b213c 0%, #2b1e38 46%, #3d2835 72%, #302622 100%);
-}
-
-.terrarium__tint,
-.terrarium__stars,
-.terrarium__moon,
-.terrarium__rain,
-.terrarium__snow,
-.terrarium__fog,
-.terrarium__flash {
-  position: absolute;
-  pointer-events: none;
-}
-
-.terrarium__tint {
-  inset: 0;
-  z-index: 0;
-  background: transparent;
-  transition: background 0.9s ease;
-}
-
-.terrarium[data-sky="clear-night"] .terrarium__tint,
-.terrarium[data-sky="partly-night"] .terrarium__tint {
-  background: linear-gradient(180deg, rgba(8, 13, 34, 0.8), rgba(44, 26, 58, 0.46) 62%, rgba(91, 52, 52, 0.24));
-}
-
-.terrarium[data-sky="sunrise"] .terrarium__tint {
-  background: linear-gradient(180deg, rgba(255, 143, 74, 0.18), rgba(255, 191, 128, 0.2) 52%, transparent 84%);
-}
-
-.terrarium[data-sky="sunset"] .terrarium__tint {
-  background: linear-gradient(180deg, rgba(222, 105, 124, 0.2), rgba(143, 113, 201, 0.2) 55%, rgba(255, 157, 101, 0.14));
-}
-
-.terrarium[data-sky="cloudy"] .terrarium__tint {
-  background: rgba(81, 94, 116, 0.2);
-}
-
-.terrarium[data-sky="rain"] .terrarium__tint {
-  background: linear-gradient(180deg, rgba(28, 48, 74, 0.48), rgba(36, 57, 80, 0.3));
-}
-
-.terrarium[data-sky="storm"] .terrarium__tint {
-  background: linear-gradient(180deg, rgba(9, 19, 40, 0.64), rgba(20, 30, 52, 0.4));
-}
-
-.terrarium[data-sky="snow"] .terrarium__tint {
-  background: linear-gradient(180deg, rgba(165, 199, 232, 0.28), rgba(237, 246, 255, 0.18));
-}
-
-.terrarium[data-sky="fog"] .terrarium__tint {
-  background: rgba(224, 229, 232, 0.36);
-}
-
-.terrarium__stars {
-  inset: 12px 20px 40px;
-  z-index: 1;
-  background-image:
-    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.95) 0 1.2px, transparent 1.9px),
-    radial-gradient(circle at 31% 12%, rgba(255, 255, 255, 0.7) 0 0.9px, transparent 1.5px),
-    radial-gradient(circle at 49% 28%, rgba(255, 255, 255, 0.9) 0 1px, transparent 1.7px),
-    radial-gradient(circle at 66% 16%, rgba(255, 255, 255, 0.62) 0 0.8px, transparent 1.4px),
-    radial-gradient(circle at 82% 30%, rgba(255, 255, 255, 0.86) 0 1.1px, transparent 1.8px),
-    radial-gradient(circle at 11% 48%, rgba(255, 255, 255, 0.55) 0 0.8px, transparent 1.4px),
-    radial-gradient(circle at 41% 44%, rgba(255, 255, 255, 0.52) 0 0.8px, transparent 1.4px);
-  opacity: 0;
-  transition: opacity 0.9s ease;
-}
-
-.terrarium[data-sky="clear-night"] .terrarium__stars,
-.terrarium[data-sky="partly-night"] .terrarium__stars {
-  opacity: 0.95;
-  animation: sky-twinkle 5s ease-in-out infinite;
-}
-
-.terrarium__moon {
-  top: 36px;
-  right: 38px;
-  z-index: 1;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 32% 30%, rgba(211, 194, 146, 0.4) 0 3.9px, transparent 4.4px),
-    radial-gradient(circle at 64% 58%, rgba(211, 194, 146, 0.3) 0 3px, transparent 3.5px),
-    radial-gradient(circle at 35% 30%, #fff9de, #f3e4ae 58%, #ddc88c);
-  box-shadow:
-    0 0 0 11px rgba(255, 246, 207, 0.08),
-    0 0 45px rgba(255, 243, 194, 0.34),
-    inset -7px -7px 12px rgba(170, 151, 99, 0.38);
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-
-.terrarium[data-sky="clear-night"] .terrarium__moon,
-.terrarium[data-sky="partly-night"] .terrarium__moon {
-  opacity: 0.95;
-}
-
-.terrarium__sun {
-  position: absolute;
-  z-index: 1;
-  top: 25px;
-  right: 34px;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff5d7, #ffd18c 52%, #ffbe77);
-  box-shadow:
-    0 0 0 14px rgba(255, 216, 160, 0.1),
-    0 0 48px rgba(255, 203, 131, 0.36);
-  opacity: 0;
-  transition: opacity 0.8s ease, top 0.8s ease, right 0.8s ease, background 0.8s ease;
-}
-
-.terrarium[data-sky="clear-day"] .terrarium__sun,
-.terrarium[data-sky="partly-day"] .terrarium__sun {
-  opacity: 0.9;
-}
-
-.terrarium[data-sky="sunrise"] .terrarium__sun,
-.terrarium[data-sky="sunset"] .terrarium__sun {
-  top: 92px;
-  right: 28px;
-  opacity: 0.95;
-  background: radial-gradient(circle at 35% 30%, #fff1c7, #ffb56f 52%, #ff8d5d);
-  box-shadow:
-    0 0 0 18px rgba(255, 171, 103, 0.12),
-    0 0 60px rgba(255, 158, 91, 0.46);
-}
-
-.terrarium[data-sky="fog"] .terrarium__sun {
-  opacity: 0.22;
-}
-
-.terrarium[data-sky="cloudy"] .terrarium__sun,
-.terrarium[data-sky="rain"] .terrarium__sun,
-.terrarium[data-sky="storm"] .terrarium__sun,
-.terrarium[data-sky="snow"] .terrarium__sun,
-.terrarium[data-sky="clear-night"] .terrarium__sun,
-.terrarium[data-sky="partly-night"] .terrarium__sun {
-  opacity: 0;
-}
-
-.terrarium__sun::after {
-  content: "";
-  position: absolute;
-  inset: -27px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 50%;
-  animation: ring-pulse 5s ease-out infinite;
-}
-
-.terrarium__cloud {
-  position: absolute;
-  z-index: 1;
-  top: 56px;
-  left: 25px;
-  width: 82px;
-  height: 25px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.46);
-  filter: blur(0.2px);
-  opacity: 0;
-  transition: opacity 0.8s ease, background 0.8s ease;
-  animation: cloud-float 8s ease-in-out infinite;
-}
-
-.terrarium[data-sky="partly-day"] .terrarium__cloud,
-.terrarium[data-sky="partly-night"] .terrarium__cloud {
-  opacity: 0.52;
-  background: rgba(255, 255, 255, 0.42);
-}
-
-.terrarium[data-sky="cloudy"] .terrarium__cloud,
-.terrarium[data-sky="fog"] .terrarium__cloud {
-  opacity: 0.72;
-  background: rgba(238, 242, 248, 0.46);
-}
-
-.terrarium[data-sky="rain"] .terrarium__cloud,
-.terrarium[data-sky="snow"] .terrarium__cloud {
-  opacity: 0.68;
-  background: rgba(225, 233, 243, 0.48);
-}
-
-.terrarium[data-sky="storm"] .terrarium__cloud {
-  opacity: 0.75;
-  background: rgba(194, 202, 219, 0.44);
-}
-
-.terrarium[data-sky="sunrise"] .terrarium__cloud,
-.terrarium[data-sky="sunset"] .terrarium__cloud {
-  opacity: 0.32;
-  background: rgba(255, 226, 201, 0.46);
-}
-
-.terrarium__cloud::before,
-.terrarium__cloud::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  background: inherit;
-}
-
-.terrarium__cloud::before {
-  width: 34px;
-  height: 34px;
-  left: 15px;
-  bottom: 1px;
-}
-
-.terrarium__cloud::after {
-  width: 25px;
-  height: 25px;
-  left: 43px;
-  bottom: 2px;
-}
-
-.terrarium__rain,
-.terrarium__snow,
-.terrarium__fog,
-.terrarium__flash {
-  z-index: 3;
-  inset: 22px 20px 48px;
-  border-radius: 50% 50% 44% 44%;
-  overflow: hidden;
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-
-.terrarium__rain {
-  background-image: repeating-linear-gradient(
-    108deg,
-    transparent 0 17px,
-    rgba(160, 202, 244, 0.42) 17px 18px,
-    transparent 18px 34px
-  );
-  background-size: 82px 82px;
-}
-
-.terrarium__snow {
-  background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.94) 0 1.7px, transparent 2.3px),
-    radial-gradient(circle, rgba(255, 255, 255, 0.66) 0 1.1px, transparent 1.8px);
-  background-position: 0 0, 18px 21px;
-  background-size: 42px 42px, 56px 56px;
-  animation: garden-snow 9s linear infinite;
-}
-
-.terrarium__fog {
-  background:
-    linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.3) 20%, transparent 58%),
-    linear-gradient(80deg, transparent 34%, rgba(255, 255, 255, 0.24) 65%, transparent);
-  filter: blur(7px);
-}
-
-.terrarium__flash {
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.terrarium[data-sky="rain"] .terrarium__rain,
-.terrarium[data-sky="storm"] .terrarium__rain {
-  opacity: 0.68;
-  animation: garden-rain 0.9s linear infinite;
-}
-
-.terrarium[data-sky="snow"] .terrarium__snow {
-  opacity: 0.78;
-}
-
-.terrarium[data-sky="fog"] .terrarium__fog {
-  opacity: 0.72;
-  animation: sky-fog 7s ease-in-out infinite alternate;
-}
-
-.terrarium[data-sky="storm"] .terrarium__flash {
-  animation: garden-flash 7s ease-out infinite;
-}
-
-.terrarium__dome {
-  position: absolute;
-  z-index: 2;
-  inset: 16px 18px 42px;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 50% 50% 44% 44%;
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.2), transparent 40%);
-  box-shadow:
-    inset 12px 16px 32px rgba(255, 255, 255, 0.22),
-    inset -18px -12px 38px rgba(255, 255, 255, 0.06);
-  pointer-events: none;
-}
-
-.terrarium__dome::after {
-  content: "";
-  position: absolute;
-  top: 18px;
-  left: 30px;
-  width: 40%;
-  height: 40%;
-  border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.42), transparent 62%);
-  transform: rotate(-22deg);
-}
-
-.terrarium__soil {
-  position: absolute;
-  z-index: 1;
-  left: 12%;
-  right: 12%;
-  bottom: 42px;
-  height: 44px;
-  border-radius: 50%;
-  background:
-    radial-gradient(ellipse at 50% 20%, #9c745a, #6d4c3f 60%, #55352e);
-  box-shadow:
-    0 9px 18px rgba(79, 53, 44, 0.18),
-    inset 0 4px 10px rgba(255, 255, 255, 0.1);
-}
-
-.terrarium__soil::before {
-  content: "";
-  position: absolute;
-  top: -4px;
-  left: 16%;
-  width: 68%;
-  height: 13px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #b58b6c, #8d6551);
-  opacity: 0.9;
-}
-
-.plant {
-  position: absolute;
-  z-index: 2;
-  left: 50%;
-  bottom: 54px;
-  width: 226px;
-  height: 185px;
-  transform: translateX(-50%) scale(var(--plant-scale, 0.62));
-  transform-origin: 50% 91%;
-  transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.1);
-  filter: drop-shadow(0 7px 12px rgba(64, 60, 83, 0.14));
-}
-
-.plant__stem {
-  fill: none;
-  stroke: #4f8b68;
-  stroke-width: 4;
-  stroke-linecap: round;
-}
-
-.plant__stem--soft {
-  stroke: #72a478;
-  stroke-width: 3;
-  opacity: 0.65;
-}
-
-.plant__leaf {
-  fill: url("#leafGradient");
-  transform-box: fill-box;
-  transform-origin: 0% 50%;
-  transition: opacity 0.55s ease, transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.1);
-  animation: leaf-sway 6s ease-in-out infinite;
-}
-
-.plant__leaf--2 {
-  transform-origin: 100% 50%;
-  animation-delay: -1.8s;
-}
-
-.plant__leaf--3 {
-  animation-delay: -3.2s;
-}
-
-.plant__leaf--small {
-  opacity: 0.72;
-}
-
-.plant__flower {
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.2);
-  animation: flower-breathe 5s ease-in-out infinite;
-}
-
-.plant__petal {
-  fill: url("#flowerGradient");
-}
-
-.plant__center {
-  fill: #ffcf68;
-}
-
-.plant__heart {
-  fill: #f28ba1;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.terrarium[data-stage="0"] .plant {
-  --plant-scale: 0.54;
-}
-
-.terrarium[data-stage="1"] .plant {
-  --plant-scale: 0.78;
-}
-
-.terrarium[data-stage="2"] .plant {
-  --plant-scale: 0.9;
-}
-
-.terrarium[data-stage="3"] .plant {
-  --plant-scale: 1;
-}
-
-.terrarium[data-stage="4"] .plant,
-.terrarium[data-stage="5"] .plant {
-  --plant-scale: 1.05;
-}
-
-.terrarium[data-stage="0"] .plant__leaf--2,
-.terrarium[data-stage="0"] .plant__leaf--3,
-.terrarium[data-stage="0"] .plant__flower,
-.terrarium[data-stage="1"] .plant__leaf--3,
-.terrarium[data-stage="1"] .plant__flower,
-.terrarium[data-stage="2"] .plant__flower,
-.terrarium[data-stage="3"] .plant__flower {
-  opacity: 0;
-  transform: scale(0.4);
-}
-
-.terrarium[data-stage="4"] .plant__heart,
-.terrarium[data-stage="5"] .plant__heart {
-  opacity: 0.9;
-  animation: heart-rise 4.8s ease-in-out infinite;
-}
-
-.terrarium[data-stage="5"] .plant__heart:nth-child(2) {
-  animation-delay: -1.7s;
-}
-
-.terrarium[data-stage="5"] .plant__heart:nth-child(3) {
-  animation-delay: -3.1s;
-}
-
-.terrarium__ground {
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 45px;
-  background: linear-gradient(180deg, rgba(240, 226, 211, 0), #e7d4c2);
-}
-
-html[data-theme="dark"] .terrarium__ground {
-  background: linear-gradient(180deg, rgba(48, 38, 34, 0), #2a211f);
-}
-
-.terrarium__drop {
-  position: absolute;
-  z-index: 3;
-  top: 44px;
-  width: 4px;
-  height: 9px;
-  border-radius: 99px;
-  background: #8fc9ff;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.terrarium.is-watering .terrarium__drop {
-  animation: drop-fall 1.25s ease-in infinite;
-}
-
-.terrarium.is-watering .terrarium__drop--2 {
-  left: 42%;
-  animation-delay: 0.18s;
-}
-
-.terrarium.is-watering .terrarium__drop--3 {
-  left: 52%;
-  animation-delay: 0.42s;
-}
-
-.terrarium.is-watering .terrarium__drop--4 {
-  left: 61%;
-  animation-delay: 0.06s;
-}
-
-.terrarium__drop--1 {
-  left: 35%;
-}
-
-.terrarium__drop--2 {
-  left: 42%;
-}
-
-.terrarium__drop--3 {
-  left: 52%;
-}
-
-.terrarium__drop--4 {
-  left: 61%;
-}
-
-.garden-content {
-  padding: 19px 20px 20px;
-}
-
-.garden-title {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.garden-title h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 730;
-  letter-spacing: -0.045em;
-}
-
-.garden-title__drops {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 5px 8px;
-  border-radius: 10px;
-  background: rgba(89, 154, 255, 0.1);
-  color: #4e8bd4;
-  font-size: 9px;
-  font-weight: 750;
-  white-space: nowrap;
-}
-
-.garden-title__drops .icon {
-  width: 12px;
-  height: 12px;
-}
-
-.garden-caption {
-  margin: 6px 0 0;
-  color: var(--ink-2);
-  font-size: 11.5px;
-  line-height: 1.45;
-}
-
-.garden-meter {
-  margin-top: 15px;
-}
-
-.garden-meter__bar {
-  height: 5px;
-  border-radius: 99px;
-  background: rgba(80, 160, 120, 0.12);
-  overflow: hidden;
-}
-
-.garden-meter__bar span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #79d6a9, #4ec6ad);
-  box-shadow: 0 0 12px rgba(78, 198, 173, 0.4);
-  transition: width 0.5s ease;
-}
-
-.garden-meter__labels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 5px;
-  color: var(--ink-3);
-  font-size: 8.5px;
-  font-weight: 600;
-}
-
-.garden-actions {
-  display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.garden-actions .primary,
-.garden-actions .secondary {
-  min-height: 46px;
-  border-radius: 16px;
-  font-size: 12px;
-}
-
-.water-counts {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 11px;
-  padding-top: 11px;
-  border-top: 1px solid var(--stroke-soft);
-  color: var(--ink-3);
-  font-size: 9px;
-  font-weight: 600;
-}
-
-.water-counts span {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.water-counts .icon {
-  width: 11px;
-  height: 11px;
-  color: #6fa8e7;
-}
-
-.presence-line {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.presence-line__dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--ink-3);
-}
-
-.presence-line__dot.is-online {
-  background: var(--success);
-  box-shadow: 0 0 0 3px rgba(44, 171, 131, 0.12);
-}
-
 /* question */
 
 .couple-question {
@@ -3461,6 +2802,668 @@ html[data-theme="dark"] .answer-bubble--mine {
   font-size: 9px;
   font-weight: 650;
 }
+
+/* biz: ortak akvaryum */
+
+.aquarium-panel {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 28px;
+  border: 1px solid var(--stroke);
+  background: var(--glass-strong);
+  box-shadow: var(--shadow), inset 0 1px 0 var(--highlight);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+}
+
+.aquarium-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.aquarium-head h2 {
+  margin: 2px 0 0;
+  font-size: 26px;
+  font-weight: 740;
+  letter-spacing: -0.04em;
+}
+
+.aquarium-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  color: var(--ink-3);
+  font-size: 9px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.aquarium-stats strong {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.aquarium-tank {
+  position: relative;
+  isolation: isolate;
+  height: 230px;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: linear-gradient(180deg, #8ee4f1 0%, #46b4d4 42%, #146b85 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -18px 30px rgba(5, 51, 70, 0.25);
+}
+
+.aquarium-tank[data-theme="sunset"] {
+  background: linear-gradient(180deg, #ffd9c4 0%, #ff9eb8 46%, #76559f 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), inset 0 -18px 30px rgba(84, 36, 76, 0.25);
+}
+
+.aquarium-tank[data-theme="deep"] {
+  background: linear-gradient(180deg, #73d7e6 0%, #1f799a 44%, #062b49 100%);
+  box-shadow: inset 0 1px 0 rgba(191, 244, 255, 0.45), inset 0 -18px 30px rgba(1, 18, 35, 0.4);
+}
+
+.aquarium-tank__caustics {
+  position: absolute;
+  inset: -16%;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 28% 38%, rgba(255, 255, 255, 0.55), transparent 58%),
+    radial-gradient(ellipse at 72% 58%, rgba(191, 250, 255, 0.35), transparent 52%);
+  background-size: 62% 54%, 48% 44%;
+  mix-blend-mode: soft-light;
+  opacity: 0.62;
+  pointer-events: none;
+  animation: aquarium-caustics 16s ease-in-out infinite alternate;
+}
+
+.aquarium-tank__water {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(255, 255, 255, 0.3), transparent 55%),
+    radial-gradient(ellipse at 80% 18%, rgba(255, 255, 255, 0.16), transparent 45%);
+  pointer-events: none;
+}
+
+.aquarium-tank__light {
+  z-index: 1;
+  position: absolute;
+  top: -30%;
+  left: 12%;
+  width: 22%;
+  height: 150%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 80%);
+  transform: rotate(14deg);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+.aquarium-tank__light::after {
+  content: '';
+  position: absolute;
+  left: 260%;
+  width: 90%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 75%);
+}
+
+.aquarium-tank__sand {
+  position: absolute;
+  right: -5%;
+  bottom: -18px;
+  left: -5%;
+  z-index: 1;
+  height: 62px;
+  border-radius: 50% 50% 0 0;
+  background: linear-gradient(180deg, #f5dfb5 0%, #e0bd86 55%, #c79d63 100%);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.45);
+}
+
+.aquarium-tank__rock {
+  position: absolute;
+  bottom: 22px;
+  z-index: 2;
+  border-radius: 52% 48% 30% 34% / 58% 62% 28% 30%;
+  background: linear-gradient(155deg, #93b9ae 0%, #577f7d 52%, #365d66 100%);
+  box-shadow: inset 0 4px 5px rgba(255, 255, 255, 0.18), 0 5px 9px rgba(9, 49, 60, 0.16);
+}
+
+.aquarium-tank__rock--1 {
+  left: 37%;
+  width: 50px;
+  height: 25px;
+  transform: rotate(-4deg);
+}
+
+.aquarium-tank__rock--2 {
+  right: 22%;
+  width: 36px;
+  height: 18px;
+  transform: rotate(6deg);
+  opacity: 0.82;
+}
+
+.aquarium-tank__coral {
+  position: absolute;
+  bottom: 28px;
+  z-index: 2;
+  width: 9px;
+  height: 44px;
+  border-radius: 9px 9px 2px 2px;
+  background: linear-gradient(180deg, #ffc1bd 0%, #f08a95 55%, #c95d78 100%);
+  transform-origin: bottom center;
+  animation: aquarium-coral 6.5s ease-in-out infinite alternate;
+  box-shadow: 0 3px 5px rgba(84, 32, 50, 0.14);
+}
+
+.aquarium-tank__coral::before,
+.aquarium-tank__coral::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 26px;
+  border-radius: 8px 8px 2px 2px;
+  background: inherit;
+  transform-origin: bottom center;
+}
+
+.aquarium-tank__coral::before {
+  bottom: 9px;
+  left: -7px;
+  transform: rotate(-29deg);
+}
+
+.aquarium-tank__coral::after {
+  right: -7px;
+  bottom: 15px;
+  height: 22px;
+  transform: rotate(26deg);
+}
+
+.aquarium-tank__coral--1 {
+  left: 19%;
+  height: 42px;
+}
+
+.aquarium-tank__coral--2 {
+  right: 5%;
+  height: 32px;
+  opacity: 0.78;
+  animation-delay: -2.4s;
+}
+
+.aquarium-tank__plant {
+  position: absolute;
+  bottom: 28px;
+  z-index: 2;
+  width: 18px;
+  height: 70px;
+  border-radius: 60% 60% 20% 20%;
+  background: linear-gradient(180deg, #b8f3b0 0%, #57b985 55%, #2d7d5b 100%);
+  transform-origin: bottom center;
+  animation: aquarium-sway var(--sway-dur, 5.4s) ease-in-out var(--sway-delay, 0s) infinite alternate;
+  opacity: 0.92;
+  filter: drop-shadow(0 2px 2px rgba(9, 68, 48, 0.14));
+}
+
+.aquarium-tank__plant::before,
+.aquarium-tank__plant::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 12px;
+  height: 46px;
+  border-radius: 60% 60% 20% 20%;
+  background: inherit;
+  transform-origin: bottom center;
+}
+
+.aquarium-tank__plant::before {
+  left: -8px;
+  transform: rotate(-22deg);
+}
+
+.aquarium-tank__plant::after {
+  right: -8px;
+  transform: rotate(20deg);
+}
+
+.aquarium-tank__plant--1 { left: 7%; height: 58px; --sway-dur: 5.4s; }
+.aquarium-tank__plant--2 { right: 11%; height: 82px; --sway-dur: 6.8s; --sway-delay: -1.8s; }
+.aquarium-tank__plant--3 { left: 27%; height: 42px; --sway-dur: 4.6s; --sway-delay: -3s; opacity: 0.75; }
+.aquarium-tank__plant--4 { right: 29%; height: 34px; --sway-dur: 6.2s; --sway-delay: -2.4s; opacity: 0.7; }
+
+.aquarium-tank__bubble {
+  position: absolute;
+  bottom: 20px;
+  left: var(--x);
+  z-index: 3;
+  width: calc(6px * var(--s));
+  height: calc(6px * var(--s));
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.55);
+  animation: aquarium-rise var(--d) linear var(--delay) infinite;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.aquarium-fish {
+  position: absolute;
+  top: var(--top);
+  left: -14%;
+  z-index: 3;
+  line-height: 1;
+  animation: aquarium-swim var(--dur) linear var(--delay) infinite;
+  will-change: left, transform;
+  user-select: none;
+  pointer-events: none;
+}
+
+.aquarium-fish__body {
+  display: block;
+  font-size: calc(30px * var(--scale));
+  filter: drop-shadow(0 5px 5px rgba(8, 45, 60, 0.18));
+  animation: aquarium-bob var(--bob) ease-in-out infinite alternate;
+}
+
+.aquarium-food {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.aquarium-food i {
+  position: absolute;
+  top: 7%;
+  left: calc(50% + var(--start));
+  width: 5px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ffe0a0;
+  box-shadow: 0 0 6px rgba(255, 222, 145, 0.55);
+  opacity: 0;
+  animation: aquarium-food-fall 2.4s ease-in var(--delay) forwards;
+}
+
+.aquarium-food i:nth-child(3n) {
+  background: #ffc277;
+}
+
+.aquarium-food i:nth-child(4n) {
+  width: 4px;
+  height: 3px;
+  background: #fff0c8;
+}
+
+.aquarium-tank__ripple {
+  position: absolute;
+  top: 7%;
+  left: 50%;
+  z-index: 4;
+  width: 18px;
+  height: 7px;
+  border: 2px solid rgba(255, 255, 255, 0.78);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: aquarium-ripple 2s ease-out forwards;
+}
+
+.aquarium-sparkles {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.aquarium-sparkle {
+  position: absolute;
+  left: var(--left);
+  top: var(--top);
+  color: #fffbe8;
+  font-size: 14px;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.85);
+  opacity: 0;
+  animation: aquarium-sparkle 2.2s ease-out var(--delay) forwards;
+}
+
+.aquarium-status {
+  margin: 10px 0 0;
+  color: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.aquarium-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 11px;
+}
+
+.aquarium-actions button {
+  min-height: 44px;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 10px;
+  font-size: 10px;
+}
+
+.aquarium-actions button small {
+  font-size: 8px;
+  font-weight: 550;
+  opacity: 0.72;
+}
+
+.aquarium-actions button:disabled {
+  opacity: 0.55;
+}
+
+.aquarium-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  color: var(--ink-3);
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.aquarium-shelf {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--stroke-soft);
+}
+
+.aquarium-shelf__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.aquarium-shelf__head h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 720;
+  letter-spacing: -0.02em;
+}
+
+.aquarium-shelf__head span {
+  color: var(--ink-3);
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.aquarium-species-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.aquarium-species {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 9px 5px 8px;
+  border: 1px solid var(--stroke-soft);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.28);
+  color: var(--ink);
+  transition: transform 0.16s ease, background 0.16s ease;
+}
+
+html[data-theme="dark"] .aquarium-species {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.aquarium-species:not(:disabled):active {
+  transform: scale(0.95);
+}
+
+.aquarium-species.is-owned {
+  background: rgba(255, 224, 234, 0.5);
+  border-color: rgba(233, 110, 139, 0.28);
+}
+
+html[data-theme="dark"] .aquarium-species.is-owned {
+  background: rgba(233, 110, 139, 0.14);
+}
+
+.aquarium-species:disabled {
+  opacity: 0.6;
+}
+
+.aquarium-species.is-owned:disabled {
+  opacity: 1;
+}
+
+.aquarium-species__emoji {
+  font-size: 21px;
+  line-height: 1.1;
+}
+
+.aquarium-species__name {
+  font-size: 8.5px;
+  font-weight: 680;
+}
+
+.aquarium-species__cost {
+  color: var(--ink-3);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.aquarium-species.is-owned .aquarium-species__cost {
+  color: var(--accent-deep);
+}
+
+.aquarium-themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.aquarium-theme {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--stroke-soft);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.aquarium-theme.is-active {
+  border-color: transparent;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.aquarium-note {
+  margin: 10px 0 0;
+  color: var(--ink-3);
+  font-size: 9.5px;
+  line-height: 1.5;
+}
+
+.aquarium-offline {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--ink-2);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.aquarium-offline p {
+  margin: 0;
+}
+
+.aquarium-panel + .notes-section {
+  margin-top: 20px;
+}
+
+@keyframes aquarium-swim {
+  0% { left: -14%; transform: scaleX(var(--flip)); }
+  44% { left: 100%; transform: scaleX(var(--flip)); }
+  50% { left: 100%; transform: scaleX(var(--flip-back)); }
+  94% { left: -14%; transform: scaleX(var(--flip-back)); }
+  100% { left: -14%; transform: scaleX(var(--flip)); }
+}
+
+@keyframes aquarium-bob {
+  from { transform: translateY(-3px) rotate(-2deg); }
+  to { transform: translateY(3px) rotate(2deg); }
+}
+
+@keyframes aquarium-sway {
+  from { transform: rotate(-4deg) scaleY(1); }
+  to { transform: rotate(5deg) scaleY(1.04); }
+}
+
+@keyframes aquarium-coral {
+  from { transform: rotate(-2.5deg) scaleY(1); }
+  to { transform: rotate(3deg) scaleY(1.03); }
+}
+
+@keyframes aquarium-caustics {
+  from { transform: translate3d(-2%, -1%, 0) scale(1); background-position: 0 0, 100% 0; }
+  to { transform: translate3d(2%, 1%, 0) scale(1.06); background-position: 24% 12%, 72% 8%; }
+}
+
+@keyframes aquarium-rise {
+  0% { transform: translate3d(0, 0, 0) scale(0.55); opacity: 0; }
+  16% { opacity: 0.72; }
+  52% { transform: translate3d(7px, -95px, 0) scale(1); }
+  100% { transform: translate3d(-4px, -200px, 0) scale(1.2); opacity: 0; }
+}
+
+@keyframes aquarium-food-fall {
+  0% { transform: translate(-50%, -8px) rotate(0deg) scale(0.65); opacity: 0; }
+  16% { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--drift)), 148px) rotate(var(--rot)) scale(1); opacity: 0; }
+}
+
+@keyframes aquarium-ripple {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0.85; }
+  100% { transform: translate(-50%, -50%) scale(4.6); opacity: 0; }
+}
+
+@keyframes aquarium-sparkle {
+  0% { transform: scale(0.2) rotate(0deg); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: scale(1.3) rotate(90deg); opacity: 0; }
+}
+
+.aquarium-tank.is-feed .aquarium-tank__water {
+  animation: aquarium-feed-water 2.4s ease;
+}
+
+.aquarium-tank.is-clean .aquarium-tank__water {
+  animation: aquarium-clean 2.8s ease;
+}
+
+.aquarium-tank.is-clean::after {
+  content: '';
+  position: absolute;
+  inset: -24%;
+  z-index: 5;
+  background: linear-gradient(115deg, transparent 34%, rgba(255, 255, 255, 0.62) 49%, transparent 64%);
+  transform: translateX(-120%);
+  pointer-events: none;
+  animation: aquarium-shine 2.4s ease;
+}
+
+@keyframes aquarium-feed-water {
+  0%, 100% { filter: brightness(1); }
+  35% { filter: brightness(1.08) sepia(0.07); }
+}
+
+@keyframes aquarium-clean {
+  0%, 100% { filter: brightness(1); }
+  40% { filter: brightness(1.35) saturate(1.18); }
+}
+
+@keyframes aquarium-shine {
+  0% { transform: translateX(-120%); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateX(120%); opacity: 0; }
+}
+
+/* Akvaryum, işletim sisteminin "hareketi azalt" ayarından bağımsız canlı kalsın.
+   Uygulamanın kendi "hareketi azalt" ayarı (data-reduce-motion) yine önceliklidir. */
+@media (prefers-reduced-motion: reduce) {
+  .aquarium-fish {
+    animation-duration: var(--dur) !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .aquarium-fish__body {
+    animation-duration: var(--bob) !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .aquarium-tank__plant {
+    animation-duration: var(--sway-dur, 5.4s) !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .aquarium-tank__coral {
+    animation-duration: 6.5s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .aquarium-tank__bubble {
+    animation-duration: var(--d) !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .aquarium-tank__caustics {
+    animation-duration: 16s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .aquarium-food i {
+    animation-duration: 2.4s !important;
+  }
+
+  .aquarium-sparkle {
+    animation-duration: 2.2s !important;
+  }
+
+  .aquarium-tank__ripple {
+    animation-duration: 2s !important;
+  }
+
+  .aquarium-tank.is-feed .aquarium-tank__water {
+    animation-duration: 2.4s !important;
+  }
+
+  .aquarium-tank.is-clean .aquarium-tank__water {
+    animation-duration: 2.8s !important;
+  }
+
+  .aquarium-tank.is-clean::after {
+    animation-duration: 2.4s !important;
+  }
+}
+
+
 
 /* notes */
 
@@ -5509,43 +5512,8 @@ html[data-theme="dark"] .tile-map__attribution {
   }
 }
 
-@keyframes garden-rain {
-  from {
-    background-position: 0 -40px;
-  }
-  to {
-    background-position: -20px 80px;
-  }
-}
 
-@keyframes garden-snow {
-  from {
-    background-position: 0 -20px, 18px 0;
-  }
-  to {
-    background-position: 24px 130px, -8px 170px;
-  }
-}
 
-@keyframes garden-flash {
-  0%,
-  88%,
-  100% {
-    opacity: 0;
-  }
-  89% {
-    opacity: 0.5;
-  }
-  90% {
-    opacity: 0.04;
-  }
-  91.5% {
-    opacity: 0.28;
-  }
-  93% {
-    opacity: 0;
-  }
-}
 
 @keyframes drift-a {
   from {
@@ -5943,4 +5911,891 @@ html[data-reduce-motion="true"] *::after {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
+}
+
+/* =========================================================
+   Sema 1.2 — notlar, mürekkep, hatırlatıcı, XOX, sürüm notu
+   ========================================================= */
+
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/caveat-400-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/caveat-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/caveat-600-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/caveat-600-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.hero__orb-slot {
+  display: contents;
+}
+
+.tabbar__item {
+  min-height: 50px;
+  font-size: 9px;
+}
+
+.tabbar__item .icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* ------------------------------ notlar sayfası ------------------------------ */
+
+.notes-page {
+  padding-bottom: 26px;
+}
+
+.notes-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 4px 14px;
+  padding: 0 14px;
+  border: 1px solid var(--stroke);
+  border-radius: 18px;
+  background: var(--glass);
+  box-shadow: inset 0 1px 0 var(--highlight);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+.notes-search__icon {
+  color: var(--ink-3);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.notes-search input {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13px;
+  outline: none;
+}
+
+.notes-search input::placeholder {
+  color: var(--ink-3);
+}
+
+.notes-search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+.notes-chips {
+  display: flex;
+  gap: 6px;
+  margin: 0 4px 14px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.notes-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-chip {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid var(--stroke-soft);
+  border-radius: 999px;
+  background: var(--glass-soft);
+  color: var(--ink-2);
+  font-size: 10.5px;
+  font-weight: 650;
+  white-space: nowrap;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.filter-chip.is-active {
+  background: var(--ink);
+  border-color: transparent;
+  color: var(--bg);
+}
+
+html[data-theme="dark"] .filter-chip.is-active {
+  background: var(--accent);
+  color: #1a1420;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 4px;
+}
+
+.note-tile {
+  position: relative;
+  display: flex;
+  min-height: 176px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 22px;
+  background:
+    linear-gradient(160deg, rgba(255, 253, 248, 0.96), rgba(250, 245, 236, 0.86));
+  color: #2c2636;
+  text-align: left;
+  box-shadow: 0 16px 34px -24px rgba(54, 39, 80, 0.55), inset 0 1px 0 #fff;
+  overflow: hidden;
+}
+
+html[data-theme="dark"] .note-tile {
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 16px 34px -22px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.note-tile__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  color: #8b8290;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.note-tile__pin {
+  color: #c08a3e;
+}
+
+.note-tile__paper {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 2px;
+}
+
+.note-tile__title {
+  display: -webkit-box;
+  overflow: hidden;
+  font-family: 'Caveat', var(--font);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.12;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.note-tile__preview {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #6f6777;
+  font-family: 'Caveat', var(--font);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.28;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  white-space: pre-wrap;
+}
+
+.note-tile__thumb {
+  display: block;
+  overflow: hidden;
+  flex: 1;
+  border-radius: 13px;
+  background: #fffdf8;
+}
+
+.note-tile__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.note-tile__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #9a919f;
+  font-size: 8.5px;
+  font-weight: 600;
+}
+
+.notes-empty {
+  margin: 8px 4px 0;
+}
+
+.notes-empty__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.notes-loading {
+  display: grid;
+  gap: 10px;
+  padding: 0 4px;
+}
+
+.notes-loading .skeleton {
+  height: 110px;
+}
+
+/* ------------------------------ not editörü ------------------------------ */
+
+.note-editor {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, 0.6), transparent 60%),
+    var(--bg);
+}
+
+html[data-theme="dark"] .note-editor {
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, 0.06), transparent 60%),
+    var(--bg);
+}
+
+.note-editor__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: calc(10px + var(--safe-top)) 14px 8px;
+}
+
+.note-editor__back {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  border: 1px solid var(--stroke);
+  border-radius: 50%;
+  background: var(--glass);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.note-editor__status {
+  flex: 1;
+  color: var(--ink-3);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.note-editor__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.note-icon-btn {
+  display: grid;
+  place-items: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 8px;
+  border: 1px solid var(--stroke);
+  border-radius: 50%;
+  background: var(--glass);
+  color: var(--ink-2);
+  font-size: 13px;
+}
+
+.note-icon-btn[aria-pressed="true"] {
+  color: #c08a3e;
+  border-color: rgba(192, 138, 62, 0.4);
+}
+
+.note-paper {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  margin: 4px 12px 10px;
+  padding: 20px 20px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 26px;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 31px, rgba(96, 84, 118, 0.11) 31px 32px),
+    linear-gradient(165deg, #fffdf8, #fbf5ea);
+  color: #2c2636;
+  box-shadow: 0 24px 50px -30px rgba(44, 31, 66, 0.6), inset 0 1px 0 #fff;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.note-paper__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #9a919f;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.note-paper__mode {
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(120, 110, 140, 0.12);
+}
+
+.note-title-input {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #2c2636;
+  font-family: 'Caveat', var(--font);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.15;
+  outline: none;
+}
+
+.note-title-input::placeholder {
+  color: rgba(44, 38, 54, 0.34);
+}
+
+.note-body {
+  min-height: 300px;
+  flex: 1;
+  color: #322b3d;
+  font-family: 'Caveat', var(--font);
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 32px;
+  outline: none;
+  caret-color: #322b3d;
+  white-space: pre-wrap;
+  word-break: break-word;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.note-body:empty::before {
+  content: attr(data-placeholder);
+  color: rgba(44, 38, 54, 0.32);
+  font-size: 18px;
+  line-height: 30px;
+  pointer-events: none;
+}
+
+.note-paper__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(96, 84, 118, 0.1);
+  color: #9a919f;
+  font-size: 8.5px;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.note-editor__tip {
+  margin: 0 18px calc(12px + var(--safe-bottom));
+  color: var(--ink-3);
+  font-size: 9px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* mürekkep */
+
+.note-ink-head {
+  padding: 0 16px 6px;
+}
+
+.note-title-input--ink {
+  padding: 0 4px;
+  color: var(--ink);
+  font-size: 26px;
+}
+
+.note-title-input--ink::placeholder {
+  color: var(--ink-3);
+}
+
+.ink-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 12px 8px;
+  padding: 6px;
+  border: 1px solid var(--stroke);
+  border-radius: 18px;
+  background: var(--glass);
+  box-shadow: inset 0 1px 0 var(--highlight);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ink-toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+.ink-tools {
+  display: flex;
+  gap: 3px;
+  flex: 0 0 auto;
+}
+
+.ink-tools--end {
+  margin-left: auto;
+}
+
+.ink-tool {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.ink-tool.is-active {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+html[data-theme="dark"] .ink-tool.is-active {
+  background: var(--accent);
+  color: #1a1420;
+}
+
+.ink-colors {
+  display: flex;
+  gap: 5px;
+  flex: 0 0 auto;
+  padding: 0 4px;
+}
+
+.ink-color {
+  width: 22px;
+  height: 22px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.ink-color.is-active {
+  transform: scale(1.16);
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
+.ink-paper {
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  margin: 0 12px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 32px, rgba(96, 84, 118, 0.1) 32px 33px),
+    linear-gradient(170deg, #fffdf8, #fbf5ea);
+  box-shadow: 0 24px 50px -30px rgba(44, 31, 66, 0.55), inset 0 1px 0 #fff;
+  overflow: hidden;
+}
+
+.ink-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.ink-canvas[data-tool="eraser"] {
+  cursor: cell;
+}
+
+.ink-paper__hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  color: rgba(44, 38, 54, 0.28);
+  font-family: 'Caveat', var(--font);
+  font-size: 20px;
+  line-height: 1.2;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.ink-paper__hint.is-hidden {
+  opacity: 0;
+}
+
+.ink-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 16px calc(12px + var(--safe-bottom));
+}
+
+.ink-width {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-3);
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ink-width input {
+  width: 104px;
+  accent-color: var(--accent);
+}
+/* ------------------------------ hatırlatıcı ------------------------------ */
+
+.reminder-bar {
+  position: fixed;
+  z-index: 90;
+  top: calc(10px + var(--safe-top));
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(calc(100% - 24px), 460px);
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  border-radius: 20px;
+  background: rgba(30, 25, 42, 0.82);
+  color: #fff;
+  box-shadow: 0 20px 44px -22px rgba(20, 14, 32, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  transform: translate(-50%, -140%);
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+  pointer-events: none;
+}
+
+.reminder-bar.is-visible {
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+body.sheet-open .reminder-bar {
+  display: none;
+}
+
+.reminder-bar__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.reminder-bar__icon .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.reminder-bar__copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.reminder-bar__copy strong {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reminder-bar__copy small {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 9.5px;
+  font-weight: 600;
+}
+
+.reminder-bar__close {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.reminder-bar__close .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.reminder-settings {
+  display: grid;
+  gap: 14px;
+  padding: 2px 0 10px;
+}
+
+.reminder-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.reminder-row strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.reminder-row small {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink-3);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.switch {
+  width: 48px;
+  height: 29px;
+  flex: 0 0 auto;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(120, 110, 140, 0.22);
+  transition: background 0.2s ease;
+}
+
+.switch span {
+  display: block;
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(30, 20, 45, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.switch.is-on {
+  background: linear-gradient(145deg, #ff9aac, var(--accent));
+}
+
+.switch.is-on span {
+  transform: translateX(19px);
+}
+
+.reminder-lead {
+  display: grid;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--stroke-soft);
+}
+
+.reminder-lead > span {
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.lead-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.reminder-push {
+  display: grid;
+  gap: 7px;
+  padding-top: 12px;
+  border-top: 1px solid var(--stroke-soft);
+}
+
+.reminder-hint {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 9.5px;
+  line-height: 1.5;
+}
+
+.secondary.tiny {
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 10px;
+}
+/* ------------------------------ sürüm notu ------------------------------ */
+
+.release {
+  display: grid;
+  gap: 10px;
+  padding: 10px 2px 6px;
+}
+
+.release__kicker {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.release__title {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 760;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.release__sub {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.release__list {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 6px;
+  padding: 0;
+  list-style: none;
+}
+
+.release__item {
+  display: flex;
+  gap: 11px;
+  padding: 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 18px;
+  background: var(--glass-soft);
+}
+
+.release__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(255, 154, 172, 0.28), rgba(123, 91, 214, 0.18));
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.release__item strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.release__item p {
+  margin: 3px 0 0;
+  color: var(--ink-2);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.release__cta {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.release__once {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 9px;
+  text-align: center;
+}
+
+@media (max-width: 380px) {
+  .notes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .note-tile {
+    min-height: 132px;
+  }
+
+  .note-editor__top {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .ink-toolbar {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+}
+
+@media (min-width: 760px) {
+  .notes-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
