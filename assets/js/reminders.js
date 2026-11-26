@@ -1,7 +1,7 @@
 import { dayNumber, nowMinutes, sortedLessons, dateKey } from './time.js';
 import { minutesFromTime } from './state.js';
 import { cloudEnabled, writeNode } from './sync.js';
-import { firebaseConfig } from './firebase-config.js';
+import { firebaseConfig, vapidPublicKey } from './firebase-config.js';
 
 const REMINDED_KEY = 'sema-reminded-v1';
 const CHECK_INTERVAL = 20000;
@@ -128,7 +128,7 @@ export function pushDebugInfo() {
     `push=${'PushManager' in window ? 'var' : 'yok'}`,
     `izin=${'Notification' in window ? Notification.permission : 'yok'}`,
     `sw=${'serviceWorker' in navigator ? 'var' : 'yok'}`,
-    `anahtar=${firebaseConfig.vapidPublicKey ? 'var' : 'yok'}`,
+    `anahtar=${vapidPublicKey ? 'var' : 'yok'}`,
   ].join(' · ');
 }
 
@@ -136,7 +136,7 @@ export function pushBlockedReason() {
   if (!('Notification' in window)) return 'no-notification';
   if (!('serviceWorker' in navigator)) return 'no-service-worker';
   if (!('PushManager' in window)) return isIos() && !isStandalone() ? 'ios-install' : 'ios-old';
-  if (!firebaseConfig.vapidPublicKey) return 'no-key';
+  if (!vapidPublicKey) return 'no-key';
   return null;
 }
 
@@ -145,7 +145,7 @@ export function pushSupported() {
     'Notification' in window &&
     'serviceWorker' in navigator &&
     'PushManager' in window &&
-    Boolean(firebaseConfig.vapidPublicKey)
+    Boolean(vapidPublicKey)
   );
 }
 
@@ -169,7 +169,7 @@ function base64UrlToBytes(value) {
 function matchesVapidKey(subscription) {
   const current = subscription?.options?.applicationServerKey;
   if (!current) return false;
-  const expected = base64UrlToBytes(firebaseConfig.vapidPublicKey);
+  const expected = base64UrlToBytes(vapidPublicKey);
   const actual = new Uint8Array(current);
   if (actual.length !== expected.length) return false;
   return actual.every((byte, index) => byte === expected[index]);
@@ -217,7 +217,7 @@ export async function enablePush(state) {
     if (!subscription) {
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: base64UrlToBytes(firebaseConfig.vapidPublicKey),
+        applicationServerKey: base64UrlToBytes(vapidPublicKey),
       });
     }
     const saved = await savePushDevice(state, subscription);

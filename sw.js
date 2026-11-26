@@ -1,4 +1,4 @@
-const VERSION = 'sema-v1.5.8';
+const VERSION = 'sema-v1.5.9';
 const SHELL_CACHE = `${VERSION}-shell`;
 const TILE_CACHE = `${VERSION}-tiles`;
 const TILE_LIMIT = 160;

@@ -197,7 +197,7 @@ icons/                  # PWA ve Apple ikonları
 
 ## Notlar
 
-- Service worker sürümü `sw.js` içindeki `VERSION` değeridir. Yeni yayında bunu artırın; eski önbellek temizlenir. (Şu an: `sema-v1.5.8`)
+- Service worker sürümü `sw.js` içindeki `VERSION` değeridir. Yeni yayında bunu artırın; eski önbellek temizlenir. (Şu an: `sema-v1.5.9`)
 - Sürüm notu ekranı `release.js` içindeki `RELEASE.id` ile `localStorage` anahtarına bağlıdır; bir kez gösterildikten sonra tekrar açılmaz.
 - Uygulama dış JS çatısı kullanmaz. Tek dış font `assets/fonts/` altındaki Caveat'tır (SIL Open Font License).
 - Harita için OSM karoları, yüklenemezse CARTO kullanılır; yoğun kullanımda kendi tile sağlayıcına geçmek daha doğru olur.
