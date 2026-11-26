@@ -88,7 +88,7 @@ import {
 } from './aquarium.js';
 import { openReleaseSheet, releasePending } from './release.js';
 
-const APP_VERSION = '1.5.0';
+const APP_VERSION = '1.7.0';
 const WEATHER_TTL = 15 * 60 * 1000;
 const TABS = [
   { id: 'today', label: 'Bugün', icon: 'today' },
@@ -113,6 +113,7 @@ let locationWatchId = null;
 let locationPromptTimer = null;
 let reverseLookupPending = false;
 let notesInitStarted = false;
+let scrollFrame = 0;
 
 const ui = {
   scheduleDay: dayNumber(),
@@ -158,7 +159,16 @@ weatherTimer = setInterval(() => {
 registerServiceWorker();
 updateOnlineStatus();
 
-initNotes();
+const bootAction = takeBootAction();
+initNotes()
+  .catch(() => {})
+  .finally(() => {
+    if (bootAction !== 'note') return;
+    setTimeout(() => {
+      showTab('notes');
+      openNoteEditor(null, 'text');
+    }, 600);
+  });
 startReminderRuntime({ getState: () => state, onDue: showReminderBanner });
 if (cloudEnabled()) {
   syncSchedule(state);
@@ -171,6 +181,20 @@ setTimeout(() => {
 /* -------------------------------------------------------------------------- */
 /*  state helpers                                                             */
 /* -------------------------------------------------------------------------- */
+
+function takeBootAction() {
+  let url;
+  try {
+    url = new URL(location.href);
+  } catch {
+    return '';
+  }
+  const action = url.searchParams.get('go') || '';
+  if (!action) return '';
+  url.searchParams.delete('go');
+  history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+  return action;
+}
 
 function tabFromHash() {
   const hash = location.hash.replace('#', '');
@@ -408,15 +432,22 @@ function renderTabbar() {
 function showTab(tabId, { updateHash = true } = {}) {
   if (!TABS.some((tab) => tab.id === tabId)) tabId = 'today';
   const changed = activeTab !== tabId;
+  const fromIndex = TABS.findIndex((tab) => tab.id === activeTab);
+  const toIndex = TABS.findIndex((tab) => tab.id === tabId);
+  const slide = toIndex > fromIndex ? 'next' : 'prev';
   activeTab = tabId;
 
   $$('.view').forEach((view) => {
     const visible = view.dataset.view === tabId;
     view.hidden = !visible;
-    if (visible) {
-      view.classList.remove('view');
+    if (!visible) return;
+    if (changed) {
+      view.dataset.slide = slide;
+      view.style.animation = 'none';
       void view.offsetWidth;
-      view.classList.add('view');
+      view.style.animation = '';
+    } else {
+      delete view.dataset.slide;
     }
   });
 
@@ -437,6 +468,7 @@ function showTab(tabId, { updateHash = true } = {}) {
   if (tabId !== 'us') stopAquariumPolling();
 
   if (changed) window.scrollTo({ top: 0, behavior: 'instant' });
+  syncScrollChrome();
   if (updateHash) {
     const hash =
       tabId === 'today' ? 'bugun' : tabId === 'schedule' ? 'dersler' : tabId === 'notes' ? 'notlar' : 'biz';
@@ -444,6 +476,30 @@ function showTab(tabId, { updateHash = true } = {}) {
   }
   state.ui.lastTab = tabId;
   persistSoon();
+}
+
+function syncScrollChrome() {
+  const today = $('#view-today .today');
+  if (!today) return;
+  today.classList.toggle('is-scrolled', window.scrollY > 96);
+}
+
+function playWeatherOrbFx(element) {
+  const orb = element.closest('.weather-orb');
+  if (!orb || orb.classList.contains('is-wx')) return;
+  const current = currentWeather(weatherData());
+  const kind = current?.kind || 'clear';
+  const fx = ['rain', 'drizzle', 'storm'].includes(kind)
+    ? 'rain'
+    : kind === 'snow'
+      ? 'snow'
+      : current && !current.isDay
+        ? 'moon'
+        : 'sun';
+  orb.dataset.wx = fx;
+  orb.classList.add('is-wx');
+  clearTimeout(orb._wxTimer);
+  orb._wxTimer = setTimeout(() => orb.classList.remove('is-wx'), 1150);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -485,7 +541,8 @@ function renderToday() {
       <header class="home-top">
         <div class="home-top__date">
           <span class="live-dot"></span>
-          <span>${escapeHtml(formatLongDate(now))}</span>
+          <span class="home-top__full">${escapeHtml(formatLongDate(now))}</span>
+          <span class="home-top__compact">${escapeHtml(state.profile.name)} · günün ritmi</span>
         </div>
         <div class="home-top__right">
           <time class="home-clock" data-clock>${formatClock(now)}</time>
@@ -578,6 +635,7 @@ function renderToday() {
   `;
 
   applySkyState();
+  syncScrollChrome();
   mountMiniMap();
 }
 
@@ -2245,6 +2303,18 @@ function bindGlobalEvents() {
     if (event.target.matches('.mood-chip input')) updateMoodSelection();
   });
 
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (scrollFrame) return;
+      scrollFrame = requestAnimationFrame(() => {
+        scrollFrame = 0;
+        syncScrollChrome();
+      });
+    },
+    { passive: true },
+  );
+
   window.addEventListener('online', updateOnlineStatus);
   window.addEventListener('offline', updateOnlineStatus);
   window.addEventListener('pagehide', () => {
@@ -2283,6 +2353,7 @@ async function handleAction(element) {
       requestLocation();
       break;
     case 'open-weather':
+      playWeatherOrbFx(element);
       openWeatherSheet();
       break;
     case 'open-map':

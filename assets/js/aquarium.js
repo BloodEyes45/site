@@ -13,6 +13,8 @@ const THEMES = [
   { id: 'lagoon', label: 'Lagün' },
   { id: 'sunset', label: 'Gün batımı' },
   { id: 'deep', label: 'Derin' },
+  { id: 'snow', label: 'Kar' },
+  { id: 'space', label: 'Uzay' },
 ];
 
 const FEED_COOLDOWN = 6 * 60 * 60 * 1000;
@@ -192,7 +194,10 @@ export function aquariumCardHtml(state) {
 
       <div class="aquarium-tank ${effect ? `is-${effect}` : ''}" data-theme="${aquarium.theme}" aria-label="Ortak akvaryum">
         <span class="aquarium-tank__caustics"></span>
+        <span class="aquarium-tank__aurora" aria-hidden="true"></span>
+        <span class="aquarium-tank__stars" aria-hidden="true"></span>
         <span class="aquarium-tank__water"></span>
+        <span class="aquarium-tank__snow" aria-hidden="true"></span>
         <span class="aquarium-tank__light"></span>
         <span class="aquarium-tank__rock aquarium-tank__rock--1"></span>
         <span class="aquarium-tank__rock aquarium-tank__rock--2"></span>

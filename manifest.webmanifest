@@ -47,15 +47,9 @@
       "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Notlar",
-      "short_name": "Notlar",
-      "url": "./#notlar",
-      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Biz",
-      "short_name": "Biz",
-      "url": "./#biz",
+      "name": "Yeni not",
+      "short_name": "Yeni not",
+      "url": "./?go=note#notlar",
       "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192" }]
     }
   ]

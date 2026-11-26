@@ -85,6 +85,7 @@ body {
   color: var(--ink);
   background: var(--bg);
   overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overscroll-behavior-y: none;
@@ -7131,4 +7132,311 @@ html[data-theme="dark"] .tabbar__item.is-active {
   .hero__mood {
     width: 100%;
   }
+}
+
+/* =========================================================
+   Sema 1.7 — kar & uzay akvaryumu, yönlü geçiş, orb
+   ========================================================= */
+
+/* akvaryum: katmanlı gradyanlar yavaşça kayıyor */
+.aquarium-tank {
+  background-size: 150% 150%;
+  animation: aquarium-gradient-drift 28s ease-in-out infinite alternate;
+}
+
+.aquarium-tank[data-theme="snow"] {
+  background:
+    radial-gradient(120% 70% at 50% -18%, rgba(255, 255, 255, 0.92), transparent 62%),
+    linear-gradient(180deg, #dff4ff 0%, #8ecae8 44%, #33689b 100%);
+  background-size: 150% 150%;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -18px 30px rgba(21, 54, 86, 0.36);
+}
+
+.aquarium-tank[data-theme="space"] {
+  background:
+    radial-gradient(90% 70% at 14% 6%, rgba(150, 94, 255, 0.55), transparent 60%),
+    radial-gradient(85% 65% at 86% 28%, rgba(255, 116, 196, 0.3), transparent 62%),
+    linear-gradient(180deg, #2c1b5e 0%, #180f3f 46%, #050317 100%);
+  background-size: 150% 150%;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -22px 34px rgba(0, 0, 0, 0.6);
+}
+
+/* temalara özel katmanlar: kar, yıldız tozu, uzay bulutu */
+.aquarium-tank__snow,
+.aquarium-tank__stars,
+.aquarium-tank__aurora {
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.aquarium-tank__snow {
+  z-index: 2;
+  background-image:
+    radial-gradient(circle, #fff 0 1.5px, transparent 2.1px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.72) 0 1.1px, transparent 1.8px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.5) 0 0.9px, transparent 1.5px);
+  background-size: 54px 54px, 83px 83px, 37px 37px;
+  background-position: 0 0, 26px 39px, 13px 21px;
+}
+
+.aquarium-tank[data-theme="snow"] .aquarium-tank__snow {
+  opacity: 0.9;
+  animation: aquarium-snowfall 34s linear infinite;
+}
+
+.aquarium-tank__stars {
+  z-index: 1;
+  background-image:
+    radial-gradient(circle, #fff 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, rgba(205, 176, 255, 0.95) 0 1.6px, transparent 2.2px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 0.9px, transparent 1.5px);
+  background-size: 96px 96px, 137px 137px, 61px 61px;
+  background-position: 12px 24px, 58px 71px, 31px 9px;
+}
+
+.aquarium-tank[data-theme="space"] .aquarium-tank__stars {
+  opacity: 0.92;
+  animation: aquarium-stardust 46s linear infinite, aquarium-twinkle 5.5s ease-in-out infinite alternate;
+}
+
+.aquarium-tank__aurora {
+  z-index: 1;
+  background:
+    radial-gradient(60% 50% at 30% 20%, rgba(160, 108, 255, 0.45), transparent 70%),
+    radial-gradient(50% 45% at 75% 45%, rgba(255, 118, 196, 0.32), transparent 70%);
+  filter: blur(12px);
+}
+
+.aquarium-tank[data-theme="space"] .aquarium-tank__aurora {
+  opacity: 0.75;
+  animation: aquarium-aurora 18s ease-in-out infinite alternate;
+}
+
+.aquarium-tank[data-theme="snow"] .aquarium-tank__sand {
+  background: linear-gradient(180deg, #ffffff 0%, #e2f0fb 55%, #bcd7ec 100%);
+}
+
+.aquarium-tank[data-theme="snow"] .aquarium-tank__rock {
+  background: linear-gradient(155deg, #dff2ff 0%, #9dc4dd 52%, #6c96b6 100%);
+}
+
+.aquarium-tank[data-theme="snow"] .aquarium-tank__caustics {
+  opacity: 0.4;
+}
+
+.aquarium-tank[data-theme="snow"] .aquarium-tank__bubble {
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+.aquarium-tank[data-theme="space"] .aquarium-tank__caustics {
+  opacity: 0.18;
+}
+
+.aquarium-tank[data-theme="space"] .aquarium-tank__sand {
+  background: linear-gradient(180deg, #6b57a6 0%, #42306f 55%, #241a48 100%);
+  box-shadow: inset 0 3px 0 rgba(196, 167, 255, 0.35);
+}
+
+.aquarium-tank[data-theme="space"] .aquarium-tank__rock {
+  background: linear-gradient(155deg, #7a6aa8 0%, #463871 52%, #291f4d 100%);
+  box-shadow: inset 0 4px 6px rgba(214, 191, 255, 0.28), 0 5px 12px rgba(0, 0, 0, 0.3);
+}
+
+.aquarium-tank[data-theme="space"] .aquarium-tank__plant {
+  background: linear-gradient(180deg, #a9ffe9 0%, #45d7c0 55%, #1d8f88 100%);
+  filter: drop-shadow(0 0 7px rgba(120, 255, 232, 0.6));
+}
+
+.aquarium-tank[data-theme="space"] .aquarium-tank__coral {
+  background: linear-gradient(180deg, #ffd8ff 0%, #d596ff 55%, #8d55e6 100%);
+  box-shadow: 0 0 10px rgba(213, 150, 255, 0.45);
+}
+
+.aquarium-tank[data-theme="space"] .aquarium-tank__bubble {
+  border-color: rgba(218, 191, 255, 0.7);
+  background: rgba(197, 166, 255, 0.14);
+}
+
+@keyframes aquarium-gradient-drift {
+  from { background-position: 0% 0%; }
+  to { background-position: 100% 55%; }
+}
+
+@keyframes aquarium-snowfall {
+  from { background-position: 0 -140px, 26px -90px, 13px -40px; }
+  to { background-position: 16px 320px, 4px 380px, 30px 300px; }
+}
+
+@keyframes aquarium-stardust {
+  from { background-position: 12px 24px, 58px 71px, 31px 9px; }
+  to { background-position: 42px 66px, 18px 131px, 71px 49px; }
+}
+
+@keyframes aquarium-twinkle {
+  from { opacity: 0.55; }
+  to { opacity: 0.98; }
+}
+
+@keyframes aquarium-aurora {
+  from { transform: translate3d(-4%, -2%, 0) scale(1); }
+  to { transform: translate3d(5%, 3%, 0) scale(1.1); }
+}
+
+/* sekmeler: içerik yönüne göre kayma */
+.view[data-slide="next"] {
+  animation: view-in-next 0.44s cubic-bezier(0.22, 0.9, 0.28, 1) both;
+}
+
+.view[data-slide="prev"] {
+  animation: view-in-prev 0.44s cubic-bezier(0.22, 0.9, 0.28, 1) both;
+}
+
+@keyframes view-in-next {
+  from { opacity: 0; transform: translate3d(44px, 0, 0) scale(0.986); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes view-in-prev {
+  from { opacity: 0; transform: translate3d(-44px, 0, 0) scale(0.986); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* kaydırma: üst çubuk sabitlenir, hero başlığı küçülür */
+.home-top {
+  position: sticky;
+  z-index: 40;
+  top: calc(6px + var(--safe-top));
+  transition: background 0.28s ease, box-shadow 0.28s ease, padding 0.28s ease, margin 0.28s ease;
+}
+
+.home-top__compact {
+  display: none;
+  max-width: 46vw;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.today.is-scrolled .home-top {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--stroke);
+  border-radius: 18px;
+  background: var(--glass-strong);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+}
+
+.today.is-scrolled .home-top__full {
+  display: none;
+}
+
+.today.is-scrolled .home-top__compact {
+  display: inline-block;
+  animation: compact-in 0.3s ease both;
+}
+
+.hero__title {
+  transition: font-size 0.34s cubic-bezier(0.2, 0.8, 0.25, 1), letter-spacing 0.34s ease;
+}
+
+.today.is-scrolled .hero__title {
+  font-size: clamp(21px, 6.2vw, 29px);
+  letter-spacing: -0.05em;
+}
+
+@keyframes compact-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* hava durumu orb'u: dokununca kısa hava animasyonu */
+.weather-orb {
+  overflow: hidden;
+}
+
+.weather-orb > * {
+  position: relative;
+  z-index: 1;
+}
+
+.weather-orb::before,
+.weather-orb::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.weather-orb[data-wx="rain"].is-wx::before {
+  inset: -12%;
+  background-image:
+    radial-gradient(ellipse 2px 11px at 50% 50%, rgba(255, 255, 255, 0.9), transparent 72%),
+    radial-gradient(ellipse 2px 9px at 50% 50%, rgba(214, 236, 255, 0.75), transparent 72%);
+  background-size: 27px 33px, 37px 45px;
+  animation: orb-rain 1s linear 1;
+}
+
+.weather-orb[data-wx="snow"].is-wx::before {
+  inset: -12%;
+  background-image:
+    radial-gradient(circle, #fff 0 1.6px, transparent 2.2px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.7) 0 1.1px, transparent 1.8px);
+  background-size: 26px 26px, 37px 37px;
+  background-position: 0 0, 13px 19px;
+  animation: orb-snow 1.15s ease-in 1;
+}
+
+.weather-orb[data-wx="sun"].is-wx::before {
+  inset: -20%;
+  background: radial-gradient(circle at 50% 44%, rgba(255, 238, 176, 0.95), rgba(255, 199, 116, 0.45) 40%, transparent 66%);
+  animation: orb-glow 1.15s ease-out 1;
+}
+
+.weather-orb[data-wx="sun"].is-wx::after {
+  inset: -18%;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 214, 126, 0.85) 0deg 5deg, transparent 5deg 25deg);
+  -webkit-mask: radial-gradient(circle, transparent 35%, #000 47%, transparent 76%);
+  mask: radial-gradient(circle, transparent 35%, #000 47%, transparent 76%);
+  animation: orb-rays 1.15s ease-out 1;
+}
+
+.weather-orb[data-wx="moon"].is-wx::before {
+  inset: -18%;
+  background: radial-gradient(circle at 52% 40%, rgba(218, 206, 255, 0.9), rgba(150, 132, 240, 0.35) 42%, transparent 68%);
+  animation: orb-glow 1.2s ease-out 1;
+}
+
+@keyframes orb-rain {
+  0% { opacity: 0; transform: translate3d(0, -28%, 0); }
+  22% { opacity: 0.85; }
+  100% { opacity: 0; transform: translate3d(-9px, 30%, 0); }
+}
+
+@keyframes orb-snow {
+  0% { opacity: 0; transform: translate3d(0, -26%, 0); }
+  25% { opacity: 0.95; }
+  100% { opacity: 0; transform: translate3d(-4px, 28%, 0); }
+}
+
+@keyframes orb-glow {
+  0% { opacity: 0; transform: scale(0.7); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.12); }
+}
+
+@keyframes orb-rays {
+  0% { opacity: 0; transform: rotate(-26deg) scale(0.62); }
+  32% { opacity: 0.9; }
+  100% { opacity: 0; transform: rotate(22deg) scale(1.14); }
 }

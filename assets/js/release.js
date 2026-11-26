@@ -3,29 +3,34 @@ import { escapeHtml } from './utils.js';
 const RELEASE_KEY = 'sema-release-seen';
 
 export const RELEASE = {
-  id: '1.2.0',
-  title: 'Sema 1.2',
-  subtitle: 'Notlar, hatırlatıcı ve daha sakin bir harita.',
+  id: '1.7.0',
+  title: 'Sema 1.7',
+  subtitle: 'Yeni akvaryum temaları, yönlü geçişler ve ana ekran kısayolları.',
   items: [
     {
-      title: 'Notlar sekmesi',
-      text: 'El yazısı görünümlü metin notları ve Apple Pencil ile basınçlı mürekkep notları. Her not cihazında saklanır.',
-      icon: '✎',
+      title: 'Kar ve Uzay temaları',
+      text: 'Akvaryuma iki yeni tema geldi: soğuk mavilerde yavaşça yağan kar ve mor bir uzayda yıldız tozu. Tüm temalar artık hareket eden katmanlı gradyanlarla geliyor.',
+      icon: '❄',
     },
     {
-      title: 'Ders hatırlatıcısı',
-      text: 'Dersten 5–30 dakika önce uygulama içi uyarı; izin verirsen telefon bildirimi.',
-      icon: '◔',
+      title: 'Yönlü sekme geçişi',
+      text: 'Sekmeler arasında içerik artık kayarak geliyor: ileri giderken sağdan, geri dönerken soldan.',
+      icon: '⇄',
     },
     {
-      title: 'Canlı konum düzeltmesi',
-      text: 'Harita artık her konum güncellemesinde sökülüp yeniden kurulmuyor; titreme ve boş harita bitti.',
-      icon: '⌖',
+      title: 'Hava durumu dokunuşu',
+      text: 'Hava durumu küresine dokunduğunda orb içinde kısa bir yağmur, kar, güneş veya ay animasyonu oynuyor.',
+      icon: '☀',
     },
     {
-      title: 'Biz’de notlar ve akvaryum',
-      text: 'Küçük notlar ve birlikte beslediğiniz ortak akvaryum aynı alanda. Yem verin, temizleyin, inciyle yeni balıklar ekleyin.',
-      icon: '♡',
+      title: 'Kaydırmada küçülen başlık',
+      text: 'Sayfa aşağı indikçe karşılama başlığı küçülüyor ve üst çubuk sabitlenip adını gösteriyor.',
+      icon: '⌄',
+    },
+    {
+      title: 'Ana ekran kısayolları',
+      text: 'Uygulama ikonuna basılı tutunca Bugün, Dersler ve Yeni not kısayolları çıkıyor.',
+      icon: '⌘',
     },
   ],
 };
