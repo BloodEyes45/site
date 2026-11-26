@@ -1,6 +1,11 @@
 .secrets/
 push-worker/node_modules/
+node_modules/
+dist/
+.netlify/
 site/
+site.zip
+.cloud-attachments/
 .env
 .env.local
 *.log

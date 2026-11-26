@@ -120,6 +120,26 @@ async function showLocalNotification(lesson, remaining) {
   }
 }
 
+export function pushDebugInfo() {
+  const standalone =
+    window.navigator.standalone === true || Boolean(window.matchMedia?.('(display-mode: standalone)').matches);
+  return [
+    `mod=${standalone ? 'app' : 'tarayici'}`,
+    `push=${'PushManager' in window ? 'var' : 'yok'}`,
+    `izin=${'Notification' in window ? Notification.permission : 'yok'}`,
+    `sw=${'serviceWorker' in navigator ? 'var' : 'yok'}`,
+    `anahtar=${firebaseConfig.vapidPublicKey ? 'var' : 'yok'}`,
+  ].join(' · ');
+}
+
+export function pushBlockedReason() {
+  if (!('Notification' in window)) return 'no-notification';
+  if (!('serviceWorker' in navigator)) return 'no-service-worker';
+  if (!('PushManager' in window)) return isIos() && !isStandalone() ? 'ios-install' : 'ios-old';
+  if (!firebaseConfig.vapidPublicKey) return 'no-key';
+  return null;
+}
+
 export function pushSupported() {
   return (
     'Notification' in window &&

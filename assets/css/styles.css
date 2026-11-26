@@ -6799,3 +6799,336 @@ body.sheet-open .reminder-bar {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* ------------------------------ 1.5.6 ince ayar ------------------------------ */
+
+/* 1 · günün saatine göre ışık */
+.ambient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--daypart-tint, transparent);
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+  transition: background 1.2s ease;
+  pointer-events: none;
+}
+
+html[data-daypart="morning"] {
+  --daypart-tint: linear-gradient(200deg, #ffd9b5, #fff0f2 55%, #e6f2ff);
+}
+html[data-daypart="day"] {
+  --daypart-tint: linear-gradient(200deg, #ffffff, #f6f2ec 60%, #eef3ff);
+}
+html[data-daypart="evening"] {
+  --daypart-tint: linear-gradient(200deg, #ffc7b8, #f3d8ef 55%, #dcd5ff);
+}
+html[data-daypart="night"] {
+  --daypart-tint: linear-gradient(200deg, #b7c2ff, #d6caff 55%, #c6d3ff);
+}
+html[data-theme="dark"] .ambient::after {
+  opacity: 0.16;
+}
+
+/* 2 · sıralı kart girişi + 11 · liste performansı */
+@keyframes card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.lesson-stack .lesson-card {
+  animation: card-rise 0.52s cubic-bezier(0.22, 0.9, 0.28, 1.02) backwards;
+  animation-delay: calc(var(--i, 0) * 55ms);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 72px;
+}
+
+/* 3 · dokunma hissi */
+button,
+[role="switch"] {
+  transition: scale 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.35);
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: none) {
+  button:active:not(:disabled),
+  [role="switch"]:active,
+  .filter-chip:active,
+  .day-chip:active {
+    scale: 0.955;
+  }
+}
+
+
+
+
+
+
+/* 5 · hatırlatıcı bandı geri sayımı */
+.reminder-bar {
+  padding-bottom: 14px;
+}
+
+.reminder-bar__timer {
+  position: absolute;
+  right: 14px;
+  bottom: 6px;
+  left: 14px;
+  height: 2px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+}
+
+.reminder-bar__timer::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--accent), var(--peach));
+  animation: reminder-countdown 60s linear forwards;
+}
+
+@keyframes reminder-countdown {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.reminder-bar__icon {
+  animation: bell-breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes bell-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.09);
+  }
+}
+
+.reminder-debug {
+  margin: 8px 0 0;
+  color: var(--ink-3);
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+/* 8 · akvaryum gecesi ve ürkek balıklar */
+html[data-daypart="night"] .aquarium-tank {
+  filter: brightness(0.86) saturate(0.94);
+}
+
+html[data-daypart="night"] .aquarium-tank__light {
+  opacity: 0.55;
+}
+
+.aquarium-fish__body {
+  transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.5);
+}
+
+.aquarium-fish.is-scared .aquarium-fish__body {
+  transform: scale(1.18) translateY(-7px);
+}
+
+.aquarium-fish.is-scared {
+  filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.45));
+}
+
+/* 9 · selamlama tipografisi */
+.hero__title {
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.hero__name {
+  font-style: italic;
+  letter-spacing: -0.025em;
+}
+
+/* 10 · geçiş süreleri */
+.view {
+  animation-duration: 0.52s;
+  animation-timing-function: cubic-bezier(0.22, 0.88, 0.24, 1.04);
+}
+
+.sheet {
+  transition:
+    transform 0.46s cubic-bezier(0.2, 0.9, 0.22, 1.02),
+    opacity 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce), (prefers-reduced-transparency: reduce) {
+  .lesson-stack .lesson-card,
+  .reminder-bar__icon,
+  .reminder-bar__timer::after,
+  .view {
+    animation: none !important;
+  }
+  .aquarium-fish__body,
+  .reminder-bar,
+  .sheet {
+    transition: none !important;
+  }
+}
+
+/* ------------------------------ 1.5.7 görsel cila ------------------------------ */
+
+/* bölüm başlıkları */
+.section-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  letter-spacing: -0.035em;
+}
+.section-head h2::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: linear-gradient(140deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+/* isim parıltısı */
+.hero__name {
+  background-size: 220% 100%;
+  animation: name-shimmer 9s ease-in-out infinite;
+}
+@keyframes name-shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* sekmeler */
+.tabbar__item.is-active {
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--accent) 14%, rgba(255, 255, 255, 0.94)),
+    rgba(255, 255, 255, 0.44)
+  );
+  box-shadow:
+    0 12px 26px -16px color-mix(in srgb, var(--accent) 60%, rgba(44, 31, 66, 0.5)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+html[data-theme="dark"] .tabbar__item.is-active {
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--accent) 24%, rgba(255, 255, 255, 0.12)),
+    rgba(255, 255, 255, 0.04)
+  );
+}
+.tabbar__item.is-active .icon {
+  transform: translateY(-2px) scale(1.08);
+}
+.tabbar__item.is-active::after {
+  width: 3px;
+  height: 3px;
+  background: var(--accent-deep);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+/* ders kartı fare ile */
+@media (hover: hover) {
+  .lesson-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 26px 46px -30px rgba(54, 39, 80, 0.55),
+      inset 0 1px 0 var(--highlight);
+  }
+}
+
+/* boş durum */
+.empty-state {
+  padding: 36px 24px 32px;
+  border-radius: 30px;
+  background:
+    radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 62%),
+    var(--glass-soft);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    var(--shadow-soft);
+}
+.empty-state__icon {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 22px;
+  background: linear-gradient(150deg, rgba(255, 197, 168, 0.62), rgba(233, 110, 139, 0.42));
+  box-shadow:
+    0 18px 32px -18px rgba(233, 110, 139, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  animation: icon-breathe 4.5s ease-in-out infinite;
+}
+.empty-state__icon::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 28px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  animation: halo-pulse 4.5s ease-in-out infinite;
+}
+@keyframes icon-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.03);
+  }
+}
+@keyframes halo-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__name,
+  .empty-state__icon,
+  .empty-state__icon::after {
+    animation: none !important;
+  }
+}
+
+/* konum etiketi sıkışmasın */
+.location-chip {
+  flex: 1 1 auto;
+}
+
+@media (max-width: 430px) {
+  .hero__bottom {
+    flex-wrap: wrap;
+    row-gap: 9px;
+  }
+  .hero__mood {
+    width: 100%;
+  }
+}

@@ -430,3 +430,18 @@ export function stopAquariumPolling() {
   pollTimer = null;
   clockTimer = null;
 }
+
+/* Dokununca balik urkekce kacar. */
+document.addEventListener(
+  'pointerdown',
+  (event) => {
+    const fish = event.target instanceof Element ? event.target.closest('.aquarium-fish') : null;
+    if (!fish) return;
+    fish.classList.remove('is-scared');
+    void fish.offsetWidth;
+    fish.classList.add('is-scared');
+    clearTimeout(fish._scareTimer);
+    fish._scareTimer = setTimeout(() => fish.classList.remove('is-scared'), 900);
+  },
+  { passive: true },
+);

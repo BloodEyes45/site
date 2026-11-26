@@ -30,21 +30,21 @@ Açık tema varsayılandır. Sağ üstteki güneş/ay düğmesiyle koyu temaya g
 - Bugün ekranındaki **zil** düğmesi ayarları açar: aç/kapa, 5 / 10 / 15 / 30 dakika önce.
 - Uygulama açıkken uyarı her durumda çalışır (üstte kalıcı kart + hafif titreşim). Aynı ders için günde bir kez gösterilir.
 - **Telefon bildirimi** için izin verilmesi gerekir. iPhone/iPad'de önce Paylaş → **Ana Ekrana Ekle** ile uygulamayı yükle.
-- Uygulama kapalıyken bildirim, GitHub Actions üzerinde 5 dakikada bir çalışan `push-worker` ile gönderilir. **Blaze planı veya Firebase CLI gerekmez.**
+- Uygulama kapalıyken bildirim, Netlify üzerinde 5 dakikada bir çalışan zamanlanmış fonksiyon (`netlify/functions/reminders.mjs`) ile gönderilir. **Blaze planı, Firebase CLI veya GitHub gerekmez.**
 
 ### Telefon bildirimi kurulumu (tek sefer)
 
-> Bu yöntem GitHub’ı kullanır. Repo **public** ise Actions dakikaları ücretsizdir; private repoda aylık dakika sınırına dikkat et.
+> Gönderen taraf Netlify’ın **zamanlanmış fonksiyonu**. Ücretsiz plana dahildir; 5 dakikada bir çalışır ve her çalışma saniyeler sürer.
 
-1. GitHub’da repoyu aç → **Settings → Secrets and variables → Actions → New repository secret**.
-2. Bilgisayarda `D:\OneDrive\Desktop\Deneme\.secrets\vapid.json` dosyasını aç (`notepad .secrets\vapid.json`). İçindeki **`privateKey`** değerini kopyala.
-3. Secret adı: **`VAPID_PRIVATE_KEY`**, değer: kopyaladığın anahtar. Kaydet. (İsteğe bağlı `VAPID_SUBJECT` ekleyebilirsin; boş bırakılırsa `mailto:sema@example.com` kullanılır.)
-4. **Actions** sekmesinde **Ders hatırlatıcıları** iş akışını aç → **Run workflow** ile bir kez elle çalıştır. Sonraki çalışmalar 5 dakikada bir otomatiktir.
+1. Bilgisayarda `.secrets\netlify.env` dosyasını aç (`notepad .secrets\netlify.env`). İçinde üç satır var: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`.
+2. Netlify’da siteyi aç → **Site configuration → Environment variables → Import from a .env file** → bu dosyayı yükle (ya da üç değişkeni elle ekle). Kaydet ve değişkenleri **secret** olarak işaretle.
+3. **Deploys → Trigger deploy → Deploy site** ile yeniden yayınla; ortam değişkenleri yeni deploy’da devreye girer.
+4. **Functions** sekmesinde `reminders` fonksiyonunu aç → **Run now**. Günlükte `[19:24] 8 ders, 0 cihaz` benzeri bir satır görürsün; sonrası otomatiktir (`*/5 * * * *`).
 5. Uygulamada **Bugün → zil → Telefon bildirimi → Aç** ve izin ver. “Deneme bildirimi gönder” ile kontrol et.
 
-İstemci, cihaz aboneliğini ve ders programını `spaces/semaasistan/push/...` altına yazar; GitHub Actions `push-worker/cron.mjs` ile yaklaşan dersleri bulup Web Push gönderir ve gönderilenleri `push/sent/...` altında işaretler. GitHub zamanlayıcısı birkaç dakika gecikebilir; bu yüzden bildirim “tam dakikasında” değil, o aralıkta gelebilir.
+İstemci, cihaz aboneliğini ve ders programını `spaces/semaasistan/push/...` altına yazar; Netlify fonksiyonu yaklaşan dersleri bulup Web Push gönderir ve gönderilenleri `push/sent/...` altında işaretler. Zamanlayıcı birkaç dakika gecikebilir; bu yüzden bildirim “tam dakikasında” değil, o aralıkta gelebilir.
 
-> `.secrets/vapid.json` **özel anahtar** içerir ve `.gitignore` ile repo dışında tutulur. Bu dosyayı GitHub’a, siteye veya sohbete yükleme. Daha önce eski `functions/.vapid.json` dosyasını push ettiysen, artık kullanılmayan eski anahtarı geçmişten silmek için repo geçmişini temizle; yeni anahtar çifti bu sürümde yeniden üretildi.
+> `.secrets/vapid.json` ve `.secrets/netlify.env` **özel anahtar** içerir ve `.gitignore` ile repo dışında tutulur. Bu dosyaları GitHub’a, siteye veya sohbete yükleme. Anahtarlar kaybolursa yeni çift üretilir, `firebase-config.js` içindeki açık anahtar güncellenir ve telefonda bildirimi bir kez kapatıp açmak yeterlidir; eski abonelik otomatik yenilenir.
 
 ## Biz
 
@@ -85,13 +85,35 @@ http://localhost:8791
 
 Telefonda PWA olarak kurmak için sitenin **HTTPS** üzerinden yayınlanması gerekir. Konum izni de HTTPS (veya localhost) gerektirir.
 
-### GitHub Pages ile yayınlama
+### Netlify ile yayınlama
 
-`.github/workflows/pages.yml` yalnızca `index.html`, `manifest.webmanifest`, `sw.js`, `assets/` ve `icons/` klasörlerini yayınlar; `push-worker/`, `.secrets/` ve yapılandırma dosyaları siteye çıkmaz.
+`netlify.toml` yalnızca site dosyalarını yayınlar: `node scripts/build-site.mjs` komutu `index.html`, `manifest.webmanifest`, `sw.js`, `assets/` ve `icons/` klasörlerini `dist` içine toplar. `push-worker/`, `.secrets/`, `.github/` ve yapılandırma dosyaları siteye çıkmaz.
 
-1. GitHub → **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-2. `main` (veya `master`) dalına push et. **GitHub Pages** iş akışı siteyi yayınlar.
-3. Adres: `https://KULLANICI.github.io/REPO/`. Telefonda bu adresi açıp ana ekrana ekle.
+**A. Sürükle-bırak (yalnızca site, Git gerekmez)**
+
+1. [app.netlify.com](https://app.netlify.com) → **Add new site → Deploy manually**.
+2. Bilgisayarda `npm run build` çalıştır.
+3. Netlify'ın sürükle-bırak alanına **`dist` klasörünü** bırak. Site saniyeler içinde `https://SITE-ADI.netlify.app` adresinde yayınlanır.
+4. Sonraki güncellemeler için aynı adımı tekrarla (**Deploys → Deploy manually**).
+
+> Yalnızca `dist` klasörünü yükle. Klasörün tamamını yüklersen `.secrets/` ve `push-worker/` de siteye çıkar.
+>
+> Sürükle-bırak **yalnızca siteyi** yayınlar; zamanlanmış bildirim fonksiyonu yüklenmez. Telefon bildirimlerinin de çalışması için **B** veya **C** yolunu kullan.
+
+**B. Netlify CLI ile (önerilen, Git gerekmez)**
+
+```bash
+npx netlify login
+npx netlify deploy --build --prod
+```
+
+İlk çalıştırmada “Link this directory to an existing site?” sorusuna yeni site oluşturarak yanıtla. `--build` sayesinde `dist` yeniden üretilir ve fonksiyon bağımlılıkları (`web-push`) Netlify tarafında paketlenir.
+
+**C. Git ile (isteğe bağlı)**
+
+Repoyu GitHub/GitLab/Bitbucket'a bağlarsan Netlify her push'ta `node scripts/build-site.mjs` çalıştırıp yayınlar.
+
+Telefonda adresi aç → Paylaş → **Ana Ekrana Ekle**.
 
 ## Firebase
 
@@ -141,9 +163,13 @@ Reklam, analitik veya takip kodu yoktur.
 index.html
 manifest.webmanifest
 sw.js
+netlify.toml
+package.json
 firebase.json
 .firebaserc
 database.rules.json
+netlify/functions/reminders.mjs   # 5 dakikalık Web Push zamanlayıcısı
+scripts/build-site.mjs           # dist/ üretir (yalnızca site dosyaları)
 assets/
   css/styles.css
   fonts/                # Caveat (OFL) + lisans
@@ -163,18 +189,19 @@ assets/
     time.js             # tarih/saat ve ders durumu
     utils.js
     weather.js          # Open-Meteo ve ters konum
-.github/workflows/      # GitHub Pages + ders hatırlatıcıları
-push-worker/            # GitHub Actions Web Push zamanlayıcısı
-.secrets/               # VAPID özel anahtarı (gitignore, yayınlanmaz)
+.github/workflows/      # eski GitHub akışı (Netlify kullanılıyorsa gerekmez)
+push-worker/            # GitHub Actions alternatifi (aynı cron mantığı)
+.secrets/               # VAPID anahtarları + netlify.env (gitignore, yayınlanmaz)
 icons/                  # PWA ve Apple ikonları
 ```
 
 ## Notlar
 
-- Service worker sürümü `sw.js` içindeki `VERSION` değeridir. Yeni yayında bunu artırın; eski önbellek temizlenir. (Şu an: `sema-v1.5.3`)
+- Service worker sürümü `sw.js` içindeki `VERSION` değeridir. Yeni yayında bunu artırın; eski önbellek temizlenir. (Şu an: `sema-v1.5.8`)
 - Sürüm notu ekranı `release.js` içindeki `RELEASE.id` ile `localStorage` anahtarına bağlıdır; bir kez gösterildikten sonra tekrar açılmaz.
 - Uygulama dış JS çatısı kullanmaz. Tek dış font `assets/fonts/` altındaki Caveat'tır (SIL Open Font License).
 - Harita için OSM karoları, yüklenemezse CARTO kullanılır; yoğun kullanımda kendi tile sağlayıcına geçmek daha doğru olur.
-- GitHub Actions gizli anahtarı yoksa “Telefon bildirimi” aboneliği buluta yazılamaz; önce `VAPID_PRIVATE_KEY` secret’ını ekle.
-- `.secrets/vapid.json` özel anahtarı içerir; `.gitignore` dışına çıkarma. GitHub Pages iş akışı yalnızca site dosyalarını yayınladığı için bu dosya sitede görünmez.
-- GitHub Actions zamanlayıcısı yoğun saatlerde birkaç dakika gecikebilir; bildirim ders saatinden hemen önce değil, seçtiğin aralıkta gelebilir.
+- Netlify ortam değişkenleri (`VAPID_PRIVATE_KEY`, `VAPID_PUBLIC_KEY`) yoksa “Telefon bildirimi” aboneliği buluta yazılamaz; önce **Site configuration → Environment variables** adımını tamamla.
+- `.secrets/` özel anahtarı içerir; `.gitignore` dışına çıkarma. Netlify build'i yalnızca `dist` klasörünü yayınladığı için bu dosyalar sitede görünmez.
+- Netlify zamanlayıcısı yoğun saatlerde birkaç dakika gecikebilir; bildirim ders saatinden hemen önce değil, seçtiğin aralıkta gelebilir.
+- GitHub'a da push edeceksen `.github/workflows/lesson-reminders.yml` dosyasını sil; yoksa aynı bildirim iki yerden gönderilmeye çalışılır (Firebase'deki `push/sent` işareti çoğu durumda ikinciyi engeller).

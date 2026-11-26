@@ -65,6 +65,8 @@ import {
   disablePush,
   enablePush,
   pushPermission,
+  pushBlockedReason,
+  pushDebugInfo,
   pushSupported,
   reminderSettings,
   sendTestNotification,
@@ -458,6 +460,7 @@ function renderToday() {
   if (!view) return;
 
   const now = new Date();
+  applyDaypart(now);
   const summary = todaySummary(state.lessons, now);
   const next = nextLesson(state.lessons, now);
   const data = weatherData();
@@ -914,7 +917,7 @@ function renderSchedule() {
       ${
         lessons.length
           ? `<div class="lesson-stack">
-              ${lessons.map((lesson) => renderLessonCard(lesson, selected, today)).join('')}
+              ${lessons.map((lesson, index) => renderLessonCard(lesson, selected, today, index)).join('')}
              </div>`
           : `<div class="empty-state">
               <div class="empty-state__icon">${icon('calendar')}</div>
@@ -930,11 +933,11 @@ function renderSchedule() {
   `;
 }
 
-function renderLessonCard(lesson, selectedDay, today) {
+function renderLessonCard(lesson, selectedDay, today, index = 0) {
   const status = lessonStatus(lesson, new Date(), selectedDay);
   const place = lesson.place || 'Derslik ekle';
   return `
-    <button class="lesson-card" style="${courseStyle(lesson.title)}" data-action="edit-lesson" data-id="${escapeHtml(lesson.id)}" aria-label="${escapeHtml(lesson.title)} dersini düzenle">
+    <button class="lesson-card" style="${courseStyle(lesson.title)}--i:${index}" data-action="edit-lesson" data-id="${escapeHtml(lesson.id)}" aria-label="${escapeHtml(lesson.title)} dersini düzenle">
       <span class="lesson-card__time">
         <strong>${lesson.start}</strong>
         <span>${lesson.end}</span>
@@ -1058,6 +1061,14 @@ function renderNotes(couple) {
 /*  clock / online / theme                                                    */
 /* -------------------------------------------------------------------------- */
 
+function applyDaypart(now = new Date()) {
+  const hour = now.getHours();
+  const part = hour < 6 ? 'night' : hour < 11 ? 'morning' : hour < 17 ? 'day' : hour < 21 ? 'evening' : 'night';
+  if (document.documentElement.dataset.daypart !== part) {
+    document.documentElement.dataset.daypart = part;
+  }
+}
+
 function startClock() {
   clearInterval(clockTimer);
   clockTimer = setInterval(() => {
@@ -1065,6 +1076,7 @@ function startClock() {
     $$('[data-clock]').forEach((element) => {
       element.textContent = formatClock(now);
     });
+    applyDaypart(now);
     applySkyState();
     if (dateKey(now) !== ui.lastDateKey) {
       ui.lastDateKey = dateKey(now);
@@ -2099,11 +2111,24 @@ function showReminderBanner(due) {
       <strong>${escapeHtml(lesson.title)}</strong>
       <small>${due.remaining} dk sonra${lesson.place ? ` · ${escapeHtml(lesson.place)}` : ''}</small>
     </div>
+    <span class="reminder-bar__timer" aria-hidden="true"></span>
     <button class="reminder-bar__close" data-action="dismiss-reminder" aria-label="Uyarıyı kapat">${icon('x')}</button>`;
   bar.classList.add('is-visible');
   clearTimeout(reminderHideTimer);
   reminderHideTimer = setTimeout(() => bar.classList.remove('is-visible'), 60000);
   if (navigator.vibrate) navigator.vibrate(50);
+}
+
+function pushHintText() {
+  const reason = pushBlockedReason();
+  if (reason === 'ios-install') {
+    return 'iPhone’da arka plan bildirimi için: Paylaş → Ana Ekrana Ekle, sonra uygulamayı ana ekrandaki ikondan açıp bu ekrana dön.';
+  }
+  if (reason === 'ios-old') {
+    return 'Bu cihaz arka plan bildirimini desteklemiyor (iPhone’da iOS 16.4 ve üzeri gerekir; WhatsApp/Instagram içinden açılan sayfada da çalışmaz). Uygulama içi uyarı yine çalışır.';
+  }
+  if (reason === 'no-key') return 'Bildirim anahtarı yüklenemedi. Sayfayı yenileyip tekrar dene.';
+  return 'Bu tarayıcı arka plan bildirimini desteklemiyor. Uygulama içi uyarı yine çalışır.';
 }
 
 function reminderSheetContent() {
@@ -2149,9 +2174,10 @@ function reminderSheetContent() {
         <p class="reminder-hint">${
           supported
             ? 'Uygulama kapalıyken bildirim için Firebase zamanlayıcısı gerekir. Kurulduysa dersten önce telefonuna düşer.'
-            : 'Bu cihaz arka plan bildirimini desteklemiyor. Uygulama içi uyarı yine çalışır.'
+            : pushHintText()
         }</p>
         ${permission === 'granted' ? '<button class="text-link" data-action="test-push">Deneme bildirimi gönder</button>' : ''}
+        ${supported ? '' : `<p class="reminder-debug">tanı · ${escapeHtml(pushDebugInfo())}</p>`}
       </div>
 
       <p class="schedule-note">Hatırlatıcı aynı ders için günde bir kez gösterilir.</p>
