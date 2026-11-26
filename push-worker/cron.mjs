@@ -133,7 +133,7 @@ async function main() {
         console.log(`gönderildi: ${lesson.title} → ${deviceId.slice(0, 8)}…`);
       } catch (error) {
         const status = Number(error?.statusCode);
-        if (status === 404 || status === 410) {
+        if (status === 400 || status === 404 || status === 410) {
           await remove(`push/devices/${encodeURIComponent(deviceId)}`).catch(() => {});
           console.log(`geçersiz abonelik silindi: ${deviceId.slice(0, 8)}…`);
         } else {
