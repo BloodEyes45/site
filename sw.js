@@ -1,4 +1,4 @@
-const VERSION = 'sema-v1.6.0';
+const VERSION = 'sema-v1.6.1';
 const SHELL_CACHE = `${VERSION}-shell`;
 const TILE_CACHE = `${VERSION}-tiles`;
 const TILE_LIMIT = 160;
@@ -173,7 +173,7 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const target = new URL(event.notification.data?.url || './#bugun', self.location.origin).href;
+  const target = new URL(event.notification.data?.url || './#bugun', self.registration.scope).href;
   event.waitUntil(
     (async () => {
       const clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });

@@ -8,6 +8,8 @@ const SPACE = 'spaces/semaasistan';
 const BASE = `${DATABASE}/${SPACE}`;
 const TIME_ZONE = 'Europe/Istanbul';
 const LEAD_OPTIONS = [5, 10, 15, 30];
+// Bildirime dokununca açılacak adres. Mutlak olmalı; göreli adres site köküne (/site/ değil /) çözülüyordu.
+const SITE_URL = 'https://bloodeyes45.github.io/site/';
 
 function readPublicKey() {
   const workerDir = path.dirname(fileURLToPath(import.meta.url));
@@ -116,7 +118,7 @@ async function main() {
       const payload = {
         title: 'Ders yaklaşıyor',
         body: `${lesson.title} · ${timing}${lesson.place ? ` · ${lesson.place}` : ''}`,
-        url: './#bugun',
+        url: SITE_URL + '#bugun',
         tag: `sema-${now.dateKey}-${lesson.id}`,
       };
 
