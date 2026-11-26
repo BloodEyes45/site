@@ -18,4 +18,4 @@ export const sharedSpacePath = 'spaces/semaasistan';
 // Web Push için VAPID açık anahtarı (gizli değildir).
 // Özel eşi .secrets/vapid.json içinde durur ve yayınlanmaz.
 export const vapidPublicKey =
-  'BLzaYn2SKqngKRmNCATBpIiBMFi5zseO4OHVhDzYVJZ7pKo3vxp7fpG8RM8xOmJm00o4H-S653-m0tHNgd0ACSg';
+  'BMBckVFhbyEhysTknnL741qKEjBBY7ojmVapfmnR6dwrq8J9AmmxXqcHygqkbKgQ-tn5HGNa4KI-GdznWkyrTr0';
